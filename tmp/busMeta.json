@@ -1,0 +1,27 @@
+{
+  "inputObjs": {
+    "list": [
+      {
+        "sequential": false,
+        "name": "application",
+        "description": "子系统名称,如果为空，那么不限制查询条件获取所有节点信息",
+        "clazz": "java.lang.String",
+        "xhash": false,
+        "required": false
+      }
+    ]
+  },
+  "base": {
+    "public": true,
+    "readonly": false,
+    "monitorEnabled": false,
+    "transferable": false,
+    "name": "getNodeInfo",
+    "description": "获取所有节点详细信息",
+    "scopes": [
+      "api_all"
+    ],
+    "transactional": false,
+    "successful": ""
+  }
+}

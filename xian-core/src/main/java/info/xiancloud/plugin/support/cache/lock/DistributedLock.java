@@ -1,0 +1,103 @@
+package info.xiancloud.plugin.support.cache.lock;
+
+import com.alibaba.fastjson.JSONObject;
+import info.xiancloud.plugin.Group;
+import info.xiancloud.plugin.message.SyncXian;
+import info.xiancloud.plugin.message.UnitResponse;
+import info.xiancloud.plugin.support.cache.CacheConfigBean;
+import info.xiancloud.plugin.support.cache.exception.TimeOutException;
+import info.xiancloud.plugin.util.EnvUtil;
+import info.xiancloud.plugin.util.LOG;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * distributed lock
+ */
+public class DistributedLock {
+    private static final AtomicInteger AUTO_INCREMENT = new AtomicInteger(0);
+
+    private final int autoIncrement;
+    private final String key;
+    private final String lockKey;
+    private final Object value;
+
+    public DistributedLock(int autoIncrement, String key, String lockKey, Object value) {
+        this.autoIncrement = autoIncrement;
+        this.key = key;
+        this.lockKey = lockKey;
+        this.value = value;
+    }
+
+    /**
+     * @param cacheConfigBean    cacheConfigBean
+     * @param key                key
+     * @param value              vlaue
+     * @param expireTimeInSecond 单位: 秒, KEY 过期时间
+     * @param timeOutInSecond    单位: 秒, 获取锁超时时间
+     * @return DistributedLock
+     * @throws TimeOutException
+     */
+    public static DistributedLock lock(CacheConfigBean cacheConfigBean, String key, Object value, int expireTimeInSecond, int timeOutInSecond) throws TimeOutException, RuntimeException {
+        final long applyTime = System.currentTimeMillis();
+
+        final int _expireTimeInSecond = expireTimeInSecond < 1 ? 3 : expireTimeInSecond;
+        final int _timeOutInSecond = timeOutInSecond < 1 ? 3 : timeOutInSecond;
+
+        if (expireTimeInSecond != _expireTimeInSecond)
+            LOG.warn(String.format("key: %s, 原 expireTime: %s < 1, 校正为现 expireTime: %s", key, expireTimeInSecond, _expireTimeInSecond));
+        if (timeOutInSecond != _timeOutInSecond)
+            LOG.warn(String.format("key: %s, 原 timeOutInSecond: %s < 1, 校正为现 timeOutInSecond: %s", key, timeOutInSecond, _timeOutInSecond));
+
+        final String lockKey = "LOCK_" + key;
+
+        UnitResponse unitResponseObject = SyncXian.call("cache", "distributedLock", new JSONObject() {{
+            put("cacheConfig", cacheConfigBean);
+            put("key", lockKey);
+            put("value", value);
+            put("expireTimeInSecond", _expireTimeInSecond);
+            put("timeOutInSecond", _timeOutInSecond);
+        }});
+
+        final long receiveTime = System.currentTimeMillis();
+
+        if (unitResponseObject.succeeded()) {
+            int autoIncrement = AUTO_INCREMENT.incrementAndGet();
+
+            if (!EnvUtil.getEnv().equals(EnvUtil.PRODUCTION))
+                LOG.info(String.format("锁编号: %s, key: %s, lockKey: %s, value: %s, 分布式加锁, 成功, 耗时: %s 毫秒", autoIncrement, key, lockKey, value, (receiveTime - applyTime)));
+
+            return new DistributedLock(autoIncrement, key, lockKey, value);
+        } else if (unitResponseObject.getCode().equals(Group.CODE_TIME_OUT))
+            throw new TimeOutException(String.format("分布式加锁, 超时, key: %s, lockKey: %s, 耗时: %s 毫秒", key, lockKey, (receiveTime - applyTime)));
+        else
+            throw new RuntimeException(String.format("分布式加锁, 异常, key: %s, lockKey: %s, 耗时: %s 毫秒", key, lockKey, (receiveTime - applyTime)));
+    }
+
+    public boolean unlock(CacheConfigBean cacheConfigBean) {
+        final long applyTime = System.currentTimeMillis();
+
+        if (lockKey == null)
+            return false;
+
+        UnitResponse unitResponseObject = SyncXian.call("cache", "distributedUnLock", new JSONObject() {{
+            put("cacheConfig", cacheConfigBean);
+            put("key", lockKey);
+            put("value", value);
+        }});
+
+        if (!EnvUtil.getEnv().equals(EnvUtil.PRODUCTION)) {
+            final long receiveTime = System.currentTimeMillis();
+            final String result = unitResponseObject.succeeded() ? "成功" : "失败";
+            LOG.info(String.format("锁编号: %s, key: %s, lockKey: %s, value: %s, 分布式解锁, %s, 影响数量: %s, 耗时: %s 毫秒", autoIncrement, key, lockKey, value, result, unitResponseObject.getData(), (receiveTime - applyTime)));
+        }
+
+        if (!unitResponseObject.succeeded()) {
+            LOG.error(unitResponseObject);
+            return false;
+        }
+
+        return true;
+    }
+
+}

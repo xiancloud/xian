@@ -1,0 +1,36 @@
+def dir = new File(settingsDir.toString())
+def projects = new HashSet()
+def projectSymbol = File.separator + 'src'
+
+dir.eachDirRecurse { subDir ->
+    def subDirName = subDir.canonicalPath
+    def isSubProject = true
+    if (subDirName.endsWith(projectSymbol)) {
+        for (String projectDir in projects) {
+            if (subDirName.startsWith(projectDir)) {
+                isSubProject = false
+                break
+            }
+        }
+        if (isSubProject) {
+            projects << subDirName
+            def lastIndex = subDirName.lastIndexOf(projectSymbol)
+            def gradleModulePath = subDirName.substring(dir.canonicalPath.length(), lastIndex).replace(File.separator, ':')
+            println "include " + gradleModulePath
+            include gradleModulePath
+        }
+    }
+}
+
+dir.eachDir { subDir ->
+    if (subDir.name == "xian_runtime") {
+        subDir.eachDir { applicationDir ->
+            def application = applicationDir.canonicalPath.substring(dir.canonicalPath.length()).replace(File.separator, ":")
+            if (!application.endsWith(":build") && !application.endsWith(":bin") && !application.endsWith(":target") && !application.endsWith(":out") && !application.endsWith(":libs")) {
+                println "include " + application
+                include application
+            }
+        }
+    }
+}
+

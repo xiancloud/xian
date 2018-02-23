@@ -1,0 +1,19 @@
+dependencies {
+    runtime project(':xian-zookeeper')
+    runtime project(':xian-rpc:xian-rpcNettyClient')
+    runtime project(':xian-rpc:xian-rpcNettyServer')
+    runtime project(':xian-httpclient')
+    runtime project(':xian-httpserver:xian-httpserver-core')
+    runtime project(':xian-httpserver:xian-nettyhttpserver')
+    runtime project(':xian-gateway')
+    runtime project(':xian-ruleengine')
+    runtime project(':xian-oauth20:xian-apifestOauth20')
+    runtime project(':xian-oauth20:xian-apifestOauth20Api')
+    runtime project(':xian-redis')
+
+    /*
+    注释掉的依赖仅供测试使用，请勿解除注释，请勿删除
+    runtime project(':xian-monitor')
+    runtime project(':xian-mq:xian-rabbitmqclient')
+     */
+}

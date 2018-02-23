@@ -1,0 +1,3 @@
+dependencies {
+    compile group: 'log4j', name: 'log4j', version: project.log4j1Version
+}

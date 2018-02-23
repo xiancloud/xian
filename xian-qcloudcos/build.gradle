@@ -1,0 +1,4 @@
+dependencies {
+    compile group: 'com.qcloud', name: 'cos_api', version: '4.4'
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.4.1'
+}

@@ -1,0 +1,75 @@
+{
+  "code": 0,
+  "message": "",
+  "codeDesc": "Success",
+  "data": {
+    "service": {
+      "serviceName": "singlenode-predev",
+      "serviceDesc": "",
+      "status": "Normal",
+      "reasonMap": {
+        "容器运行中": 1
+      },
+      "regionId": 1,
+      "desiredReplicas": 1,
+      "currentReplicas": 1,
+      "lbId": "",
+      "lbStatus": "None",
+      "createdAt": "2017-06-05 12:53:55",
+      "accessType": "None",
+      "serviceIp": "",
+      "externalIp": "",
+      "portMappings": null,
+      "containers": [
+        {
+          "containerName": "singlenode",
+          "image": "ccr.ccs.tencentyun.com/xian/xian_predev:latest",
+          "envs": [
+            {
+              "name": "XIAN_ENV",
+              "value": "predev"
+            },
+            {
+              "name": "LC_ALL",
+              "value": "en_US.utf8"
+            },
+            {
+              "name": "LANG",
+              "value": "en_US.utf8"
+            },
+            {
+              "name": "PATH",
+              "value": "/opt/jdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            },
+            {
+              "name": "JAVA_HOME",
+              "value": "/opt/jdk"
+            },
+            {
+              "name": "XIAN_APPLICATION",
+              "value": "singleNode"
+            }
+          ],
+          "volumeMounts": null,
+          "liveProbe": null,
+          "readyProbe": null,
+          "cpu": 200,
+          "memory": 0,
+          "privileged": false,
+          "command": "",
+          "arguments": null,
+          "unHubId": ""
+        }
+      ],
+      "selector": {
+        "qcloud-app": "singlenode-predev"
+      },
+      "labels": {
+        "qcloud-app": "singlenode-predev"
+      },
+      "volumes": [],
+      "subnetId": "",
+      "namespace": "default"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+<Configuration>
+    <Appenders>
+        <Gelf name="gelf" host="udp:localhost" port="12201" version="1.1" extractStackTrace="true"
+              filterStackTrace="true" mdcProfiling="true" includeFullMdc="true" maximumMessageSize="8192"
+              originHost="%host{fqdn}" additionalFieldTypes="fieldName1=String,fieldName2=Double,fieldName3=Long">
+            <Field name="timestamp" pattern="%d{dd MMM yyyy HH:mm:ss,SSS}"/>
+            <Field name="level" pattern="%level"/>
+            <Field name="simpleClassName" pattern="%C{1}"/>
+            <Field name="className" pattern="%C"/>
+            <Field name="server" pattern="%host"/>
+            <Field name="server.fqdn" pattern="%host{fqdn}"/>
+
+            <!-- This is a static field -->
+            <Field name="fieldName2" literal="fieldValue2"/>
+
+            <!-- This is a field using MDC -->
+            <Field name="mdcField2" mdc="mdcField2"/>
+            <DynamicMdcFields regex="mdc.*"/>
+            <DynamicMdcFields regex="(mdc|MDC)fields"/>
+        </Gelf>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="gelf"/>
+        </Root>
+    </Loggers>
+</Configuration>

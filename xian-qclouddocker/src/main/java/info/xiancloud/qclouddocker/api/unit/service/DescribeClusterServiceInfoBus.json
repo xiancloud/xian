@@ -1,0 +1,61 @@
+{
+  "code": 0,
+  "message": "",
+  "codeDesc": "Success",
+  "data": {
+    "service": {
+      "serviceName": "weixinmch-test",
+      "serviceDesc": "weixinmch-test",
+      "status": "Normal",
+      "reasonMap": {
+        "容器运行中": 1
+      },
+      "regionId": 1,
+      "desiredReplicas": 1,
+      "currentReplicas": 1,
+      "lbId": "",
+      "lbStatus": "None",
+      "createdAt": "2017-07-05 19:07:53",
+      "strategy": "RollingUpdate",
+      "accessType": "None",
+      "serviceIp": "",
+      "externalIp": "",
+      "portMappings": null,
+      "containers": [
+        {
+          "containerName": "weixinmchtest",
+          "image": "ccr.ccs.tencentyun.com/xian/xian_plugin_test:14",
+          "envs": [
+            {
+              "name": "XIAN_ENV",
+              "value": "test"
+            },
+            {
+              "name": "XIAN_APPLICATION",
+              "value": "weixinMch"
+            }
+          ],
+          "volumeMounts": null,
+          "liveProbe": null,
+          "readyProbe": null,
+          "cpu": 0,
+          "memory": 0,
+          "privileged": false,
+          "command": "",
+          "arguments": null,
+          "unHubId": "",
+          "workingDir": ""
+        }
+      ],
+      "selector": {
+        "qcloud-app": "weixinmch-test"
+      },
+      "labels": {
+        "qcloud-app": "weixinmch-test"
+      },
+      "volumes": [],
+      "subnetId": "",
+      "namespace": "default"
+    }
+  }
+}

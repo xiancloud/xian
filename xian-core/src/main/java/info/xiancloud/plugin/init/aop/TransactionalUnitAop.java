@@ -1,0 +1,65 @@
+package info.xiancloud.plugin.init.aop;
+
+import info.xiancloud.plugin.Constant;
+import info.xiancloud.plugin.Group;
+import info.xiancloud.plugin.LocalUnitsManager;
+import info.xiancloud.plugin.Unit;
+import info.xiancloud.plugin.aop.IUnitAop;
+import info.xiancloud.plugin.init.IStartService;
+import info.xiancloud.plugin.message.SyncXian;
+import info.xiancloud.plugin.message.UnitRequest;
+import info.xiancloud.plugin.message.UnitResponse;
+import info.xiancloud.plugin.util.LOG;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * @author happyyangyuan
+ * @deprecated xianframe currently can not supports distributed transactions.
+ */
+public class TransactionalUnitAop implements IUnitAop, IStartService {
+
+    @Override
+    public Collection<Unit> getUnitCollection() {
+        Set<Unit> collection = new HashSet<>();
+        LocalUnitsManager.unitMap(unitMap -> {
+            for (String groupName : unitMap.keySet()) {
+                for (Unit unit : unitMap.get(groupName)) {
+                    if (unit.getMeta().isTransactional()) {
+                        collection.add(unit);
+                    }
+                }
+            }
+        });
+        return collection;
+    }
+
+    @Override
+    public Object before(Unit unit, UnitRequest unitRequest) {
+        //todo Please define a abstraction interface of transaction operations instead of calling the transaction operation unit.
+        return SyncXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "beginTrans", new HashMap<>());
+    }
+
+    @Override
+    public void after(Unit unit, UnitRequest unitRequest, UnitResponse unitResponse, Object beforeReturn/*, AOPSession ssn*/) {
+        if (((UnitResponse) beforeReturn).succeeded()) {
+            if (unitResponse.getContext().isRollback() || unitResponse.getData() instanceof Throwable || Group.CODE_EXCEPTION.equals(unitResponse.getCode())) {
+                //todo Please to define a abstraction interface of rollbackTransaction instead of calling the rollbackTrans unit.
+                SyncXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "rollbackTrans");
+            } else {
+                //todo Please define a abstraction interface of transaction operations instead of calling the transaction operation unit.
+                SyncXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "commitTrans");
+            }
+        }
+    }
+
+    @Override
+    public boolean startup() {
+        LOG.info("Currently we do not start transaction aop.");
+        return true;
+    }
+
+}

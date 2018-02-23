@@ -1,0 +1,10 @@
+dependencies {
+    compile 'org.eclipse.jetty:jetty-server:9.4.6.v20170531'
+    compile 'org.eclipse.jetty:jetty-servlet:9.4.6.v20170531'
+    compile 'org.eclipse.jetty:jetty-webapp:9.4.6.v20170531'
+    compile 'org.eclipse.jetty:jetty-http:9.4.6.v20170531'
+    compile 'org.eclipse.jetty:jetty-jmx:9.4.6.v20170531'
+    /*compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'*/
+}
+
+println 'For java web module add runtime project(path: ":module_name", configuration: "war") in xian_runtime/application/build.gradle'

@@ -1,0 +1,9 @@
+dependencies {
+    compileOnly group: 'log4j', name: 'log4j', version: project.log4j1Version
+    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: project.log4j2Version
+    compileOnly group: 'org.jboss.logmanager', name: 'jboss-logmanager', version: '2.0.7.Final'
+    compileOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    compileOnly group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    compileOnly group: 'redis.clients', name: 'jedis', version: '2.8.1'
+    compileOnly group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2'
+}

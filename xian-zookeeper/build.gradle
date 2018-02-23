@@ -1,0 +1,10 @@
+dependencies {
+    /*compile group: 'org.apache.curator', name: 'curator-framework', version: '2.12.0'
+    compile group: 'org.apache.curator', name: 'curator-recipes', version: '2.12.0'
+    compile group: 'org.apache.curator', name: 'curator-x-discovery', version: '2.12.0'
+    compile group: 'org.apache.curator', name: 'curator-test', version: '2.12.0'*/
+    compile project('xian-curator:xian-curator-framework')
+    compile project('xian-curator:xian-curator-recipes')
+    compile project('xian-curator:xian-curator-x-discovery')
+    testCompile project('xian-curator:xian-curator-test')
+}

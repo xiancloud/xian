@@ -1,0 +1,126 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+    }
+}
+
+//WARNING. Nexus staging plugin should only be applied to the root project in build.
+apply plugin: 'io.codearte.nexus-staging'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+
+    group 'info.xiancloud'
+    version '0.1-SNAPSHOTS'
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.+'
+        if (project.path != ':xian-core') {
+            compile project(':xian-core')
+        } else {
+            compile group: 'io.netty', name: 'netty-all', version: '4.1.9.Final'
+            compile group: 'com.google.guava', name: 'guava', version: '21.0'
+            compile group: 'com.alibaba', name: 'fastjson', version: '1.2.38'
+        }
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    // Signature of artifacts
+    signing {
+        sign configurations.archives
+    }
+
+    // OSSRH publication
+    uploadArchives {
+        if (project.publishToMavenCentral)
+            repositories {
+                mavenDeployer {
+                    // POM signature
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                    // Target repository
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                        authentication(userName: ossrhUser, password: ossrhPassword)
+                    }
+                    pom.project {
+                        name project.name
+                        description project.description
+                        packaging 'jar'
+                        url 'https://github.com/happyyangyuan/xian'
+
+                        scm {
+                            connection 'scm:git:https://github.com/happyyangyuan/xian.git'
+                            developerConnection 'scm:git:git@github.com:happyyangyuan/xian.git'
+                            url 'https://github.com/happyyangyuan/xian'
+                        }
+
+                        licenses {
+                            license {
+                                name 'Apache License'
+                                url 'http://www.apache.org/licenses/'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = 'happyyangyuan'
+                                name = 'happyyangyuan'
+                                email = 'happyyangyuan@163.com'
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
+    nexusStaging {
+        username = ossrhUser
+        password = ossrhPassword
+    }
+
+    if (project.file('WebRoot').exists()) {
+        println 'web detected:' + project.name
+        apply plugin: 'war'
+        dependencies {
+            /*providedRuntime group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"*/
+            providedRuntime project(':xian-core')
+        }
+        configurations {
+            war {
+                archiveName 'web.war' //这里写死web.war作为输出物名称
+                from 'WebRoot' //业务云统一使用'WebRoot'命名的web路径，我们这里遵守其约定
+            }
+        }
+        artifacts {
+            war tasks.war
+        }
+    }
+}

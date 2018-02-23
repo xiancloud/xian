@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':xian-zookeeper:xian-curator:xian-curator-recipes')
+    compile project(':xian-zookeeper:xian-curator:xian-curator-x-discovery')
+}

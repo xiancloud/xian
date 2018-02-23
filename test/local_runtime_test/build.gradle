@@ -1,0 +1,9 @@
+dependencies {
+    for (p in rootProject.subprojects) {
+        if (p.path != project.path) {
+            compile project(p.path)
+        }
+    }
+}
+
+

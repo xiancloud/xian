@@ -1,0 +1,37 @@
+subprojects {
+    dependencies {
+        /*
+        runtime project(':xian-log:xian-log4j1')
+        runtime project(':xian-log:xian-gelf-log4j1')
+        */
+        runtime project(':xian-log:xian-log4j2')
+        runtime project(':xian-log:xian-gelf-common')
+    }
+}
+
+task extractLib {
+    doLast {
+        def jars = new ArrayList<List>()
+        project.subprojects.each { application ->
+            def plugins = new ArrayList()
+            application.file("plugins").eachFile { jar ->
+                plugins.add(jar.name)
+            }
+            jars.add(plugins)
+        }
+        List intersection = jars.get(0)
+        jars.each { plugins ->
+            intersection.retainAll(plugins)
+        }
+        mkdir("libs")
+        project.subprojects.each { application ->
+            application.file("plugins").eachFile { pluginJar ->
+                intersection.each { libJarName ->
+                    if (libJarName == pluginJar.name) {
+                        pluginJar.renameTo(projectDir.toString() + File.separator + "libs" + File.separator + libJarName)
+                    }
+                }
+            }
+        }
+    }
+}

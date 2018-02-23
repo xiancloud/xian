@@ -1,0 +1,12 @@
+dependencies {
+    runtime project(':xian-httpserver:xian-httpserver-core')
+    runtime project(':xian-httpserver:xian-nettyhttpserver')
+    runtime project(':xian-gateway')
+    runtime project(':xian-ruleengine')
+    runtime project(':xian-oauth20:xian-apifestOauth20')
+    runtime project(':xian-oauth20:xian-apifestOauth20Api')
+    runtime project(':xian-qclouddocker')
+    runtime project(':xian-httpclient')
+    //以下临时加入api文档生成
+    //runtime project(':xian-apidoc')
+}

@@ -1,0 +1,5 @@
+1、This whole conf part is relied by ReflectUtil.java
+In this package including the children you mustn't use ReflectUtil while class is loading: static code block, static fields initialization for example.
+Else a class loading dead lock will occur.
+2、In this conf package, many methods are relied by LOG.java.
+in order to avoid a recursive invocation, you must not use LOG.java to print the log, use the  SystemOutLogger.singleton to print log to std out instead.

@@ -1,0 +1,18 @@
+{
+  "transId1": {
+    "count": 1,
+    "clientIds": [
+      "dao01ClientId",
+      "dao02ClientId",
+      "dao03ClientId"
+    ]
+  },
+  "transId2": {
+    "count": 1,
+    "clientIds": [
+      "dao01ClientId",
+      "dao02ClientId",
+      "dao03ClientId"
+    ]
+  }
+}

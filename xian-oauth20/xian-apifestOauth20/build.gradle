@@ -1,0 +1,9 @@
+dependencies {
+    compile project(':xian-oauth20:xian-apifestOauth20Api')
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.6'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
+    testCompile group: 'org.testng', name: 'testng', version: '6.5.1'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.0'
+}
+test.useTestNG()

@@ -1,0 +1,9 @@
+dependencies {
+    for (p in rootProject.subprojects) {
+        if (p.path != project.path && p.path != ':test:local_runtime_test') {
+            compile project(p.path)
+        }
+    }
+}
+
+

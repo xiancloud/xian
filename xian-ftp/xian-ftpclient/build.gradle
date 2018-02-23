@@ -1,0 +1,4 @@
+dependencies {
+    //commons-net目前是ftp客户端依赖着
+    compile group: 'commons-net', name: 'commons-net', version: '3.6'
+}

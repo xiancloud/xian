@@ -1,0 +1,9 @@
+{
+  "statusLine": {
+    "statusCode": "200",
+    "protocolVersion": "v1.1",
+    "reasonPhrase": "xxx"
+  },
+  "allHeaders": [],
+  "entity": "即payload"
+}

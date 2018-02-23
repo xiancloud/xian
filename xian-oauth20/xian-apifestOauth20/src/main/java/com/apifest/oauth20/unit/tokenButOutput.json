@@ -1,0 +1,10 @@
+{
+  "code": "SUCCESS",
+  "data": {
+    "valid": true,
+    "expiresIn": "60",
+    "created": 1501737579022,
+    "appId": "25874717e9b1807c5cfb66427f7d3c8da02ecfe4",
+    "accessToken": "b28ce33a110b77c8500181943feba21365e0d185c53584e86c146234b6e76ad4"
+  }
+}

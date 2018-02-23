@@ -1,0 +1,5 @@
+dependencies {
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient-cache', version: '4.5.3'
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.6'
+}

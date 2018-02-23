@@ -1,0 +1,7 @@
+dependencies {
+    runtime project(':xian-zookeeper')
+    runtime project(':xian-rpc:xian-rpcNettyClient')
+    runtime project(':xian-rpc:xian-rpcNettyServer')
+    runtime project(':xian-redis')
+    runtime project(':test:server_runtime_test')
+}
