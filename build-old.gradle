@@ -1,0 +1,106 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    group 'info.xiancloud'
+    version '0.1-SNAPSHOTS'
+
+    repositories {
+        /*maven {
+            url "${nexusRemoteUrl}/repository/maven-central/"
+        }
+        maven {
+            url "${nexusRemoteUrl}/repository/maven-releases/"
+        }*/
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+        if (project.path != ':xian-core') {
+            compile project(':xian-core')
+        } else {
+            compile group: 'io.netty', name: 'netty-all', version: '4.1.9.Final'
+            compile group: 'com.google.guava', name: 'guava', version: '21.0'
+            compile group: 'com.alibaba', name: 'fastjson', version: '1.2.38'
+        }
+    }
+
+    /*
+    use standard maven directory structure instead!
+    sourceSets {
+        main {
+            java {
+                srcDir 'src'
+            }
+            resources {
+                srcDir 'res'
+            }
+        }
+        test {
+            java {
+                srcDir('test')
+            }
+            resources {
+                srcDir 'test/res'
+            }
+        }
+    }*/
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    //将jar包发布到私库
+    install {
+        repositories {
+            mavenDeployer {
+                repository(url: "${nexusUrl}/repository/maven-releases/") {
+                    authentication(userName: nexusUsername, password: nexusPassword)
+                }
+            }
+        }
+    }
+    task copyPlugins(type: Sync) {
+        from configurations.runtime
+        into 'plugins'
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives sourcesJar
+    }
+
+    configurations {
+        /*'我们使用netty-all,exclude掉其他所有netty版本的包'*/
+        compile.exclude module: 'netty'
+        compile.exclude module: 'c3p0'
+        compile.exclude group: 'com.mchange', module: 'mchange-commons-java'
+    }
+
+    if (project.file('WebRoot').exists()) {
+        println 'web detected:' + project.name
+        apply plugin: 'war'
+        dependencies {
+            /*providedRuntime group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"*/
+            providedRuntime project(':xian-core')
+        }
+        configurations {
+            war {
+                archiveName 'web.war' // here we give the fixed archive name.
+                from 'WebRoot'
+                //We fix the web root name as 'WebRoot', whoever uses this xian framework's web plugin must obey it.
+            }
+        }
+        artifacts {
+            war tasks.war
+        }
+    }
+}

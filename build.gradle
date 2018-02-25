@@ -1,23 +1,29 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+    }
+}
+
+//WARNING. Nexus staging plugin should only be applied to the root project in build.
+apply plugin: 'io.codearte.nexus-staging'
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'signing'
 
     group 'info.xiancloud'
-    version '0.1-SNAPSHOTS'
+    version '0.1.0-SNAPSHOTS'
 
     repositories {
-        /*maven {
-            url "${nexusRemoteUrl}/repository/maven-central/"
-        }
-        maven {
-            url "${nexusRemoteUrl}/repository/maven-releases/"
-        }*/
         jcenter()
-        mavenCentral()
     }
 
     dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.+'
+        testCompile group: 'junit', name: 'junit', version: '4.12'
         if (project.path != ':xian-core') {
             compile project(':xian-core')
         } else {
@@ -27,34 +33,27 @@ subprojects {
         }
     }
 
-    /*
-    use standard maven directory structure instead!
-    sourceSets {
-        main {
-            java {
-                srcDir 'src'
-            }
-            resources {
-                srcDir 'res'
-            }
-        }
-        test {
-            java {
-                srcDir('test')
-            }
-            resources {
-                srcDir 'test/res'
-            }
-        }
-    }*/
-
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
     }
 
-    //将jar包发布到私库
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    //publish artifacts into private nexus
     install {
         repositories {
             mavenDeployer {
@@ -64,26 +63,70 @@ subprojects {
             }
         }
     }
+
     task copyPlugins(type: Sync) {
         from configurations.runtime
         into 'plugins'
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        archives sourcesJar
-    }
-
     configurations {
-        /*'我们使用netty-all,exclude掉其他所有netty版本的包'*/
-        compile.exclude module: 'netty'
-        //我们不再使用c3p0
-        compile.exclude module: 'c3p0'
-        compile.exclude group: 'com.mchange', module: 'mchange-commons-java'
+        compile.exclude module: 'netty' // exclude any other version of netty, we only use netty-all
+        compile.exclude module: 'c3p0' // no c3p0
+        compile.exclude group: 'com.mchange', module: 'mchange-commons-java' // no c3p0
+    }
+
+    // Signature of artifacts
+    signing {
+        sign configurations.archives
+    }
+
+    // OSSRH publication
+    uploadArchives {
+        if (project.publishToMavenCentral) {
+            repositories {
+                mavenDeployer {
+                    // POM signature
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                    // Target repository
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                        authentication(userName: ossrhUser, password: ossrhPassword)
+                    }
+                    pom.project {
+                        name project.name
+                        description project.description
+                        packaging 'jar'
+                        url 'https://github.com/happyyangyuan/xian'
+
+                        scm {
+                            connection 'scm:git:https://github.com/happyyangyuan/xian.git'
+                            developerConnection 'scm:git:git@github.com:happyyangyuan/xian.git'
+                            url 'https://github.com/happyyangyuan/xian'
+                        }
+
+                        licenses {
+                            license {
+                                name 'Apache License'
+                                url 'http://www.apache.org/licenses/'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = 'happyyangyuan'
+                                name = 'happyyangyuan'
+                                email = 'happyyangyuan@163.com'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    nexusStaging {
+        username = ossrhUser
+        password = ossrhPassword
     }
 
     if (project.file('WebRoot').exists()) {
@@ -95,8 +138,9 @@ subprojects {
         }
         configurations {
             war {
-                archiveName 'web.war' //这里写死web.war作为输出物名称
-                from 'WebRoot' //业务云统一使用'WebRoot'命名的web路径，我们这里遵守其约定
+                archiveName 'web.war' // here we give the fixed archive name.
+                from 'WebRoot'
+                //We fix the web root name as 'WebRoot', whoever uses this xian framework's web plugin must obey it.
             }
         }
         artifacts {
