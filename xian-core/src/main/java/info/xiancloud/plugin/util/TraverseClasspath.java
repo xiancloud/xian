@@ -79,7 +79,6 @@ public class TraverseClasspath {
     }
 
     /**
-     * 获取所有的子类实例<br>
      * Get all subclass initiatable instances.
      */
     public static <T> Set<T> getSubclassInstances(Class<T> clazz) {
@@ -87,7 +86,7 @@ public class TraverseClasspath {
     }
 
     private static String[] defaultPackages() {
-        String[] packagesToScan = EnvConfig.getStringArray("packagesToScan", new String[]{});
+        String[] packagesToScan = EnvConfig.getStringArray("packagesToScan", new String[]{"com.", "info."});
         return ArrayUtil.concat(new String[]{"info.xiancloud"}, packagesToScan);
     }
 
