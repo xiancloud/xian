@@ -81,7 +81,8 @@
 ## 30分钟学会使用xian frame开发微服务
 
 ### 引入依赖
-暂无
+gradle项目模板配置，详见https://github.com/happyyangyuan/xian_template
+
 
 
 
