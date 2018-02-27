@@ -81,7 +81,32 @@
 ## 30分钟学会使用xian frame开发微服务
 
 ### 引入依赖
-gradle项目模板配置，详见https://github.com/happyyangyuan/xian_template
+我在GitHub上给出了一个gradle项目模板，详见https://github.com/happyyangyuan/xian_template 。
+#### /xian_template/gradle.properties
+一下
+#### /xian_template/gradle.properties
+配置文件指明了xian依赖的版本号
+````
+xianVersion=0.1.0-beta
+````
+#### xian_template项目子module：/xian_template/demo_plugin01、/xian_template/demo_plugin02
+demo_plugin01定义了unit类 /xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin01/unit/DemoUnit01.java
+该unit类调用另外一个unit类：/xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin02/unit/DemoUnit02.java
+二者形成rpc调用关系。
+#### 可运行的application
+我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication01、demoGateway、demoWebApplication01。
+我们这里将每个application看作是一个微服务。
+1. demoWebApplication01，它是一个web应用，以“微服务”的身份定义于微服务集群内。在任意位置运行脚本 ./demoWebApplication01/build.sh执行gradle构建
+
+
+
+### 基础概念参考
+#### 服务单元unit
+unit是本微服务框架的基础服务单元最小粒度，每个unit对应着一个Java方法，我们会将每个unit注册到注册中心。
+#### 单元组group
+group定义了unit分组，每个unit都属于唯一一个group，groupName和unitName二者唯一确定一个unit定义。
+#### 插件plugin
+插件是多个特定的unit的组合而成的一个项目子module，我们将插件自有组合而成为
 
 
 
