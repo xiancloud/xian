@@ -89,15 +89,17 @@
 ````
 xianVersion=0.1.0-beta
 ````
-#### xian_template项目子module：/xian_template/demo_plugin01、/xian_template/demo_plugin02
+#### /xian_template项目内的子module：demo_plugin01、demo_plugin02、demo_web_plugin01
 demo_plugin01定义了unit类 /xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin01/unit/DemoUnit01.java
 该unit类调用另外一个unit类：/xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin02/unit/DemoUnit02.java
 二者形成rpc调用关系。
+demo_web_plugin01定义了一个Java web应用，里面内置了一个hello world的index.html页面。
 #### 可运行的application
-我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication01、demoGateway、demoWebApplication01。
+我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
 我们这里将每个application看作是一个微服务。
-1. demoWebApplication01，它是一个web应用，以“微服务”的身份定义于微服务集群内。在任意位置运行脚本 ./demoWebApplication01/build.sh执行gradle构建
-
+1. demoWebApplication01，我们将demo_web_plugin01部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle。demoWebApplication01以“微服务”的身份定义于微服务集群内。我们可以在任意位置运行脚本 ./demoWebApplication01/build.sh执行gradle构建，然后执行运行程序：./xian_runtime/demoWebApplication01/_start.sh。启动后访问http://localhost:8080 查看效果。
+2. demoGateway，这是我们xianframe关键第一个application：业务网关。它内置了一个高性能httpserver作为网关服务对外提供服务。
+3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application,然后运行
 
 
 ### 基础概念参考
