@@ -297,10 +297,10 @@ final public class UnitResponse {
     }
 
     /**
-     * The same as {@link #toJSONString()}
+     * The same as {@link #toVoJSONString()} ()}
      */
     public String toString() {
-        return toJSONString();
+        return toVoJSONString();
     }
 
     /**
