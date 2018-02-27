@@ -55,7 +55,7 @@ public class OpenFalconMailAdaptor implements Unit {
                     put("content", msg.get("content", String.class));
                 }},
                 new NotifyHandler() {
-                    protected void toContinue(UnitResponse unitResponse) {
+                    protected void handle(UnitResponse unitResponse) {
                         LOG.info("邮件发送结果：" + unitResponse);
                     }
                 });

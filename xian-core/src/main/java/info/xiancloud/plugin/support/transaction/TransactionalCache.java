@@ -53,7 +53,7 @@ public class TransactionalCache {
             UnitRequest request = UnitRequest.create(Constant.SYSTEM_DAO_GROUP_NAME, "commitAndCloseTogether");
             request.getContext().setDestinationNodeId(clientId);
             LocalNodeManager.send(request, new NotifyHandler() {
-                protected void toContinue(UnitResponse unitResponse) {
+                protected void handle(UnitResponse unitResponse) {
                     LOG.info(clientId + "的事务已经提交");
                 }
             });
@@ -69,7 +69,7 @@ public class TransactionalCache {
             UnitRequest request = UnitRequest.create(Constant.SYSTEM_DAO_GROUP_NAME, "rollbackAndCloseTogether");
             request.getContext().setDestinationNodeId(clientId);
             LocalNodeManager.send(request, new NotifyHandler() {
-                protected void toContinue(UnitResponse unitResponse) {
+                protected void handle(UnitResponse unitResponse) {
                     LOG.info(clientId + "的事务已经回滚");
                 }
             });

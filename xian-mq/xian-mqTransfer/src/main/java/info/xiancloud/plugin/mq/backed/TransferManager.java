@@ -133,7 +133,7 @@ public class TransferManager implements IStartService, ShutdownHook {
                 Thread.sleep(10 * 1000);
             }
             NotifyHandler callback = new NotifyHandler() {
-                protected void toContinue(UnitResponse output) {
+                protected void handle(UnitResponse output) {
                     LOG.info("中转器收到回调:" + output + ";准备转发回调结果至原始发送端...");
                     LocalNodeManager.sendBack(output);
                     //todo 建议在这里做队列ack，既可以实现推送速度控制，也可以保证消息成功处理才从队列删除消息

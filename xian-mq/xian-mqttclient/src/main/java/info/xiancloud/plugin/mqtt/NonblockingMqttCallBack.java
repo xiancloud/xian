@@ -49,13 +49,13 @@ public class NonblockingMqttCallBack extends MqttCallbackAdaptor {
                     ISequencer.build(group, unit, json).sequence(
                             //run this runnable if succeeded.
                             () -> new DefaultLocalAsyncSender(request, new NotifyHandler() {
-                                protected void toContinue(UnitResponse unitResponse) {
+                                protected void handle(UnitResponse unitResponse) {
                                     LocalNodeManager.sendBack(unitResponse);
                                 }
                             }).send(),
                             /*failed directly, call this handler*/
                             new NotifyHandler() {
-                                protected void toContinue(UnitResponse unitResponse) {
+                                protected void handle(UnitResponse unitResponse) {
                                     LocalNodeManager.sendBack(unitResponse);
                                 }
                             });

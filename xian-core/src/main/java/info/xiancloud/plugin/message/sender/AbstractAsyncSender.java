@@ -25,7 +25,7 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
         senderFuture = new SenderFuture();
         unitRequest = request;
         callback = handler == null ? new NotifyHandler() {
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 //既然你不需要callback,那么这里什么也不用做啰
             }
         } : handler;

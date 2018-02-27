@@ -60,7 +60,7 @@ public abstract class AbstractAsyncForwarder implements IAsyncForwarder, IRespon
                 .setMsgId(msgId)
                 .setUriParameters(uriBean.getUriParameters());
         BaseController controller = IControllerMapping.getController(controllerRequest, new TransactionalNotifyHandler() {
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 if (unitResponse == null) {
                     Throwable emptyOutputException = new RuntimeException("UnitResponse is not allowed to be null.");
                     LOG.error(emptyOutputException);

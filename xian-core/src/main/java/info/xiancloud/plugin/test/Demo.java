@@ -18,7 +18,7 @@ public class Demo {
         map.put("password", "xianPwd");
         Xian.call("test", "UnitResponseTestUnit", map, new NotifyHandler() {
             @Override
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 System.out.println(unitResponse.toVoJSONString());
             }
         });

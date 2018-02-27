@@ -67,7 +67,7 @@ public abstract class ReceiveAndBroadcast implements Unit {
                                         .setDestinationNodeId(clientInfo.getNodeId())
                         ),
                         new NotifyHandler() {
-                            protected void toContinue(UnitResponse unitResponse) {
+                            protected void handle(UnitResponse unitResponse) {
                                 LOG.info("对" + clientInfo.getNodeId() + "执行" + getName() + "操作完毕");
                                 if (!successDataOnly()) {
                                     piledUpOutput.add(unitResponse);

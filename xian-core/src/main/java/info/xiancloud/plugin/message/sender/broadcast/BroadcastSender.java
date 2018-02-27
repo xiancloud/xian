@@ -44,7 +44,7 @@ public class BroadcastSender extends AbstractAsyncSender {
         final CountDownLatch latch = new CountDownLatch(list.size());
         Collection<Object> piledUpOutput = new ConcurrentLinkedQueue<>();
         final NotifyHandler tmpHandler = new NotifyHandler() {
-            protected void toContinue(UnitResponse output) {
+            protected void handle(UnitResponse output) {
                 if (!broadcast.isSuccessDataOnly()) {
                     piledUpOutput.add(output);
                 } else if (output.succeeded()) {

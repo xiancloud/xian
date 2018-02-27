@@ -36,7 +36,7 @@ public class UnitExecutionExceptionTest implements Unit {
     public static void main(String[] args) {
         Xian.call(UnitExecutionExceptionTest.class, new NotifyHandler() {
             @Override
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 System.out.println(unitResponse.toString());
             }
         });

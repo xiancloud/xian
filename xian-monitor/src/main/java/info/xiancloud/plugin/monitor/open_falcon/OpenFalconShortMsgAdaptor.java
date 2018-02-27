@@ -52,7 +52,7 @@ public class OpenFalconShortMsgAdaptor implements Unit {
                 put("text", msg.get("content", String.class));
                 put("mobile", mobile);
             }}, new NotifyHandler() {
-                protected void toContinue(UnitResponse unitResponse) {
+                protected void handle(UnitResponse unitResponse) {
                     LOG.info("发送给" + mobile + "的短信发送结果:" + unitResponse);
                 }
             });

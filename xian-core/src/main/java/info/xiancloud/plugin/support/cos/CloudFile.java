@@ -44,7 +44,7 @@ public class CloudFile {
         if (async) {
             Xian.call("cosService", "cosWrite", map, new NotifyHandler() {
                 @Override
-                protected void toContinue(UnitResponse unitResponse) {
+                protected void handle(UnitResponse unitResponse) {
                     LOG.info(unitResponse);
                 }
             });

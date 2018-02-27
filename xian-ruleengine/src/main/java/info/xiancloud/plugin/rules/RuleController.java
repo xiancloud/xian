@@ -67,7 +67,7 @@ public abstract class RuleController extends BaseController {
             Map<String, Object> params = processParams();
             LOG.info("[RuleController] params = " + params);
             Xian.call(next.split("_")[0], next.split("_")[1], params, new NotifyHandler() {
-                protected void toContinue(UnitResponse unitResponse1) {
+                protected void handle(UnitResponse unitResponse1) {
                     unitResponse = unitResponse1;
                     processReturnParams();
                     callNext();

@@ -11,7 +11,7 @@ public class OutputTestMain {
     public static void main(String... args) {
         Xian.call("test", "UnitResponseTestUnit", new NotifyHandler() {
             @Override
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 System.out.println(unitResponse.toVoJSONString());
             }
         });

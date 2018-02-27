@@ -20,7 +20,7 @@ public class RedisTest extends BaseRedis {
             put("dbIndex", getDBIndex());
         }}, new NotifyHandler() {
             @Override
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 System.out.println(unitResponse);
             }
         });

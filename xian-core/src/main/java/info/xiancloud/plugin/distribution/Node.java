@@ -88,7 +88,7 @@ public class Node implements INode {
         UnitResponse unitResponse = UnitResponse.create(true);
         final CountDownLatch latch = new CountDownLatch(1);
         NotifyHandler handler = new NotifyHandler() {
-            public void toContinue(UnitResponse output) {
+            public void handle(UnitResponse output) {
                 UnitResponse.copy(output, output);
                 latch.countDown();
             }

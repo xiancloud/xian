@@ -113,7 +113,7 @@ public class AppTransaction extends JoinableTransaction implements IDistributedT
                     UnitRequest request = UnitRequest.create(CommitAndCloseTogetherUnit.class);
                     request.getContext().setDestinationNodeId(clientId);
                     LocalNodeManager.send(request, new NotifyHandler() {
-                        protected void toContinue(UnitResponse unitResponse) {
+                        protected void handle(UnitResponse unitResponse) {
                             LOG.info(clientId + "的事务已经提交");
                         }
                     });
@@ -137,7 +137,7 @@ public class AppTransaction extends JoinableTransaction implements IDistributedT
                     UnitRequest request = UnitRequest.create(RollbackAndCloseTogetherUnit.class);
                     request.getContext().setDestinationNodeId(clientId);
                     LocalNodeManager.send(request, new NotifyHandler() {
-                        protected void toContinue(UnitResponse unitResponse) {
+                        protected void handle(UnitResponse unitResponse) {
                             LOG.info(clientId + "的事务已经回滚");
                         }
                     });

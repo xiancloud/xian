@@ -16,7 +16,7 @@ public class MonitorPusher {
             put("step", interval);
             put("value", value);
         }}, new NotifyHandler() {
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 LOG.info("监控数据推送完毕:" + unitResponse);
             }
         });

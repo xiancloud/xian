@@ -12,7 +12,7 @@ public class SendLocalStreamTest {
     public static void main(String[] args) {
         Xian.call(StreamRpcTestReqUnit.class, new NotifyHandler() {
             @Override
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
             }
         });
     }

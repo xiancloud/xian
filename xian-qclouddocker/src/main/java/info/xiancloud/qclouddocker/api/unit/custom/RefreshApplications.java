@@ -84,7 +84,7 @@ public class RefreshApplications implements Unit {
             put("buildNumber", "193");
         }}, new NotifyHandler() {
             @Override
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 System.out.println(unitResponse);
             }
         });

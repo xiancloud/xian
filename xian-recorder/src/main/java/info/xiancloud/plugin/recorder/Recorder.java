@@ -77,7 +77,7 @@ public class Recorder implements IStartService, IAllUnitsAop {
         map.put("responseTime", String.valueOf(System.currentTimeMillis()));
         map.put("cost", String.valueOf(System.currentTimeMillis() - Long.parseLong(beforeReturn.toString())));
         Xian.call("recorder", "actionItemRecord", map, new NotifyHandler() {
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 LOG.info(unitResponse.toJSONString());
             }
         });

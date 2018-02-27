@@ -18,7 +18,7 @@ public class App {
         params.put("unitFilter", "apiBuildService.apiDocUnit");//"[{'apiBuildService':['apiDocUnit']}]"
         Xian.call("apiBuildService", "apiDocUnit", params, new NotifyHandler() {
             @Override
-            protected void toContinue(UnitResponse unitResponse) {
+            protected void handle(UnitResponse unitResponse) {
                 System.out.println(unitResponse.toString());
             }
         });

@@ -43,7 +43,7 @@ public abstract class NotifyHandler {
             LOG.error("本次消息已经被判定为超时,但是超时后又收到了响应!  需要人工恢复。 unitResponseObject= " + unitResponseObject);
         } else {
             try {
-                toContinue(unitResponseObject);
+                handle(unitResponseObject);
             } catch (Throwable e) {
                 LOG.error("回调执行失败", e);
             }
@@ -66,7 +66,7 @@ public abstract class NotifyHandler {
         Collections.addAll(afterActions, oneOrMoreActions);
     }
 
-    protected abstract void toContinue(UnitResponse unitResponse);
+    protected abstract void handle(UnitResponse unitResponse);
 
     public abstract static class Action {
         protected abstract void run(UnitResponse out);
