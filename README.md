@@ -126,13 +126,33 @@ Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
 });
 ````
 
+3. 我们为大家准备的project template是方便大家基于此template来扩展新的微服务，而不用浪费时间来自己开发gradle和shell脚本了，请遵循以下xian_template规范如下
+ a. 所有的application必须定义在xian_runtime/内，所有的application都是由plugin组装而成的，plugin列表配置在/xian_runtime/applicationName/build.gradle的依赖列表内。
+ b. application的名称就是xian_runtime/子路径名。
+ c. application的启动和停止脚本已经内置，请直接使用即可。
+ d. 更新程序后，需要执行build.sh/buildAll.sh重新构建。
+ e. 构建后，xian_runtime里面的所有的application包都是一个可运行的包，你可以将xian_runtime整个拷贝至服务器上并重命名为xian_runtime_test，然后运行各个application的启动脚本start.sh。如果需要将application运行多个实例，可以复制多份。需要注意的是，我们使用路径中的xian_runtime_env来标识集群环境，比如xian_runtime_test/标识其内运行的application为test集群环境，xian_runtime_production/标识其内运行的application为production环境。
+ 
+4. 以上使用启动脚本来运行各个节点的方式我们成为集群模式
+
+5. xianframe的IDE内非集群模式
+子module /xian_template/test内可以开发Junit代码或者直接写main入口代码进行单元测试，它将所有的本project定义的unit统一在本地管理，而不使用注册中心，我们可以直接使用rpc工具类"Xian.java"来本地调用的各个unit。详见/xian_template project内的DemoUnitTest.java类。
+
+
+#### demo集群模式application关系图如下
+暂时略
+
+
+
 ### 基础概念参考
 #### 服务单元unit
 unit是本微服务框架的基础服务单元最小粒度，每个unit对应着一个Java方法，我们会将每个unit注册到注册中心。
 #### 单元组group
 group定义了unit分组，每个unit都属于唯一一个group，groupName和unitName二者唯一确定一个unit定义。
 #### 插件plugin
-插件是多个特定的unit的组合而成的一个项目子module，我们将插件自有组合而成为
+插件是多个特定的unit的组合而成的一个项目子module，我们将插件自由组合而成为application。
+
+#### 其他待补充
 
 
 
