@@ -72,7 +72,7 @@
 4. 当然xianframe和springcloud一样都还没支持多语言，即都还没满足微服务的一个关键特性，即不依赖特定语言来开发微服务业务。不过让xianframe支持.NET、golang、kotlin等语言，我已经有一些想法了。
 
 
-#### 与华为开源的combbo对比
+#### 与华为开源的serviceComb对比
 暂时还没写
 
 #### 与国内基于jfinal的jboot的对比
