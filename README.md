@@ -72,7 +72,7 @@
 4. 当然xianframe和springcloud一样都还没支持多语言，即都还没满足微服务的一个关键特性，即不依赖特定语言来开发微服务业务。不过让xianframe支持.NET、golang、kotlin等语言，我已经有一些想法了。
 
 
-#### 与华为开源的combbo对比
+#### 与华为开源的serviceComb对比
 暂时还没写
 
 #### 与国内基于jfinal的jboot的对比
@@ -82,8 +82,7 @@
 
 ### 引入依赖
 我在GitHub上给出了一个gradle项目模板，详见https://github.com/happyyangyuan/xian_template 。
-#### /xian_template/gradle.properties
-一下
+
 #### /xian_template/gradle.properties
 配置文件指明了xian依赖的版本号
 ````
@@ -92,14 +91,57 @@ xianVersion=0.1.0-beta
 #### /xian_template项目内的子module：demo_plugin01、demo_plugin02、demo_web_plugin01
 demo_plugin01定义了unit类 /xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin01/unit/DemoUnit01.java
 该unit类调用另外一个unit类：/xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin02/unit/DemoUnit02.java
-二者形成rpc调用关系。
+二者形成rpc调用关系，具体见这两个unit代码的execute方法体。
 demo_web_plugin01定义了一个Java web应用，里面内置了一个hello world的index.html页面。
+
 #### 可运行的application
 我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
-我们这里将每个application看作是一个微服务。
-1. demoWebApplication01，我们将demo_web_plugin01部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle。demoWebApplication01以“微服务”的身份定义于微服务集群内。我们可以在任意位置运行脚本 ./demoWebApplication01/build.sh执行gradle构建，然后执行运行程序：./xian_runtime/demoWebApplication01/_start.sh。启动后访问http://localhost:8080 查看效果。
-2. demoGateway，这是我们xianframe关键第一个application：业务网关。它内置了一个高性能httpserver作为网关服务对外提供服务。
-3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application,然后运行
+我们将每个application看作是一个微服务，下面依次讲解。
+
+1. demoWebApplication01，我们将demo_web_plugin01部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle。demoWebApplication01以“微服务”的身份定义于微服务集群内。我们可以在任意位置运行脚本 ./demoWebApplication01/build.sh执行gradle构建，然后执行运行程序：./xian_runtime/demoWebApplication01/_start.sh。启动后访问http://localhost:8080 查看效果。我们可以运行./xian_runtime/demoWebApplication01/stop.sh来停止该服务。
+
+2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9124，并且可配置。
+
+3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application, 然后运行各自application内的_start.sh脚本可以启动他们。
+
+4. 访问curl -XPOST http://localhost:9124/demoGroup01/demoUnit01 查看对DemoUnit01的访问效果，同样的你可以访问 curl -XPOST http://localhost:9124/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
+
+#### 惯例和约定
+1. 从上文你不难看出，每一个unit都以http api形式通过demoGateway暴露给外部了，这个URI的格式如上所述： http://gatewayHost:gatewayPort/groupName/unitName
+http method为post，这是xianframe的网关标准。
+2. 而demoUnit01调用demoUnit02的rpc标准代码如下：
+````
+Xian.call("demoGroup02", "demoUnit02",
+                new JSONObject().fluentPut("param", msg.get("param", "a temp param if not absent.")));
+//详见DemoUnit01.java类
+//上面'demoGroup02'为目标Unit的groupName，'demoUnit02'为目标unit的名称。
+````
+
+以上是同步调用，很多时候，我们希望异步方式实现任务提交，示例如下：
+````
+Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
+ handle(UnitResponse response){
+    //doSth with the response.
+ }
+});
+````
+
+3. 我们为大家准备的project template是方便大家基于此template来扩展新的微服务，而不用浪费时间来自己开发gradle和shell脚本了，请遵循以下xian_template规范如下
+ a. 所有的application必须定义在xian_runtime/内，所有的application都是由plugin组装而成的，plugin列表配置在/xian_runtime/applicationName/build.gradle的依赖列表内。
+ b. application的名称就是xian_runtime/子路径名。
+ c. application的启动和停止脚本已经内置，请直接使用即可。
+ d. 更新程序后，需要执行build.sh/buildAll.sh重新构建。
+ e. 构建后，xian_runtime里面的所有的application包都是一个可运行的包，你可以将xian_runtime整个拷贝至服务器上并重命名为xian_runtime_test，然后运行各个application的启动脚本start.sh。如果需要将application运行多个实例，可以复制多份。需要注意的是，我们使用路径中的xian_runtime_env来标识集群环境，比如xian_runtime_test/标识其内运行的application为test集群环境，xian_runtime_production/标识其内运行的application为production环境。
+ 
+4. 以上使用启动脚本来运行各个节点的方式我们成为集群模式
+
+5. xianframe的IDE内非集群模式
+子module /xian_template/test内可以开发Junit代码或者直接写main入口代码进行单元测试，它将所有的本project定义的unit统一在本地管理，而不使用注册中心，我们可以直接使用rpc工具类"Xian.java"来本地调用的各个unit。详见/xian_template project内的DemoUnitTest.java类。
+
+
+#### demo集群模式application关系图如下
+暂时略
+
 
 
 ### 基础概念参考
@@ -108,7 +150,9 @@ unit是本微服务框架的基础服务单元最小粒度，每个unit对应着
 #### 单元组group
 group定义了unit分组，每个unit都属于唯一一个group，groupName和unitName二者唯一确定一个unit定义。
 #### 插件plugin
-插件是多个特定的unit的组合而成的一个项目子module，我们将插件自有组合而成为
+插件是多个特定的unit的组合而成的一个项目子module，我们将插件自由组合而成为application。
+
+#### 其他待补充
 
 
 
