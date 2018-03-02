@@ -46,7 +46,7 @@ public class PluginFileUtil {
     private static File[] jars(String relativeDirName) {
         File plugins = new File(relativeDirName);
         if (!plugins.exists() || !plugins.isDirectory()) {
-            LOG.info("Bad working dir: " + System.getProperty("usr.dir") + ". No " + relativeDirName + " sub dir found!");
+            LOG.info(". No " + relativeDirName + " sub dir found!");
             return new File[0];
         }
         File[] jars = plugins.listFiles(fileInPluginsDir ->
