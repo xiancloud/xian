@@ -15,27 +15,75 @@
 ## 30分钟学会使用xian frame开发微服务
 
 ### 引入依赖
-我在GitHub上给出了一个gradle项目模板，详见https://github.com/happyyangyuan/xian_template 。
-#### 下载gradle项目模板源码
+我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xianframe的依赖。
+#### 1、下载gradle项目模板源码
 ````
 git clone https://github.com/happyyangyuan/xian_template
 ````
 或者直接使用你的IDE，如IntelliJ IDEA内执行"Checkout from Version Control"来下载和导入本gradle项目模板工程。
 
-#### 将以上克隆好的项目，以gradle项目方式导入到你的IDE内
+#### 2、将以上克隆好的项目，以gradle项目方式导入到你的IDE内
 其实，导入git项目到IDE有一万种方式，这里省略不描述了，熟练使用IDE是你必备技能哦。
 
-#### xian_template项目结构介绍
-##### gradle.properties配置文件
+#### 3、xian_template项目结构介绍
+##### 3.1、gradle.properties配置文件
 该配置文件指明了xian依赖的版本号
 ````gradle.properties
 xianVersion=0.1.0
 ````
-#### /xian_template项目内的子module：demo_plugin01、demo_plugin02、demo_web_plugin01
-demo_plugin01定义了unit类 /xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin01/unit/DemoUnit01.java
-该unit类调用另外一个unit类：/xian_template/demo_plugin01/src/main/java/com/yourcompany/demoplugin02/unit/DemoUnit02.java
-二者形成rpc调用关系，具体见这两个unit代码的execute方法体。
-demo_web_plugin01定义了一个Java web应用，里面内置了一个hello world的index.html页面。
+
+##### 3.2、 根路径内的build.gradle依赖配置文件
+该文件指明了对xian-core的依赖
+````build.gradle
+compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
+````
+##### 3.3、 xian_runtime内定义了4个微服务application
+调用关系如下图所示
+
+
+
+
+其中，demoGateway是网关微服务，内置了高性能netty http server。
+其他微服务application接下来介绍。
+
+##### 3.4、子module：demo_plugin01、demo_plugin02、demo_web_plugin01
+子module，我们称之为“插件”。
+我们将插件部署在微服务内，从而让微服务application具有业务功能。部署方式见xian_runtime/demoApplication01/build.gradle
+````xian_runtime/demoApplication01/build.gradle
+dependencies {
+    runtime project(':demo_plugin01')
+}
+````
+demoApplication02、demoWebApplication亦是如此。
+
+###### 3.4.1 关注demo_plugin01内定义的“服务单元” DemoUnit01.java
+该“服务单元”调用另外一个“服务单元” DemoUnit02.java，形成rpc调用关系，具体见这两个unit代码的execute方法体：
+````DemoUnit01.java
+public class DemoUnit01 implements Unit {
+    @Override
+    public String getName() {
+        return "demoUnit01";
+    }
+
+    @Override
+    public Input getInput() {
+        return null;
+    }
+
+    @Override
+    public Group getGroup() {
+        return DemoPlugin01Group.singleton;
+    }
+
+    @Override
+    public UnitResponse execute(UnitRequest msg) {
+        return Xian.call("demoGroup02", "demoUnit02",
+                new JSONObject().fluentPut("param", msg.get("param", "a temp param if not absent.")));
+    }
+}
+````
+rpc调用关系见上文微服务关系图。
+
 
 #### 可运行的application
 我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
