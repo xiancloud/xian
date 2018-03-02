@@ -1,13 +1,12 @@
 package info.xiancloud.plugin.util.file;
 
 import info.xiancloud.plugin.util.ArrayUtil;
+import info.xiancloud.plugin.util.LOG;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
 
 /**
- * 类似 xian_runtime/application/plugins/ 文件分析工具类
+ * util class for plugin jars.
  *
  * @author happyyangyuan
  */
@@ -40,10 +39,16 @@ public class PluginFileUtil {
         return jars("../libs/");
     }
 
+    /**
+     * @param relativeDirName the directory path relative to working directory.
+     * @return jars in the specified directory, or empty array if the directory does not exist or is empty or contains no jar files.
+     */
     private static File[] jars(String relativeDirName) {
         File plugins = new File(relativeDirName);
-        if (!plugins.exists() || !plugins.isDirectory())
-            throw new RuntimeException("Bad working dir: " + System.getProperty("usr.dir") + ". No " + relativeDirName + " sub dir found!");
+        if (!plugins.exists() || !plugins.isDirectory()) {
+            LOG.info("Bad working dir: " + System.getProperty("usr.dir") + ". No " + relativeDirName + " sub dir found!");
+            return new File[0];
+        }
         File[] jars = plugins.listFiles(fileInPluginsDir ->
                 fileInPluginsDir.isFile()
                         && fileInPluginsDir.getName().endsWith(".jar")
@@ -53,25 +58,43 @@ public class PluginFileUtil {
 
 
     /**
-     * @param jar 插件jar包
-     * @return 插件版本号，参见build.gradle文件 版本号配置
-     * @throws IllegalArgumentException 不是标准的jar包名称
+     * @param jar plugin jar file
+     * @return plugin jar version, see build.gradle for the version configuration.
+     * @throws IllegalArgumentException the jar file name is not a standard name: name-version.jar
      */
     public static String version(File jar) {
-        if (jar.getName().contains("-"))
-            return jar.getName().substring(jar.getName().lastIndexOf("-") + 1, jar.getName().length() - 4);
-        throw new IllegalArgumentException("Not a standard jar name: " + jar.getName());
+        return version(jar.getName());
     }
 
     /**
-     * @param jar 插件jar文件
-     * @return 插件名
-     * @throws IllegalArgumentException 不是标准的jar包名称
+     * @param jar plugin jar file
+     * @return plugin name without the version
+     * @throws IllegalArgumentException the jar file name is not a standard name: name-version.jar
      */
     public static String pluginName(File jar) {
-        if (jar.getName().contains("-"))
-            return jar.getName().substring(0, jar.getName().lastIndexOf("-"));
-        throw new IllegalArgumentException("Not a standard jar name: " + jar.getName());
+        return pluginName(jar.getName());
+    }
+
+    /**
+     * @param jarName plugin jar name
+     * @return plugin jar version, see build.gradle for the version configuration.
+     * @throws IllegalArgumentException the jar name is not a standard name: name-version.jar
+     */
+    public static String version(String jarName) {
+        if (jarName.contains("-"))
+            return jarName.substring(jarName.lastIndexOf("-") + 1, jarName.length() - 4);
+        throw new IllegalArgumentException("Not a standard jar name: " + jarName);
+    }
+
+    /**
+     * @param jarName jar file name
+     * @return plugin name without the version
+     * @throws IllegalArgumentException the jar file name is not a standard name: name-version.jar
+     */
+    public static String pluginName(String jarName) {
+        if (jarName.contains("-"))
+            return jarName.substring(0, jarName.lastIndexOf("-"));
+        throw new IllegalArgumentException("Not a standard jar name: " + jarName);
     }
 
 }

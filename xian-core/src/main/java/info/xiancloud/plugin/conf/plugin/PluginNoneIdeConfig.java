@@ -6,6 +6,7 @@ import info.xiancloud.plugin.distribution.res.IResAware;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.util.StringUtil;
+import info.xiancloud.plugin.util.file.PluginFileUtil;
 
 /**
  * Configuration reader for none ide environment.
@@ -54,10 +55,10 @@ public class PluginNoneIdeConfig extends PluginConfig implements Unit {
     /**
      * @return plugin name.
      */
-    private static String getPluginName(String moduleLocation) {
-        String jarName = moduleLocation.substring(moduleLocation.lastIndexOf('/') + 1);
+    private static String getPluginName(String jarCanonicalPath) {
+        String jarName = jarCanonicalPath.substring(jarCanonicalPath.lastIndexOf('/') + 1);
         //删除尾部-version，需要注意一点：将来的灰度发布功能，新版本插件配置默认覆盖掉旧版本插件配置
-        return jarName.substring(0, jarName.lastIndexOf('-'));
+        return PluginFileUtil.pluginName(jarName);
         /*
         if (jarName.endsWith(".jar")) {
             return jarName.substring(0, jarName.length() - 4);
