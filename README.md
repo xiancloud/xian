@@ -40,8 +40,8 @@ xianVersion=0.1.0
 compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 ````
 ##### 3.3、 xian_runtime内定义了4个微服务application
-调用关系如下图所示
-
+调用关系如下图所示：
+![xian_template rpc调用关系图](http://happyyangyuan.top/xian/xian_template微服务调用关系图.png)
 
 
 
@@ -85,13 +85,13 @@ public class DemoUnit01 implements Unit {
 }
 ````
 rpc调用关系见上文微服务关系图。
-![xian_template rpc调用关系图](http://happyyangyuan.top/xian/xian_template微服务调用关系图.png)
+
 
 #### 可运行的application
 我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
 我们将每个application看作是一个微服务，下面依次讲解。
 
-1. demoWebApplication01，我们将demo_web_plugin01部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle。demoWebApplication01以“微服务”的身份定义于微服务集群内。我们可以在任意位置运行脚本 ./demoWebApplication01/build.sh执行gradle构建，然后执行运行程序：./xian_runtime/demoWebApplication01/_start.sh。启动后访问http://localhost:8080 查看效果。我们可以运行./xian_runtime/demoWebApplication01/stop.sh来停止该服务。
+1. demoWebApplication01插件demo_web_plugin01被部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle。demoWebApplication01以“微服务”的身份定义于微服务集群内。我们可以在任意位置运行脚本 ./demoWebApplication01/build.sh来构建该application，构建完毕后，便可以执行启动脚本来运行程序：./xian_runtime/demoWebApplication01/_start.sh。启动后访问http://localhost:8080 查看效果。我们可以运行./xian_runtime/demoWebApplication01/stop.sh来停止该服务。
 
 2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9124，并且可配置。
 
