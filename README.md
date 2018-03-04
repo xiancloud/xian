@@ -67,7 +67,7 @@ public class DemoUnit01 implements Unit {
     @Override
     public UnitResponse execute(UnitRequest msg) {
         return Xian.call("demoGroup02", "demoUnit02",
-                new JSONObject().fluentPut("param", msg.get("param", "a temp param if not absent.")));
+                new JSONObject().fluentPut("param", msg.get("param", "a temp param if absent.")));
     }
 }
 ````
