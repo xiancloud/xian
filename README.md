@@ -116,8 +116,7 @@ curl -XPOST http://localhost:9124/demoGroup01/demoUnit01
 http method为post，这是xianframe的网关标准。
 2. 而demoUnit01调用demoUnit02的rpc标准代码如下：
 ````
-Xian.call("demoGroup02", "demoUnit02",
-                new JSONObject().fluentPut("param", msg.get("param", "a temp param if not absent.")));
+Xian.call("demoGroup02", "demoUnit02", map/bean);
 //详见DemoUnit01.java类
 //上面'demoGroup02'为目标Unit的groupName，'demoUnit02'为目标unit的名称。
 ````
