@@ -12,7 +12,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件，它基�
 5. 部署和和监控问题。
 6. 帮助实现devops开发运维协作能力。
 7. 基于xian你可以实现如下逻辑架构图对应的微服务集群：
-![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://forjx.top/xian/基于xian的微服务逻辑架构图.png)
+![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://happyyangyuan.top/xian/基于xian的微服务逻辑架构图.png)
 
 ## 30分钟学会使用xian frame开发微服务
 
@@ -50,7 +50,7 @@ compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 
 ##### 3.4、子module：demo_plugin01、demo_plugin02、demo_web_plugin01
 子module，我们称之为“插件”。
-我们将插件部署在微服务内，从而让微服务application具有业务功能。部署方式见xian_runtime/demoApplication01/build.gradle
+我们将插件部署在微服务内，从而让微服务application具有业务功能。部署配置见xian_runtime/demoApplication01/build.gradle
 ````xian_runtime/demoApplication01/build.gradle
 dependencies {
     runtime project(':demo_plugin01')
@@ -85,7 +85,7 @@ public class DemoUnit01 implements Unit {
 }
 ````
 rpc调用关系见上文微服务关系图。
-
+![xian_template rpc调用关系图](http://happyyangyuan.top/xian/xian_template微服务调用关系图.png)
 
 #### 可运行的application
 我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
