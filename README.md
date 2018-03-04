@@ -62,21 +62,8 @@ demoApplication02、demoWebApplication亦是如此。
 该“服务单元”调用另外一个“服务单元” DemoUnit02.java，形成rpc调用关系，具体见这两个unit代码的execute方法体：
 ````DemoUnit01.java
 public class DemoUnit01 implements Unit {
-    @Override
-    public String getName() {
-        return "demoUnit01";
-    }
-
-    @Override
-    public Input getInput() {
-        return null;
-    }
-
-    @Override
-    public Group getGroup() {
-        return DemoPlugin01Group.singleton;
-    }
-
+    ...
+    
     @Override
     public UnitResponse execute(UnitRequest msg) {
         return Xian.call("demoGroup02", "demoUnit02",
