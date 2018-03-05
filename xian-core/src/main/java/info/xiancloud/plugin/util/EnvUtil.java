@@ -164,11 +164,15 @@ public class EnvUtil {
      */
     public static boolean isLan() {
         if (lan == null) {
+            String lanReferenceHost = null;
             try {
-                String lanReferenceHost = EnvConfig.get(LAN_REFERENCE_HOST_CONFIG, DEFAULT_LAN_REFERENCE_HOST);
+                lanReferenceHost = EnvConfig.get(LAN_REFERENCE_HOST_CONFIG, DEFAULT_LAN_REFERENCE_HOST);
                 System.out.println(LAN_REFERENCE_HOST_CONFIG + "=" + lanReferenceHost);
                 InetAddress build = Inet4Address.getByName(lanReferenceHost);
                 lan = build.isReachable(500);
+            } catch (UnknownHostException unknownHost) {
+                System.out.println("Unknown host: " + lanReferenceHost + ". So we judge the current network as non-lan.");
+                lan = false;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
