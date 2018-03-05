@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.init.shutdown.shutdown_strategy;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.util.LOG;
 
 import java.io.*;
@@ -47,7 +47,7 @@ public class ShutdownPort extends ShutdownStrategy {
     private static int getShutDownPort() {
         if (SHUT_DOWN_PORT == null) {
             try {
-                SHUT_DOWN_PORT = EnvConfig.getIntValue(SHUTDOWN);// shutdown port, not supported any more.
+                SHUT_DOWN_PORT = XianConfig.getIntValue(SHUTDOWN);// shutdown port, not supported any more.
             } catch (Throwable e) {
                 throw new RuntimeException("读取配置文件\"conf/server.xml\"出现了错误", e);
             }

@@ -17,7 +17,7 @@ import static info.xiancloud.plugin.conf.composite.CompositeConfigReader.singlet
  *
  * @author happyyangyuan
  */
-public abstract class EnvConfig {
+public abstract class XianConfig {
 
     /**
      * read configuration from {@linkplain PluginConfig} higher than {@linkplain} ApplicationConfig higher than {@linkplain SystemProperty} higher than {@linkplain SystemEnv}.

@@ -1,7 +1,7 @@
 package info.xiancloud.email;
 
 import com.sun.mail.util.MailSSLSocketFactory;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.util.ArrayUtil;
 import info.xiancloud.plugin.util.LOG;
 
@@ -24,12 +24,12 @@ public class EmailSender {
     private static String protocol; //协议
 
     static {
-        account = EnvConfig.get("email.account");
-        pass = EnvConfig.get("email.pass");
-        from = EnvConfig.get("email.from");
-        host = EnvConfig.get("email.host");
-        port = EnvConfig.get("email.port");
-        protocol = EnvConfig.get("email.protocol");
+        account = XianConfig.get("email.account");
+        pass = XianConfig.get("email.pass");
+        from = XianConfig.get("email.from");
+        host = XianConfig.get("email.host");
+        port = XianConfig.get("email.port");
+        protocol = XianConfig.get("email.protocol");
     }
 
     //用户名密码验证，需要实现抽象类Authenticator的抽象方法PasswordAuthentication

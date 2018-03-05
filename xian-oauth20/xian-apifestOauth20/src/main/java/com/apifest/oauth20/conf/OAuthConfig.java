@@ -20,7 +20,7 @@ import com.apifest.oauth20.api.ICustomGrantTypeHandler;
 import com.apifest.oauth20.api.IUserAuthentication;
 import com.apifest.oauth20.persistence.DBManagerFactory;
 import com.apifest.oauth20.LifecycleEventHandlers;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.util.LOG;
 import info.xiancloud.plugin.util.TraverseClasspath;
 
@@ -109,7 +109,7 @@ public final class OAuthConfig {
 
     protected static boolean loadProperties() {
         try {
-            customGrantType = EnvConfig.get("custom.grant_type");
+            customGrantType = XianConfig.get("custom.grant_type");
         } catch (Throwable e) {
             LOG.error(e);
             return false;

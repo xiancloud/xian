@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.conf.plugin;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.conf.IEnvPrefixed;
 import info.xiancloud.plugin.conf.IPropertiesReader;
 import info.xiancloud.plugin.conf.composite.CompositeConfigReader;
@@ -95,7 +95,7 @@ public abstract class PluginConfig implements IPropertiesReader {
             }
             i++;
         }
-        while (caller == PluginConfig.class || caller == CompositeConfigReader.class || caller == EnvConfig.class
+        while (caller == PluginConfig.class || caller == CompositeConfigReader.class || caller == XianConfig.class
                 || caller == IPropertiesReader.class || caller == IEnvPrefixed.class);
         return caller;
     }

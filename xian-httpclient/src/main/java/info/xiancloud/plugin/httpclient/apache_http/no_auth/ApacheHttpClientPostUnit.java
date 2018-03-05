@@ -2,7 +2,7 @@ package info.xiancloud.plugin.httpclient.apache_http.no_auth;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.plugin.*;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.httpclient.HttpClientGroup;
 import info.xiancloud.plugin.httpclient.apache_http.IApacheHttpClient;
 import info.xiancloud.plugin.message.UnitResponse;
@@ -55,7 +55,7 @@ public class ApacheHttpClientPostUnit implements Unit {
             try {
                 responsePayload = RetryUtil.retryUntilNoException(
                         () -> httpClient.post(msg.get("body", String.class)),
-                        EnvConfig.getIntValue("apache.httpclient.max.try", 3),
+                        XianConfig.getIntValue("apache.httpclient.max.try", 3),
                         ConnectTimeoutException.class);//这里对连接超时做重试，总共只尝试三次
             } catch (ConnectTimeoutException e) {
                 return UnitResponse.error(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url);

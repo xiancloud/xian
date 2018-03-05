@@ -1,7 +1,7 @@
 package info.xiancloud.plugin.httpclient.apache_http.no_auth;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.httpclient.apache_http.IApacheHttpClient;
 import info.xiancloud.plugin.httpclient.apache_http.pool.ApacheHttpConnManager;
 import info.xiancloud.plugin.httpclient.apache_http.pool.ConnKeepAliveStrategy;
@@ -167,7 +167,7 @@ public class ApacheHttpClient implements IApacheHttpClient {
      */
     private static RequestConfig getRequestConfig(Integer readTimeoutInMillis) {
         return RequestConfig.custom().setConnectionRequestTimeout(600)
-                .setConnectTimeout(EnvConfig.getIntValue("apache.httpclient.connectTimeout", 600))
+                .setConnectTimeout(XianConfig.getIntValue("apache.httpclient.connectTimeout", 600))
                 .setSocketTimeout(readTimeoutInMillis).build();
     }
 
@@ -190,7 +190,7 @@ public class ApacheHttpClient implements IApacheHttpClient {
             }
         });
         //是否启用连接池功能
-        if (EnvConfig.getBoolValue("apache.httpclient.pool.open", false)) {
+        if (XianConfig.getBoolValue("apache.httpclient.pool.open", false)) {
             LOG.info("启用Http连接池");
             hcBuilder.setConnectionManager(ApacheHttpConnManager.create())
                     .setConnectionManagerShared(true)

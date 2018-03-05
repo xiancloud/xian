@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.plugin.LocalUnitsManager;
 import info.xiancloud.plugin.Unit;
 import info.xiancloud.plugin.aop.IUnitAop;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.init.IStartService;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.message.UnitResponse;
@@ -29,7 +29,7 @@ public class UnitMonitorAop implements IUnitAop, IStartService {
     @Override
     public Collection<Unit> getUnitCollection() {
         // 读取配置文件，获取要监控的unit
-        String[] unitArray = EnvConfig.getStringArray(MONITOR_UNIT_LIST);
+        String[] unitArray = XianConfig.getStringArray(MONITOR_UNIT_LIST);
         try {
             if (unitArray != null && unitArray.length > 0) {
                 List<String> unitList = Arrays.asList(unitArray);

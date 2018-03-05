@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.plugin.Constant;
 import info.xiancloud.plugin.Scope;
 import info.xiancloud.plugin.Unit;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.distribution.exception.UnitUndefinedException;
 import info.xiancloud.plugin.distribution.loadbalance.UnitRouter;
 import info.xiancloud.plugin.executor.URIBean;
@@ -42,7 +42,7 @@ public class ValidateAccessToken {
     }
 
     private static boolean isSecure(String uri) {
-        if (Arrays.asList(EnvConfig.getStringArray("api_gateway_white_uri_list")).contains(uri)) {
+        if (Arrays.asList(XianConfig.getStringArray("api_gateway_white_uri_list")).contains(uri)) {
             //todo add 'secure' property for rule engine，instead of static config
             //todo please deprecate white uri, kept for compatibility only.
             return false;
@@ -83,7 +83,7 @@ public class ValidateAccessToken {
     }
 
     private static boolean isWhiteIp(String clientIp) {
-        for (String ip : EnvConfig.getStringArray("api_gateway_white_ip_list", new String[]{"*.*.*.*", "*:*:*:*:*:*:*:*"})) {
+        for (String ip : XianConfig.getStringArray("api_gateway_white_ip_list", new String[]{"*.*.*.*", "*:*:*:*:*:*:*:*"})) {
             if (match(ip, clientIp)) {
                 return true;
             }
@@ -121,7 +121,7 @@ public class ValidateAccessToken {
      * @deprecated for internal usage, we should not use http api to access oauth interface, instead we use unit invocation.
      */
     private static String getOauth20Url(String accessToken) {
-        return "http://" + EnvConfig.get("oauth_server_host") + ":" + EnvConfig.get("oauth_server_port") + "/oauth2.0/tokens/validate?token=" + accessToken;
+        return "http://" + XianConfig.get("oauth_server_host") + ":" + XianConfig.get("oauth_server_port") + "/oauth2.0/tokens/validate?token=" + accessToken;
     }
 
     private static boolean match(String myIpPattern, String realIp) {

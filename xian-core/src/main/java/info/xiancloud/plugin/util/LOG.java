@@ -1,7 +1,7 @@
 package info.xiancloud.plugin.util;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.log.Logger;
 import info.xiancloud.plugin.log.SystemOutLogger;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author happyyangyuan
  * Unified LOG util for the framework.
  * Performance has been improved for production env, we do not recursively traverse the stacktrace for the logger name.
- * This class loading is dependent on {@link EnvConfig#get(String, String)} which means the envConfig.get method should not depend on this LOG class,
+ * This class loading is dependent on {@link XianConfig#get(String, String)} which means the xianConfig.get method should not depend on this LOG class,
  * or you will get an class loading dead lock.
  */
 public abstract class LOG {
@@ -38,10 +38,10 @@ public abstract class LOG {
     }
 
     /**
-     * Default global log level value is from envConfig, use {@link #setLevel(Level)} you want to modify the log level any time anywhere.
+     * Default global log level value is from xianConfig, use {@link #setLevel(Level)} you want to modify the log level any time anywhere.
      * Note that, the scope for this property is the current node rather than other nodes in the cluster.
      */
-    private static Level level = Level.valueOf(EnvConfig.get("xianLogLevel", Level.INFO.name()));
+    private static Level level = Level.valueOf(XianConfig.get("xianLogLevel", Level.INFO.name()));
 
     public static void debug(Object message) {
         if (level.ordinal() >= Level.DEBUG.ordinal())

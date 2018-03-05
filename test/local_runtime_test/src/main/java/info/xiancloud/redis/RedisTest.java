@@ -1,6 +1,6 @@
 package info.xiancloud.redis;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.message.Xian;
 import info.xiancloud.plugin.support.mq.mqtt.handle.NotifyHandler;
@@ -27,18 +27,18 @@ public class RedisTest extends BaseRedis {
     }
 
     public static String getHost() {
-        return EnvConfig.get("redis.host");
+        return XianConfig.get("redis.host");
     }
 
     public static String getPassword() {
-        return EnvConfig.get("redisPassword");
+        return XianConfig.get("redisPassword");
     }
 
     public static int getPort() {
-        return EnvConfig.getIntValue("redis.port", 6379);
+        return XianConfig.getIntValue("redis.port", 6379);
     }
 
     public static int getDBIndex() {
-        return EnvConfig.getIntValue("redisDbIndex", 0);
+        return XianConfig.getIntValue("redisDbIndex", 0);
     }
 }

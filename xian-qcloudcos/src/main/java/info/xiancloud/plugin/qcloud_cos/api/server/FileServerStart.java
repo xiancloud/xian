@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.qcloud_cos.api.server;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.init.IStartService;
 import info.xiancloud.plugin.init.shutdown.ShutdownHook;
 import info.xiancloud.plugin.util.LOG;
@@ -11,7 +11,7 @@ public class FileServerStart implements IStartService, ShutdownHook {
 
     @Override
     public boolean startup() {
-        String portStr = EnvConfig.get("port");
+        String portStr = XianConfig.get("port");
         int port = 8080;
         try {
             port = Integer.parseInt(portStr);

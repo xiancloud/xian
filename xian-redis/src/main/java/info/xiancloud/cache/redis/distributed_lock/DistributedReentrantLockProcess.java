@@ -4,7 +4,7 @@ import info.xiancloud.cache.redis.Cache;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.operate.ObjectCacheOperate;
 import info.xiancloud.cache.redis.util.FormatUtil;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.support.cache.CacheConfigBean;
 import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.LOG;
@@ -228,7 +228,7 @@ public class DistributedReentrantLockProcess {
     }
 
     public static void monitoring() {
-        if (!EnvConfig.getBoolValue("monitoring.distributedReentrantLock", false))
+        if (!XianConfig.getBoolValue("monitoring.distributedReentrantLock", false))
             return;
 
         Map<String, Cache> CACHE = Redis.unmodifiableCache();

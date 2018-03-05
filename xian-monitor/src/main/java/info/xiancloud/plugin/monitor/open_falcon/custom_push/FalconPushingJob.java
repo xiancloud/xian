@@ -2,8 +2,8 @@ package info.xiancloud.plugin.monitor.open_falcon.custom_push;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.monitor.common.FactorCollector;
-import info.xiancloud.plugin.conf.EnvConfig;
 import info.xiancloud.plugin.monitor.grafana.GrafanaService;
 import info.xiancloud.plugin.init.IStartService;
 import info.xiancloud.plugin.socket.ConnectTimeoutException;
@@ -35,8 +35,8 @@ public class FalconPushingJob implements IStartService {
                 falconBeans.addAll(new FalconBeanBuilder().buildAll(metric, factors.get(metric)));
             }
             final String falcon_transfer_url = EnvUtil.isLan() ?
-                    EnvConfig.get("lan_falcon_transfer_url") :
-                    EnvConfig.get("internet_falcon_transfer_url");
+                    XianConfig.get("lan_falcon_transfer_url") :
+                    XianConfig.get("internet_falcon_transfer_url");
             try {
                 HttpUtil.postWithEmptyHeader(falcon_transfer_url, falconBeans.toJSONString());
             } catch (SocketTimeoutException | ConnectTimeoutException e) {

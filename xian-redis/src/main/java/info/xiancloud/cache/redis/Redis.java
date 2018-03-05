@@ -1,6 +1,6 @@
 package info.xiancloud.cache.redis;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.support.cache.CacheConfigBean;
 import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.LOG;
@@ -37,17 +37,17 @@ public final class Redis {
 
     private static String getUrl() {
         if (EnvUtil.isLan())
-            return EnvConfig.get("redisLanUrl"); // 腾讯云内网内
+            return XianConfig.get("redisLanUrl"); // 腾讯云内网内
         else
-            return EnvConfig.get("redisInternetUrl"); // 外网
+            return XianConfig.get("redisInternetUrl"); // 外网
     }
 
     private static String getPassword() {
-        return EnvConfig.get("redisPassword");
+        return XianConfig.get("redisPassword");
     }
 
     protected static int getDBIndex() {
-        return EnvConfig.getIntValue("redisDbIndex");
+        return XianConfig.getIntValue("redisDbIndex");
     }
 
     private static final ConcurrentHashMap<String, Cache> CACHE = new ConcurrentHashMap<>();

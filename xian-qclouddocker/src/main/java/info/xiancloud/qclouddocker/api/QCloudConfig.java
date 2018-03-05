@@ -1,6 +1,6 @@
 package info.xiancloud.qclouddocker.api;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 
 /**
  * @author yyq
@@ -20,10 +20,10 @@ import info.xiancloud.plugin.conf.EnvConfig;
  */
 public class QCloudConfig {
 
-    public final static String SecretId = EnvConfig.get("dockerServiceSecretId");
-    public final static String SecretKey = EnvConfig.get("dockerServiceSecretKey");
+    public final static String SecretId = XianConfig.get("dockerServiceSecretId");
+    public final static String SecretKey = XianConfig.get("dockerServiceSecretKey");
     //signature method
-    public final static String SignatureMethod = EnvConfig.get("dockerServiceSignatureMethod");
+    public final static String SignatureMethod = XianConfig.get("dockerServiceSignatureMethod");
     //region
-    public final static String Region = EnvConfig.get("dockerServiceRegion");
+    public final static String Region = XianConfig.get("dockerServiceRegion");
 }

@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.util;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.log.SystemOutLogger;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -86,7 +86,7 @@ public class TraverseClasspath {
     }
 
     private static String[] defaultPackages() {
-        String[] packagesToScan = EnvConfig.getStringArray("packagesToScan", new String[]{"com.", "info."});
+        String[] packagesToScan = XianConfig.getStringArray("packagesToScan", new String[]{"com.", "info."});
         return ArrayUtil.concat(new String[]{"info.xiancloud"}, packagesToScan);
     }
 

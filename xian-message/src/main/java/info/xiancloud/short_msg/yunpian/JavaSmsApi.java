@@ -1,6 +1,6 @@
 package info.xiancloud.short_msg.yunpian;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.socket.ConnectTimeoutException;
 import info.xiancloud.plugin.util.HttpUtil;
 
@@ -38,7 +38,7 @@ public class JavaSmsApi {
     public static void main(String[] args) throws IOException, URISyntaxException {
 
         //修改为您的apikey.apikey可在官网（http://www.yunpian.com)登录后用户中心首页看到
-        String apikey = EnvConfig.get("xian_yunpian_apikey");
+        String apikey = XianConfig.get("xian_yunpian_apikey");
 
         //修改为您要发送的手机号
         String mobile = "18011856576";

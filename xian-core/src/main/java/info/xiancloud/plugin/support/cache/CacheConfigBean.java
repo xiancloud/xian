@@ -22,13 +22,13 @@ public class CacheConfigBean
 //    {
 //        String url = null;
 //        if (EnvUtil.isQcloudLan())
-//            url = EnvConfig.get("redisLanUrl"); // 腾讯云内网内
+//            url = XianConfig.get("redisLanUrl"); // 腾讯云内网内
 //        else
-//            url = EnvConfig.get("redisInternetUrl"); // 外网
+//            url = XianConfig.get("redisInternetUrl"); // 外网
 //
-//        String password = EnvConfig.get("redisPassword");
+//        String password = XianConfig.get("redisPassword");
 //
-//        int dbIndex = EnvConfig.getIntValue("redisDbIndex", 0);
+//        int dbIndex = XianConfig.getIntValue("redisDbIndex", 0);
 //
 //        constructor(url, password, dbIndex);
 //    }

@@ -5,9 +5,9 @@ import info.xiancloud.plugin.conf.plugin.PluginConfig;
 import java.util.Arrays;
 
 /**
- * 测试envConfig性能
+ * 测试xianConfig性能
  */
-public class TestEnvConfigPerformance {
+public class TestXianConfigPerformance {
 
     private static void basicTest() {
         System.out.println(Arrays.toString(PluginConfig.performanceTestGetStringArrayUsingStackTrace("performanceTestKey")));

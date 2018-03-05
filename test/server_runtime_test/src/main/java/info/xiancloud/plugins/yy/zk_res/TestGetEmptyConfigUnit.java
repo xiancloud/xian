@@ -1,7 +1,7 @@
 package info.xiancloud.plugins.yy.zk_res;
 
 import info.xiancloud.plugin.*;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.test.TestGroup;
@@ -27,7 +27,7 @@ public class TestGetEmptyConfigUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(EnvConfig.get("whatever"));
+        return UnitResponse.success(XianConfig.get("whatever"));
     }
 
     @Override

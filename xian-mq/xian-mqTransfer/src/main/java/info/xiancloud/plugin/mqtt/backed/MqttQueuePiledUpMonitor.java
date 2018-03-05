@@ -2,7 +2,7 @@ package info.xiancloud.plugin.mqtt.backed;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.plugin.Input;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.SyncXian;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.message.UnitResponse;
@@ -60,9 +60,9 @@ public class MqttQueuePiledUpMonitor {
     private String getRabbitMqApiUrl(String queueName) {
         String tcpUrl, apiUrl;
         if (EnvUtil.isQcloudLan()) {
-            tcpUrl = EnvConfig.getStringArray("rabbitmqLanServerUrls")[0];
+            tcpUrl = XianConfig.getStringArray("rabbitmqLanServerUrls")[0];
         } else {
-            tcpUrl = EnvConfig.getStringArray("rabbitmqInternetServerUrls")[0];
+            tcpUrl = XianConfig.getStringArray("rabbitmqInternetServerUrls")[0];
         }
         try {
             URL url = new URL(tcpUrl.replaceFirst("tcp", "http"));//懒得弄就这样
@@ -81,8 +81,8 @@ public class MqttQueuePiledUpMonitor {
         String url = getRabbitMqApiUrl(queueName);
         String res = SyncXian.call("httpClient", "basicAuthApacheHttpClientGet", new JSONObject() {{
             put("url", url);
-            put("userName", EnvConfig.get("rabbitmqUserName"));
-            put("password", EnvConfig.get("rabbitmqPwd"));
+            put("userName", XianConfig.get("rabbitmqUserName"));
+            put("password", XianConfig.get("rabbitmqPwd"));
         }}).dataToJson().getString("entity");
         LOG.info(String.format("[RabbitMQ]  队列%s信息:%s", queueName, res));
         return JSONObject.parseObject(res);

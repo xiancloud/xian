@@ -2,8 +2,8 @@ package info.xiancloud.plugin.monitor.open_falcon.custom_push;
 
 import com.alibaba.fastjson.JSONArray;
 import info.xiancloud.plugin.*;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.monitor.common.MonitorGroup;
-import info.xiancloud.plugin.conf.EnvConfig;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.socket.ConnectTimeoutException;
@@ -50,7 +50,7 @@ public class PushToFalconUnit implements Unit {
         }};
         try {
             HttpUtil.postWithEmptyHeader(
-                    EnvUtil.isLan() ? EnvConfig.get("qCloud.falcon_transfer_url") : EnvConfig.get("internet.falcon_transfer_url"),
+                    EnvUtil.isLan() ? XianConfig.get("qCloud.falcon_transfer_url") : XianConfig.get("internet.falcon_transfer_url"),
                     falconBeans.toJSONString());
         } catch (SocketTimeoutException | ConnectTimeoutException e) {
             return UnitResponse.exception(e);

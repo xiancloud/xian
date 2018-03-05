@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.utils;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class GrafanaUtil
 
         headers.putAll(HTTP_HEADERS);
 
-        headers.put("Authorization", EnvConfig.get("grafana_api_token"));
+        headers.put("Authorization", XianConfig.get("grafana_api_token"));
 
         return headers;
     }

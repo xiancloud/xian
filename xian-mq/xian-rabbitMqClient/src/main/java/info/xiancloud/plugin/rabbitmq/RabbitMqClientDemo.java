@@ -3,7 +3,7 @@ package info.xiancloud.plugin.rabbitmq;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -14,8 +14,8 @@ import java.util.concurrent.TimeoutException;
 public class RabbitMqClientDemo {
     public static void main(String[] args) throws IOException, TimeoutException, InterruptedException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setUsername(EnvConfig.get("rabbitmqUserName"));
-        factory.setPassword(EnvConfig.get("rabbitmqPwd"));
+        factory.setUsername(XianConfig.get("rabbitmqUserName"));
+        factory.setPassword(XianConfig.get("rabbitmqPwd"));
         factory.setVirtualHost("/");
         factory.setHost("production-internet-mq.apaycloud.com");
         factory.setPort(5672);

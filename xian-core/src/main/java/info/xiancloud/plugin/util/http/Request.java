@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.util.http;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.SyncXian;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.socket.ISocketGroup;
@@ -198,7 +198,7 @@ public class Request implements Serializable {
             // 链接超时时间
             conn.setConnectTimeout(5000);
             //响应超时时间
-            conn.setReadTimeout(EnvConfig.getIntValue("httpclient.read_timeout", 1000 * 10));
+            conn.setReadTimeout(XianConfig.getIntValue("httpclient.read_timeout", 1000 * 10));
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setUseCaches(false);

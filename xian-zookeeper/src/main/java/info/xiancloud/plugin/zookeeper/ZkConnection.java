@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.zookeeper;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.distribution.IRegistry;
 import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.LOG;
@@ -73,9 +73,9 @@ public class ZkConnection implements IRegistry {
 
     private static String getZkConnStr() {
         if (EnvUtil.isLan()) {
-            return EnvConfig.get("zookeeperConnectionStringLan");
+            return XianConfig.get("zookeeperConnectionStringLan");
         }
-        return EnvConfig.get("zookeeperConnectionStringInternet");
+        return XianConfig.get("zookeeperConnectionStringInternet");
     }
 
     @Override

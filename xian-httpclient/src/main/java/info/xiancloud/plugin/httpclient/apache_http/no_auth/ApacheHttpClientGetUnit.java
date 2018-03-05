@@ -2,7 +2,7 @@ package info.xiancloud.plugin.httpclient.apache_http.no_auth;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.plugin.*;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.httpclient.HttpClientGroup;
 import info.xiancloud.plugin.httpclient.apache_http.IApacheHttpClient;
 import info.xiancloud.plugin.message.UnitResponse;
@@ -57,7 +57,7 @@ public class ApacheHttpClientGetUnit implements Unit {
             HttpResponse httpResponse;
             try {
                 httpResponse = RetryUtil.retryUntilNoException(httpClient::getHttpResponse,
-                        EnvConfig.getIntValue("apache.httpclient.max.try", 3),
+                        XianConfig.getIntValue("apache.httpclient.max.try", 3),
                         ConnectTimeoutException.class);
             } catch (ConnectTimeoutException e) {
                 return UnitResponse.error(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url);

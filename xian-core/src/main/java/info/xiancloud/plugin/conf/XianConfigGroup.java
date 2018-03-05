@@ -5,10 +5,10 @@ import info.xiancloud.plugin.Group;
 /**
  * @author happyyangyuan
  */
-public class EnvConfigGroup implements Group {
+public class XianConfigGroup implements Group {
     @Override
     public String getName() {
-        return "envConfig";
+        return "xianConfig";
     }
 
     @Override
@@ -16,5 +16,5 @@ public class EnvConfigGroup implements Group {
         return "支持多环境的配置文件读取服务";
     }
 
-    public static final EnvConfigGroup singleton = new EnvConfigGroup();
+    public static final XianConfigGroup singleton = new XianConfigGroup();
 }

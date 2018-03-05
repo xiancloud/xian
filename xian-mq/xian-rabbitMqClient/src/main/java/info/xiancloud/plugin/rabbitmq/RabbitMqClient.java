@@ -7,7 +7,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.rabbitmq.client.*;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.mq.IMqConsumerClient;
 import info.xiancloud.plugin.mq.IMqPubClient;
 import info.xiancloud.plugin.util.EnvUtil;
@@ -124,14 +124,14 @@ public class RabbitMqClient implements IMqPubClient, IMqConsumerClient {
 
     private void do_init() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setUsername(EnvConfig.get("rabbitUserName"));
-        factory.setPassword(EnvConfig.get("rabbitPwd"));
+        factory.setUsername(XianConfig.get("rabbitUserName"));
+        factory.setPassword(XianConfig.get("rabbitPwd"));
         factory.setVirtualHost("/");
         if (EnvUtil.isLan())
-            factory.setHost(EnvConfig.get("rabbitLanHost"));
+            factory.setHost(XianConfig.get("rabbitLanHost"));
         else
-            factory.setHost(EnvConfig.get("rabbitInternetHost"));
-        factory.setPort(EnvConfig.getIntValue("rabbitPort"));
+            factory.setHost(XianConfig.get("rabbitInternetHost"));
+        factory.setPort(XianConfig.getIntValue("rabbitPort"));
         factory.setAutomaticRecoveryEnabled(true);
         factory.setNetworkRecoveryInterval(5000);
         try {

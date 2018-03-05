@@ -8,20 +8,20 @@ import info.xiancloud.plugin.util.StringUtil;
 /**
  * @author happyyangyuan
  */
-public class ReadEnvConfigUnit implements Unit {
+public class ReadXianConfigUnit implements Unit {
     @Override
     public Group getGroup() {
-        return EnvConfigGroup.singleton;
+        return XianConfigGroup.singleton;
     }
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("Read env config");
+        return UnitMeta.create().setDescription("Read xian config");
     }
 
     @Override
     public String getName() {
-        return "readEnvConfig";
+        return "readXianConfig";
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ReadEnvConfigUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        String value = EnvConfig.get(msg.get("key"));
+        String value = XianConfig.get(msg.get("key"));
         if (StringUtil.isEmpty(value))
             return UnitResponse.dataDoesNotExists(msg.getString("key"), "config not found.");
         else

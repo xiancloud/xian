@@ -3,7 +3,7 @@ package info.xiancloud.qclouddocker.api.unit.custom;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.plugin.LocalUnitsManager;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.SyncXian;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.util.*;
@@ -18,12 +18,12 @@ import java.util.*;
  * @author happyyangyuan
  */
 public class DeploymentUtil {
-    static final String NP_CLUSTER_ID = EnvConfig.get("dockerServiceNonproductionClusterId"),
-            P_CLUSTER_ID = EnvConfig.get("dockerServiceProductionClusterId");
+    static final String NP_CLUSTER_ID = XianConfig.get("dockerServiceNonproductionClusterId"),
+            P_CLUSTER_ID = XianConfig.get("dockerServiceProductionClusterId");
 
     //每次均从配置文件加载，实现动态更新配置的功能
     public static String REGISTRY_URI() {
-        return EnvConfig.get("dockerServiceRegistryUrl");
+        return XianConfig.get("dockerServiceRegistryUrl");
     }
 
     static String clusterId(String env) {

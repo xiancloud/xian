@@ -2,7 +2,7 @@ package info.xiancloud.plugin.util;
 
 import com.alibaba.fastjson.JSON;
 import info.xiancloud.plugin.Constant;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.util.file.PlainFileUtil;
 
 import java.io.File;
@@ -135,7 +135,7 @@ public class EnvUtil {
      * @return The dependent application names. Note that, order of this array is used.
      */
     public static String[] getDependentApplications() {
-        return EnvConfig.getStringArray("dependentApplications");
+        return XianConfig.getStringArray("dependentApplications");
     }
 
     /**
@@ -166,7 +166,7 @@ public class EnvUtil {
         if (lan == null) {
             String lanReferenceHost = null;
             try {
-                lanReferenceHost = EnvConfig.get(LAN_REFERENCE_HOST_CONFIG, DEFAULT_LAN_REFERENCE_HOST);
+                lanReferenceHost = XianConfig.get(LAN_REFERENCE_HOST_CONFIG, DEFAULT_LAN_REFERENCE_HOST);
                 System.out.println(LAN_REFERENCE_HOST_CONFIG + "=" + lanReferenceHost);
                 InetAddress build = Inet4Address.getByName(lanReferenceHost);
                 lan = build.isReachable(500);
@@ -239,7 +239,7 @@ public class EnvUtil {
 
     public static boolean isRemoteSenderDisabled() {
         if (remoteSenderDisabled == null) {
-            remoteSenderDisabled = EnvConfig.getBoolValue("applicationRemoteSenderDisabled", false);
+            remoteSenderDisabled = XianConfig.getBoolValue("applicationRemoteSenderDisabled", false);
         }
         return remoteSenderDisabled;
     }

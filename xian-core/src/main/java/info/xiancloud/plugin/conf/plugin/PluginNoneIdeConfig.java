@@ -1,7 +1,7 @@
 package info.xiancloud.plugin.conf.plugin;
 
 import info.xiancloud.plugin.*;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.distribution.res.IResAware;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.message.UnitRequest;
@@ -17,7 +17,7 @@ public class PluginNoneIdeConfig extends PluginConfig implements Unit {
 
     @Override
     public String getName() {
-        return "debugEnvConfig";
+        return "debugXianConfig";
     }
 
     @Override
@@ -32,7 +32,7 @@ public class PluginNoneIdeConfig extends PluginConfig implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(EnvConfig.get(msg.getString("key")));
+        return UnitResponse.success(XianConfig.get(msg.getString("key")));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.netty.http;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import io.netty.util.CharsetUtil;
 
 import java.nio.charset.Charset;
@@ -20,7 +20,7 @@ public class Config {
     }
 
     public static Integer getPort() {
-        return EnvConfig.getIntValue("api_gateway_port", 9123);
+        return XianConfig.getIntValue("api_gateway_port", 9123);
     }
 
     public static Integer getClientMaxBodySize() {

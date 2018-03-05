@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.mqtt;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.IdManager;
 import info.xiancloud.plugin.util.Pair;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -143,7 +143,7 @@ public class MqttClientBuilder {
 
         @Override
         protected char[] getPwd() {
-            return EnvConfig.get("rabbitmqPwd").toCharArray();
+            return XianConfig.get("rabbitmqPwd").toCharArray();
         }
 
         @Override

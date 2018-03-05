@@ -2,7 +2,7 @@ package info.xiancloud.plugin.mqtt;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.LOG;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
@@ -19,9 +19,9 @@ public abstract class AbstractMqttClient implements IMqttClient {
 
     @JSONField(serialize = false, deserialize = false)
     private MqttAsyncClient sampleClient;
-    private String[] serverURIs = EnvUtil.isLan() ? EnvConfig.getStringArray("rabbitmqLanServerUrls") :
-            EnvConfig.getStringArray("rabbitmqInternetServerUrls");
-    private String userName = EnvConfig.get("rabbitmqUserName");
+    private String[] serverURIs = EnvUtil.isLan() ? XianConfig.getStringArray("rabbitmqLanServerUrls") :
+            XianConfig.getStringArray("rabbitmqInternetServerUrls");
+    private String userName = XianConfig.get("rabbitmqUserName");
     private MqttConnectOptions connOpts;
     private MemoryPersistence persistence = new MemoryPersistence();
     private Boolean cleanSession = true;

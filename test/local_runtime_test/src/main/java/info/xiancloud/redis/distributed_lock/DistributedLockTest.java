@@ -1,7 +1,7 @@
 package info.xiancloud.redis.distributed_lock;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.message.Xian;
 import info.xiancloud.plugin.support.cache.CacheService;
@@ -40,17 +40,17 @@ public class DistributedLockTest {
 
     private static String getUrl() {
         if (EnvUtil.isLan())
-            return EnvConfig.get("redisLanUrl"); // 腾讯云内网内
+            return XianConfig.get("redisLanUrl"); // 腾讯云内网内
         else
-            return EnvConfig.get("redisInternetUrl"); // 外网
+            return XianConfig.get("redisInternetUrl"); // 外网
     }
 
     private static String getPassword() {
-        return EnvConfig.get("redisPassword");
+        return XianConfig.get("redisPassword");
     }
 
     private static int getDBIndex() {
-        return EnvConfig.getIntValue("redisDbIndex", 0);
+        return XianConfig.getIntValue("redisDbIndex", 0);
     }
 
     @Test

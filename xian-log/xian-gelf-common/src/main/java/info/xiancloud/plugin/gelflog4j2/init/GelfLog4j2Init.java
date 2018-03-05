@@ -3,11 +3,12 @@ package info.xiancloud.plugin.gelflog4j2.init;
 import biz.paluch.logging.gelf.MessageFormatEnum;
 import biz.paluch.logging.gelf.log4j2.GelfLogAppender;
 import biz.paluch.logging.gelf.log4j2.GelfLogField;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.distribution.LocalNodeManager;
 import info.xiancloud.plugin.log.ICentralizedLogInitializer;
 import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.JavaPIDUtil;
+import info.xiancloud.plugin.util.StringUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Filter;
@@ -29,9 +30,13 @@ public class GelfLog4j2Init implements ICentralizedLogInitializer {
     private void addAppender() {
         final LoggerContext context = LoggerContext.getContext(false);
         final Configuration defaultConfig = context.getConfiguration();
-        String gelfInputUrl = EnvUtil.isLan() ? EnvConfig.get("gelfInputLanUrl") : EnvConfig.get("gelfInputInternetUrl");
+        String gelfInputUrl = EnvUtil.isLan() ? XianConfig.get("gelfInputLanUrl") : XianConfig.get("gelfInputInternetUrl");
         System.out.println("gelfInputUrl=" + gelfInputUrl);
-        int gelfInputPort = EnvConfig.getIntValue("gelfInputPort");
+        int gelfInputPort = XianConfig.getIntValue("gelfInputPort");
+        if (StringUtil.isEmpty(gelfInputUrl) || gelfInputPort <= 0) {
+            System.out.println("Gelf input url or port is not properly configured. No log will be sent to gelf logger server.");
+            return;
+        }
         final GelfLogAppender appender = /* WriterAppender.createAppender(layout, null, writer, writerName, false, true)*/
                 GelfLogAppender.createAppender(
                         defaultConfig,

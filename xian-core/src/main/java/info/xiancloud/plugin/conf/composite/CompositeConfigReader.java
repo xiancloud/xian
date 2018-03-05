@@ -1,6 +1,7 @@
 package info.xiancloud.plugin.conf.composite;
 
 import info.xiancloud.plugin.conf.IPropertiesReader;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.conf.application.ApplicationConfig;
 import info.xiancloud.plugin.conf.plugin.PluginConfigHolder;
 import info.xiancloud.plugin.conf.sysenv.SystemEnv;
@@ -10,7 +11,7 @@ import java.util.function.Function;
 
 /**
  * @author happyyangyuan
- * @see info.xiancloud.plugin.conf.EnvConfig
+ * @see XianConfig
  */
 public class CompositeConfigReader implements IPropertiesReader {
 

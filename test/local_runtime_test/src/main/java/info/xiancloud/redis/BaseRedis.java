@@ -1,6 +1,6 @@
 package info.xiancloud.redis;
 
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.support.cache.CacheService;
 import info.xiancloud.plugin.util.EnvUtil;
 
@@ -21,17 +21,17 @@ public abstract class BaseRedis {
 
     private static String getUrl() {
         if (EnvUtil.isQcloudLan())
-            return EnvConfig.get("redisLanUrl"); // 腾讯云内网内
+            return XianConfig.get("redisLanUrl"); // 腾讯云内网内
         else
-            return EnvConfig.get("redisInternetUrl"); // 外网
+            return XianConfig.get("redisInternetUrl"); // 外网
     }
 
     private static String getPassword() {
-        return EnvConfig.get("redisPassword");
+        return XianConfig.get("redisPassword");
     }
 
     protected static int getDBIndex() {
-        return EnvConfig.getIntValue("redisDbIndex", 0);
+        return XianConfig.getIntValue("redisDbIndex", 0);
     }
 
 }

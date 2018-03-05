@@ -1,7 +1,7 @@
 package info.xiancloud.graylog2;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.distribution.LocalNodeManager;
 import info.xiancloud.plugin.log.ICentralizedLogInitializer;
 import info.xiancloud.plugin.util.EnvUtil;
@@ -71,11 +71,11 @@ public class GelfLog4j1Init implements ICentralizedLogInitializer {
         GelfAppender appender = new GelfJsonAppender/*GelfAppender GelfJsonAppender*/();
         appender.setName(GELF_APPENDER_NAME);
         if (EnvUtil.isLan()) {
-            appender.setGraylogHost(EnvConfig.get("gelfInputLanUrl"));
+            appender.setGraylogHost(XianConfig.get("gelfInputLanUrl"));
         } else {
-            appender.setGraylogHost(EnvConfig.get("gelfInputInternetUrl"));
+            appender.setGraylogHost(XianConfig.get("gelfInputInternetUrl"));
         }
-        appender.setGraylogPort(EnvConfig.getIntValue("gelfInputInternetUrl"));
+        appender.setGraylogPort(XianConfig.getIntValue("gelfInputInternetUrl"));
         appender.setFacility("gelf-java");
         appender.setLayout(new PatternLayout() {{
             setConversionPattern("%p %m");

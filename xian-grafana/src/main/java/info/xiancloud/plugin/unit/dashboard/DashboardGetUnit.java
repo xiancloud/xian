@@ -1,7 +1,7 @@
 package info.xiancloud.plugin.unit.dashboard;
 
 import info.xiancloud.plugin.*;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.util.HttpUtil;
@@ -37,7 +37,7 @@ public class DashboardGetUnit implements Unit {
         Map<String, String> headers = GrafanaUtil.gainHttpHeaders();
 
         try {
-            String url = EnvConfig.get("grafana_http_api_dashboards_db_url");
+            String url = XianConfig.get("grafana_http_api_dashboards_db_url");
             String response = HttpUtil.get(url + (url.endsWith("/") ? "" : "/") + slug, headers);
             return UnitResponse.success(response);
         } catch (Exception e) {

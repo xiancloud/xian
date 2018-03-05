@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import info.xiancloud.plugin.conf.EnvConfig;
+import info.xiancloud.plugin.conf.XianConfig;
 import info.xiancloud.plugin.util.LOG;
 
 /**
@@ -30,7 +30,7 @@ public class QCloudCosConfig {
     private final static Map<String, String> bucketHost = new HashMap<String, String>();
 
     static {
-        String[] urls = EnvConfig.getStringArray("bucketurl");
+        String[] urls = XianConfig.getStringArray("bucketurl");
         if (urls != null && urls.length > 0) {
             for (String url : urls) {
                 String[] u = url.split(":");
@@ -39,8 +39,8 @@ public class QCloudCosConfig {
         } else {
             LOG.error("qcloud-xml-api:没有配置bucket和host的映射数据.....请重新配置");
         }
-        SecretId=EnvConfig.get("secretid");
-        SecretKey=EnvConfig.get("secretkey");
+        SecretId= XianConfig.get("secretid");
+        SecretKey= XianConfig.get("secretkey");
         
         LOG.info(String.format("bucketurl初始化完成 : [%s]", JSON.toJSONString(bucketHost)));
         LOG.info(String.format("SecretId初始化完成 : %s", SecretId));
