@@ -1,5 +1,5 @@
 # xian
-这是另外一个微服务框架，基于Java8编写。不依赖spring，不依赖dubbo，上手和学习难度非常小。如果是以学会使用为目的，只要你会Java语言会gradle构建工具，甚至不需要了解微服务的各种概念，比学会使用dubbo和spring cloud不知道简单多少倍。
+xian是一个微服务框架，更确切的说是一个微服务套件，它基于Java8编写。不依赖spring，不依赖dubbo，上手和学习难度非常小。如果是以学会使用为目的，只要你会Java语言会gradle构建工具，甚至不需要了解微服务的各种概念，比学会使用dubbo和spring cloud不知道简单多少倍。
 
 
 
@@ -11,6 +11,8 @@
 4. 微服务接口编排。
 5. 部署和和监控问题。
 6. 帮助实现devops开发运维协作能力。
+7. 基于xian你可以实现如下逻辑架构图对应的微服务集群：
+![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://happyyangyuan.top/xian/基于xian的微服务逻辑架构图.png)
 
 ## 30分钟学会使用xian frame开发微服务
 
@@ -38,8 +40,8 @@ xianVersion=0.1.0
 compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 ````
 ##### 3.3、 xian_runtime内定义了4个微服务application
-调用关系如下图所示
-
+调用关系如下图所示：
+![xian_template rpc调用关系图](http://happyyangyuan.top/xian/xian_template微服务调用关系图.png)
 
 
 
@@ -48,7 +50,7 @@ compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 
 ##### 3.4、子module：demo_plugin01、demo_plugin02、demo_web_plugin01
 子module，我们称之为“插件”。
-我们将插件部署在微服务内，从而让微服务application具有业务功能。部署方式见xian_runtime/demoApplication01/build.gradle
+我们将插件部署在微服务内，从而让微服务application具有业务功能。部署配置见xian_runtime/demoApplication01/build.gradle
 ````xian_runtime/demoApplication01/build.gradle
 dependencies {
     runtime project(':demo_plugin01')
@@ -60,25 +62,12 @@ demoApplication02、demoWebApplication亦是如此。
 该“服务单元”调用另外一个“服务单元” DemoUnit02.java，形成rpc调用关系，具体见这两个unit代码的execute方法体：
 ````DemoUnit01.java
 public class DemoUnit01 implements Unit {
-    @Override
-    public String getName() {
-        return "demoUnit01";
-    }
-
-    @Override
-    public Input getInput() {
-        return null;
-    }
-
-    @Override
-    public Group getGroup() {
-        return DemoPlugin01Group.singleton;
-    }
-
+    ...
+    
     @Override
     public UnitResponse execute(UnitRequest msg) {
         return Xian.call("demoGroup02", "demoUnit02",
-                new JSONObject().fluentPut("param", msg.get("param", "a temp param if not absent.")));
+                new JSONObject().fluentPut("param", msg.get("param", "a temp param if absent.")));
     }
 }
 ````
@@ -89,21 +78,45 @@ rpc调用关系见上文微服务关系图。
 我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
 我们将每个application看作是一个微服务，下面依次讲解。
 
-1. demoWebApplication01，我们将demo_web_plugin01部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle。demoWebApplication01以“微服务”的身份定义于微服务集群内。我们可以在任意位置运行脚本 ./demoWebApplication01/build.sh执行gradle构建，然后执行运行程序：./xian_runtime/demoWebApplication01/_start.sh。启动后访问http://localhost:8080 查看效果。我们可以运行./xian_runtime/demoWebApplication01/stop.sh来停止该服务。
+1. demoWebApplication01插件demo_web_plugin01被部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle:
+````build.gradle
+runtime "info.xiancloud:xian-jettyweb:${xianVersion}"
+runtime project(path: ':demo_web_plugin01', configuration: "war")
+````
+demoWebApplication01以“微服务”的身份定义于微服务集群内。我们可以在任意位置运行build.sh脚本来构建该application：
+````./demoWebApplication01/build.sh````
+
+构建完毕后，便可以执行启动脚本来运行程序：
+````_start.sh
+./xian_runtime/demoWebApplication01/_start.sh
+````
+
+启动后访问 http://localhost:8080 查看效果。我们可以运行stop.sh脚本来停止该服务：
+````stop.sh
+./xian_runtime/demoWebApplication01/stop.sh
+````
+
 
 2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9124，并且可配置。
 
-3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application, 然后运行各自application内的_start.sh脚本可以启动他们。
+3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application：
+````xian_runtime/buildAll.sh
+./xian_runtime/buildAll.sh
+````
+然后运行各自application内的_start.sh脚本可以启动他们。
 
-4. 访问curl -XPOST http://localhost:9124/demoGroup01/demoUnit01 查看对DemoUnit01的访问效果，同样的你可以访问 curl -XPOST http://localhost:9124/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
+4. 访问如下URL来查看对DemoUnit01的访问效果：
+````
+curl -XPOST http://localhost:9124/demoGroup01/demoUnit01
+````
+同样的你可以访问 curl -XPOST http://localhost:9124/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
 
 #### 惯例和约定
 1. 从上文你不难看出，每一个unit都以http api形式通过demoGateway暴露给外部了，这个URI的格式如上所述： http://gatewayHost:gatewayPort/groupName/unitName
 http method为post，这是xianframe的网关标准。
 2. 而demoUnit01调用demoUnit02的rpc标准代码如下：
 ````
-Xian.call("demoGroup02", "demoUnit02",
-                new JSONObject().fluentPut("param", msg.get("param", "a temp param if not absent.")));
+Xian.call("demoGroup02", "demoUnit02", map/bean);
 //详见DemoUnit01.java类
 //上面'demoGroup02'为目标Unit的groupName，'demoUnit02'为目标unit的名称。
 ````
