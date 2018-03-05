@@ -1,5 +1,5 @@
 # xian
-xian是一个微服务框架，更确切的说是一个微服务套件，它基于Java8编写。不依赖spring，不依赖dubbo，上手和学习难度非常小。如果是以学会使用为目的，只要你会Java语言会gradle构建工具，甚至不需要了解微服务的各种概念，比学会使用dubbo和spring cloud不知道简单多少倍。
+xian是一个微服务框架，更确切的说是一个微服务套件。它基于Java8编写，不依赖spring，不依赖dubbo，上手和学习难度非常小。如果是以学会使用为目的，只要你会Java语言会gradle构建工具，甚至不需要了解微服务的各种概念，比学会使用dubbo和spring cloud不知道简单多少倍。
 
 
 
@@ -19,7 +19,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件，它基�
 ### 引入依赖
 我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xianframe的依赖。
 #### 1、下载gradle项目模板源码
-````
+````bash
 git clone https://github.com/happyyangyuan/xian_template
 ````
 或者直接使用你的IDE，如IntelliJ IDEA内执行"Checkout from Version Control"来下载和导入本gradle项目模板工程。
@@ -30,13 +30,13 @@ git clone https://github.com/happyyangyuan/xian_template
 #### 3、xian_template项目结构介绍
 ##### 3.1、gradle.properties配置文件
 该配置文件指明了xian依赖的版本号
-````gradle.properties
+````properties
 xianVersion=0.1.0
 ````
 
 ##### 3.2、 根路径内的build.gradle依赖配置文件
 该文件指明了对xian-core的依赖
-````build.gradle
+````gradle
 compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 ````
 ##### 3.3、 xian_runtime内定义了4个微服务application
@@ -51,7 +51,7 @@ compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 ##### 3.4、子module：demo_plugin01、demo_plugin02、demo_web_plugin01
 子module，我们称之为“插件”。
 我们将插件部署在微服务内，从而让微服务application具有业务功能。部署配置见xian_runtime/demoApplication01/build.gradle
-````xian_runtime/demoApplication01/build.gradle
+````gradle
 dependencies {
     runtime project(':demo_plugin01')
 }
@@ -60,7 +60,7 @@ demoApplication02、demoWebApplication亦是如此。
 
 ###### 3.4.1 关注demo_plugin01内定义的“服务单元” DemoUnit01.java
 该“服务单元”调用另外一个“服务单元” DemoUnit02.java，形成rpc调用关系，具体见这两个unit代码的execute方法体：
-````DemoUnit01.java
+````java
 public class DemoUnit01 implements Unit {
     ...
     
@@ -79,7 +79,7 @@ rpc调用关系见上文微服务关系图。
 我们将每个application看作是一个微服务，下面依次讲解。
 
 1. demoWebApplication01插件demo_web_plugin01被部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle:
-````build.gradle
+````gradle
 runtime "info.xiancloud:xian-jettyweb:${xianVersion}"
 runtime project(path: ':demo_web_plugin01', configuration: "war")
 ````
@@ -87,31 +87,31 @@ demoWebApplication01以“微服务”的身份定义于微服务集群内。我
 ````./demoWebApplication01/build.sh````
 
 构建完毕后，便可以执行启动脚本来运行程序：
-````_start.sh
+````bash
 ./xian_runtime/demoWebApplication01/_start.sh
 ````
 
 启动后访问 http://localhost:8080 查看效果。我们可以运行stop.sh脚本来停止该服务：
-````stop.sh
+````bash
 ./xian_runtime/demoWebApplication01/stop.sh
 ````
 
 
 2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9123，并且可配置，配置文件在xian_runtime/demoGateway/conf/application.properties：
-````xian_runtime/demoGateway/conf/application.properties
+````properties
 ...
 #gateway http server port, the default port is 9123 if you leave this empty.
 api_gateway_port=
 ````
 
 3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application：
-````xian_runtime/buildAll.sh
+````bash
 ./xian_runtime/buildAll.sh
 ````
 然后运行各自application内的_start.sh脚本可以启动他们。
 
 4. 访问如下URL来查看对DemoUnit01的访问效果：
-````
+````bash
 curl -XPOST http://localhost:9123/demoGroup01/demoUnit01
 ````
 同样的你可以访问 curl -XPOST http://localhost:9123/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
@@ -120,14 +120,14 @@ curl -XPOST http://localhost:9123/demoGroup01/demoUnit01
 1. 从上文你不难看出，每一个unit都以http api形式通过demoGateway暴露给外部了，这个URI的格式如上所述： http://gatewayHost:gatewayPort/groupName/unitName
 http method为post，这是xianframe的网关标准。
 2. 而demoUnit01调用demoUnit02的rpc标准代码如下：
-````
+````java
 Xian.call("demoGroup02", "demoUnit02", map/bean);
 //详见DemoUnit01.java类
 //上面'demoGroup02'为目标Unit的groupName，'demoUnit02'为目标unit的名称。
 ````
 
 以上是同步调用，很多时候，我们希望异步方式实现任务提交，示例如下：
-````
+````java
 Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
  handle(UnitResponse response){
     //doSth with the response.
@@ -136,11 +136,11 @@ Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
 ````
 
 3. 我们为大家准备的project template是方便大家基于此template来扩展新的微服务，而不用浪费时间来自己开发gradle和shell脚本了，请遵循以下xian_template规范如下
- 1. 所有的application必须定义在xian_runtime/内，所有的application都是由plugin组装而成的，plugin列表配置在/xian_runtime/applicationName/build.gradle的依赖列表内。
- 2. application的名称就是xian_runtime/子路径名。
- 3. application的启动和停止脚本已经内置，请直接使用即可。
- 4. 更新程序后，需要执行build.sh/buildAll.sh重新构建。
- 5. 构建后，xian_runtime里面的所有的application包都是一个可运行的包，你可以将xian_runtime整个拷贝至服务器上并重命名为xian_runtime_test，然后运行各个application的启动脚本start.sh。如果需要将application运行多个实例，可以复制多份。需要注意的是，我们使用路径中的xian_runtime_env来标识集群环境，比如xian_runtime_test/标识其内运行的application为test集群环境，xian_runtime_production/标识其内运行的application为production环境。
+    - 所有的application必须定义在xian_runtime/内，所有的application都是由plugin组装而成的，plugin列表配置在/xian_runtime/applicationName/build.gradle的依赖列表内。
+    - application的名称就是xian_runtime/子路径名。
+    - application的启动和停止脚本已经内置，请直接使用即可。
+    - 更新程序后，需要执行build.sh/buildAll.sh重新构建。
+    - 构建后，xian_runtime里面的所有的application包都是一个可运行的包，你可以将xian_runtime整个拷贝至服务器上并重命名为xian_runtime_test，然后运行各个application的启动脚本start.sh。如果需要将application运行多个实例，可以复制多份。需要注意的是，我们使用路径中的xian_runtime_env来标识集群环境，比如xian_runtime_test/标识其内运行的application为test集群环境，xian_runtime_production/标识其内运行的application为production环境。
  
 4. 以上使用启动脚本来运行各个节点的方式我们成为集群模式
 
