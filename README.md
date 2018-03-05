@@ -97,7 +97,12 @@ demoWebApplication01以“微服务”的身份定义于微服务集群内。我
 ````
 
 
-2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9124，并且可配置。
+2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9123，并且可配置，配置文件在xian_runtime/demoGateway/conf/application.properties：
+````xian_runtime/demoGateway/conf/application.properties
+...
+#gateway http server port, the default port is 9123 if you leave this empty.
+api_gateway_port=
+````
 
 3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application：
 ````xian_runtime/buildAll.sh
@@ -107,9 +112,9 @@ demoWebApplication01以“微服务”的身份定义于微服务集群内。我
 
 4. 访问如下URL来查看对DemoUnit01的访问效果：
 ````
-curl -XPOST http://localhost:9124/demoGroup01/demoUnit01
+curl -XPOST http://localhost:9123/demoGroup01/demoUnit01
 ````
-同样的你可以访问 curl -XPOST http://localhost:9124/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
+同样的你可以访问 curl -XPOST http://localhost:9123/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
 
 #### 惯例和约定
 1. 从上文你不难看出，每一个unit都以http api形式通过demoGateway暴露给外部了，这个URI的格式如上所述： http://gatewayHost:gatewayPort/groupName/unitName
