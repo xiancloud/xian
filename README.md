@@ -43,8 +43,6 @@ compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 调用关系如下图所示：
 ![xian_template rpc调用关系图](http://happyyangyuan.top/xian/xian_template微服务调用关系图.png)
 
-
-
 其中，demoGateway是网关微服务，内置了高性能netty http server。
 其他微服务application接下来介绍。
 
@@ -145,6 +143,7 @@ Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
 4. 以上使用启动脚本来运行各个节点的方式我们成为集群模式
 
 5. xianframe的IDE内非集群模式
+
 子module /xian_template/test内可以开发Junit代码或者直接写main入口代码进行单元测试，它将所有的本project定义的unit统一在本地管理，而不使用注册中心，我们可以直接使用rpc工具类"Xian.java"来本地调用的各个unit。详见/xian_template project内的DemoUnitTest.java类。
 
 
