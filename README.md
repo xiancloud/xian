@@ -138,11 +138,11 @@ Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
 * application的名称就是xian_runtime/子路径名。
 * application的启动和停止脚本已经内置，请直接使用即可。
 * 更新程序后，需要执行build.sh/buildAll.sh重新构建。
-- 构建后，xian_runtime里面的所有的application包都是一个可运行的包，你可以将xian_runtime整个拷贝至服务器上并重命名为xian_runtime_test，然后运行各个application的启动脚本start.sh。如果需要将application运行多个实例，可以复制多份。需要注意的是，我们使用路径中的xian_runtime_env来标识集群环境，比如xian_runtime_test/标识其内运行的application为test集群环境，xian_runtime_production/标识其内运行的application为production环境。
+* 构建后，xian_runtime里面的所有的application包都是一个可运行的包，你可以将xian_runtime整个拷贝至服务器上并重命名为xian_runtime_test，然后运行各个application的启动脚本start.sh。如果需要将application运行多个实例，可以复制多份。需要注意的是，我们使用路径中的xian_runtime_env来标识集群环境，比如xian_runtime_test/标识其内运行的application为test集群环境，xian_runtime_production/标识其内运行的application为production环境。
  
 4. 以上使用启动脚本来运行各个节点的方式我们成为集群模式
 
-5. xianframe的IDE内非集群模式
+5. xian frame的IDE内非集群模式
 
 子module /xian_template/test内可以开发Junit代码或者直接写main入口代码进行单元测试，它将所有的本project定义的unit统一在本地管理，而不使用注册中心，我们可以直接使用rpc工具类"Xian.java"来本地调用的各个unit。详见/xian_template project内的DemoUnitTest.java类。
 
@@ -165,7 +165,15 @@ Apache ZooKeeper是Apache软件基金会的一个软件项目，他为大型分�
 zookeeperConnectionStringInternet=zk.xiancloud.info:19129
 ````
 ##### zkui
-zkui是
+zkui是一个zookeeper的UI客户端，访问这里查看,github开原地只是：https://github.com/DeemOpen/zkui
+xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
+
+账号密码是：admin/happyyangyuan
+
+##### 我们使用zkui来实现集中配置管理
+登录zkui后，请访问/xian_runtime_yourEnvironment/resources/来看查看和修改你的插件配置。
+修改的配置会自动广播至相关节点内，因此是实时生效的。
+
 
 
 
