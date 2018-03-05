@@ -147,10 +147,6 @@ Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
 子module /xian_template/test内可以开发Junit代码或者直接写main入口代码进行单元测试，它将所有的本project定义的unit统一在本地管理，而不使用注册中心，我们可以直接使用rpc工具类"Xian.java"来本地调用的各个unit。详见/xian_template project内的DemoUnitTest.java类。
 
 
-#### demo集群模式application关系图如下
-暂时略
-
-
 
 ### 基础概念参考
 #### 服务单元unit
@@ -160,7 +156,7 @@ group定义了unit分组，每个unit都属于唯一一个group，groupName和un
 #### 插件plugin
 插件是多个特定的unit的组合而成的一个项目子module，我们将插件自由组合而成为application。
 
-#### 其他待补充
+#### 注册中心
 
 
 
