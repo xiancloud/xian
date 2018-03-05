@@ -159,6 +159,7 @@ group定义了unit分组，每个unit都属于唯一一个group，groupName和un
 #### 注册中心
 ##### zookeeper
 Apache ZooKeeper是Apache软件基金会的一个软件项目，他为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。 ZooKeeper曾经是Hadoop的一个子项目，但现在是一个独立的顶级项目。 ZooKeeper的架构通过冗余服务实现高可用性。 参考自“维基百科”。
+
 在xian_templcate示例项目中，我提供了一个zookeeper server用于测试使用，请勿用于生产环境。可以在你的application.properties中配置你zookeeper服务端地址
 ````properties
 #service registration center internet url
@@ -166,6 +167,7 @@ zookeeperConnectionStringInternet=zk.xiancloud.info:19129
 ````
 ##### zkui
 zkui是一个zookeeper的UI客户端，访问这里查看,github开原地只是：https://github.com/DeemOpen/zkui
+
 xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 
 账号密码是：admin/happyyangyuan
