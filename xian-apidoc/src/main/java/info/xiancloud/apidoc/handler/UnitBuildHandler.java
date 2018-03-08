@@ -7,6 +7,8 @@ import info.xiancloud.plugin.Unit;
 import info.xiancloud.plugin.distribution.GroupBean;
 import info.xiancloud.plugin.distribution.GroupProxy;
 import info.xiancloud.plugin.distribution.UnitBean;
+import info.xiancloud.plugin.distribution.exception.GroupUndefinedException;
+import info.xiancloud.plugin.distribution.loadbalance.GroupRouter;
 import info.xiancloud.plugin.distribution.service_discovery.GroupDiscovery;
 import info.xiancloud.plugin.distribution.service_discovery.UnitDiscovery;
 import info.xiancloud.plugin.util.EnvUtil;
@@ -182,7 +184,11 @@ public class UnitBuildHandler extends BaseBuildHandler {
             });
         } else {// server runtime environment
             for (String groupName : GroupDiscovery.singleton.queryForNames()) {
-                groupList.add(GroupDiscovery.singleton.newestDefinition(groupName));
+                try {
+                    groupList.add(GroupRouter.singleton.newestDefinition(groupName));
+                } catch (GroupUndefinedException e) {
+                    LOG.info("group " + groupName + "'s definition does not exist, ignored for api doc.");
+                }
             }
             LOG.info(String.format("api-doc接口文档构建过程中扫描到[%s]个group", groupList.size()));
         }

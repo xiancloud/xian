@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @author yyq
  */
-public class APIBuildStart implements Unit/*, IStartService*/ {
+public class ApidocBuilderUnit implements Unit/*, IStartService*/ {
 
     /**
      * not now
@@ -118,13 +118,13 @@ public class APIBuildStart implements Unit/*, IStartService*/ {
         if (!StringUtil.isEmpty(docName) && !StringUtil.isEmpty(unitFilter)) {
             Map<String, List<String>> filterMap = null;
             if (!StringUtil.isEmpty(unitFilter)) {
-                filterMap = new HashMap<String, List<String>>();
+                filterMap = new HashMap<>();
                 String[] fullNameArr = unitFilter.split(",");
                 for (String fullName : fullNameArr) {
                     String[] sb = fullName.split("\\.");
                     String groupName = sb[0];
                     String unitName = sb[1];
-                    List<String> unitList = filterMap.computeIfAbsent(groupName, k -> new ArrayList<String>());
+                    List<String> unitList = filterMap.computeIfAbsent(groupName, k -> new ArrayList<>());
                     unitList.add(unitName);
                 }
             }

@@ -73,7 +73,7 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
                                 LocalNodeManager.sendBack(unitResponse, backPayloadConsumerOnFailure);
                             }
                         }).send(),
-                    /*failed directly, call this handler*/
+                        /*failed directly, call this handler*/
                         new NotifyHandler() {
                             protected void handle(UnitResponse failureOut) {
                                 LocalNodeManager.sendBack(failureOut, backPayloadConsumerOnFailure);
@@ -100,7 +100,7 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
                     }
                 }, response.getContext().getMsgId());
             } else
-                LOG.error("rpc server端只支持request和response两种消息类型，不支持:" + json.getString("$msgType"), new RuntimeException());
+                LOG.error("rpc server端只支持request和response两种消息类型，不支持:" + MessageType.getMessageType(json), new RuntimeException());
         } catch (Throwable e) {
             LOG.error(e);
         } finally {
