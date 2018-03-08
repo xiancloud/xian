@@ -327,7 +327,7 @@ final public class UnitResponse {
     }
 
     /**
-     * Our api gateway uses this mothod to generate a desensitized json object instead of the {@link #toJSONObject()} method.
+     * Our api gateway uses this method to generate a desensitized json object instead of the {@link #toJSONObject()} method.
      *
      * @return JSONObject with the sensitive properties(context property) hidden.
      */
