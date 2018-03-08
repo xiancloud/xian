@@ -25,7 +25,7 @@ public abstract class AbstractBodyNotRequiredAsyncForwarder extends AbstractAsyn
     }
 
     /**
-     * @deprecoated not used any more.
+     * @deprecated  not used any more.
      */
     private boolean fromStandaloneNode(Map<String, String> $header) {
         return $header.get(Constant.XIAN_APPLICATION_HEADER) != null;

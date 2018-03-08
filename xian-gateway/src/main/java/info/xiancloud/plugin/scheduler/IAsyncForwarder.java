@@ -53,12 +53,12 @@ public interface IAsyncForwarder {
             else if (unitMeta.isBodyRequired() && !unitMeta.isDataOnly())
                 throw new RuntimeException("暂时不支持入参透传body，而响应非透传请求。");
             else if (!unitMeta.isBodyRequired() && unitMeta.isDataOnly())
-                return new RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder();
+                return RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder.singleton;
             else
-                return new DefaultAsyncForwarder();
+                return DefaultAsyncForwarder.singleton;
         } catch (UnitUndefinedException ignored) {
             // we return default processor for unmapped uri request.
-            return new DefaultAsyncForwarder();
+            return DefaultAsyncForwarder.singleton;
         }
     }
 

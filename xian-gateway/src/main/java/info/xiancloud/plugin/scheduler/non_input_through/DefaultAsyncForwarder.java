@@ -9,4 +9,6 @@ import info.xiancloud.plugin.scheduler.IResponseNonThrough;
  */
 public class DefaultAsyncForwarder extends AbstractBodyNotRequiredAsyncForwarder implements IJsonBody, IResponseNonThrough {
 
+    public static final DefaultAsyncForwarder singleton = new DefaultAsyncForwarder();
+
 }

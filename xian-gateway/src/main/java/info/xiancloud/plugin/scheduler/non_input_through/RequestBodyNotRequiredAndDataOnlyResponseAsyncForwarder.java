@@ -10,4 +10,6 @@ import info.xiancloud.plugin.scheduler.IResponseDataOnly;
  */
 public class RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder extends AbstractBodyNotRequiredAsyncForwarder implements IJsonBody, IResponseDataOnly {
 
+    public static final RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder singleton = new RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder();
+
 }
