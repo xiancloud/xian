@@ -3,9 +3,9 @@ package info.xiancloud.apidoc.handler;
 /**
  * api doc builder handler
  *
- * @author yyq
+ * @author yyq, happyyangyuan
  */
-public interface BuildHandler {
+public interface MdBuilderHandler {
 
     /**
      * build the api doc

@@ -1,9 +1,9 @@
-package info.xiancloud.apidoc.unit;
+package info.xiancloud.apidoc.unit.md;
 
 import info.xiancloud.apidoc.ApiBuilder;
 import info.xiancloud.apidoc.ApidocGroup;
-import info.xiancloud.apidoc.handler.OAuth20BuildHandler;
-import info.xiancloud.apidoc.handler.UnitBuildHandler;
+import info.xiancloud.apidoc.handler.OAuth20MdBuilderHandler;
+import info.xiancloud.apidoc.handler.UnitMdBuilderHandler;
 import info.xiancloud.plugin.Group;
 import info.xiancloud.plugin.Input;
 import info.xiancloud.plugin.Unit;
@@ -17,7 +17,13 @@ import info.xiancloud.plugin.util.LOG;
  *
  * @author happyyangyuan
  */
-public class FullApidocUnit implements Unit {
+public class FullMdApidocUnit implements Unit {
+
+    @Override
+    public String getName() {
+        return "fullMd";
+    }
+
     @Override
     public Input getInput() {
         return null;
@@ -37,14 +43,14 @@ public class FullApidocUnit implements Unit {
     private String buildAll() {
         StringBuffer doc = new StringBuffer();
         try {
-            ApiBuilder.build(new UnitBuildHandler().callback(data -> {
+            ApiBuilder.build(new UnitMdBuilderHandler().callback(data -> {
                 if (data != null && data.length > 0) {
                     LOG.info("api-doc接口文档unit文档大小 : " + data.length);
                     doc.append(new String(data));
                 } else {
                     LOG.info("api-doc接口文档unit暂无扫描到相关数据");
                 }
-            }), new OAuth20BuildHandler().callback(data -> {
+            }), new OAuth20MdBuilderHandler().callback(data -> {
                 if (data != null && data.length > 0) {
                     LOG.info("api-doc接口文档oauth20发布成功");
                     doc.append(new String(data));

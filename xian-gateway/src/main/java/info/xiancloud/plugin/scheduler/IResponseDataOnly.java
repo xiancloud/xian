@@ -13,6 +13,9 @@ import java.util.Map;
  */
 public interface IResponseDataOnly extends IResponseExtractor {
     default String extractContext(UnitResponse unitResponse) {
+        if (!unitResponse.succeeded()) {
+            return unitResponse.toVoJSONString();
+        }
         if (unitResponse.getData() != null && unitResponse.getData() instanceof Map) {
             LOG.debug("这里对于需要透传的字段直接透传出去给外部，而不是返回一个unitResponse");
             JSONObject data = unitResponse.dataToJson();

@@ -1,10 +1,10 @@
 package info.xiancloud.apidoc.handler;
 
-public abstract class BaseBuildHandler implements BuildHandler {
+public abstract class BaseMdBuilderHandler implements MdBuilderHandler {
 
     private BuildCallback callback;
 
-    public BuildHandler callback(BuildCallback callback) {
+    public MdBuilderHandler callback(BuildCallback callback) {
         this.callback = callback;
         return this;
     }

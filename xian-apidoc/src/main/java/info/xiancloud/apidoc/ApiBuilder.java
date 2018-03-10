@@ -1,17 +1,17 @@
 package info.xiancloud.apidoc;
 
-import info.xiancloud.apidoc.handler.BuildHandler;
+import info.xiancloud.apidoc.handler.MdBuilderHandler;
 
 /**
  * @author yyq, happyyangyuan
  */
 public class ApiBuilder {
 
-    public static void build(BuildHandler... buildHandlers) {
+    public static void build(MdBuilderHandler... mdBuilderHandlers) {
 
-        if (buildHandlers != null && buildHandlers.length > 0) {
-            for (BuildHandler buildHandler : buildHandlers) {
-                buildHandler.build();
+        if (mdBuilderHandlers != null && mdBuilderHandlers.length > 0) {
+            for (MdBuilderHandler mdBuilderHandler : mdBuilderHandlers) {
+                mdBuilderHandler.build();
             }
         }
     }

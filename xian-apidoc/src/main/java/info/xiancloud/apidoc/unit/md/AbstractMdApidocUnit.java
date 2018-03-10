@@ -1,11 +1,12 @@
-package info.xiancloud.apidoc.unit;
+package info.xiancloud.apidoc.unit.md;
 
 import info.xiancloud.apidoc.ApiBuilder;
 import info.xiancloud.apidoc.ApidocGroup;
-import info.xiancloud.apidoc.handler.UnitBuildHandler;
+import info.xiancloud.apidoc.handler.UnitMdBuilderHandler;
 import info.xiancloud.plugin.Group;
 import info.xiancloud.plugin.Input;
 import info.xiancloud.plugin.Unit;
+import info.xiancloud.plugin.UnitMeta;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.util.LOG;
@@ -19,7 +20,12 @@ import java.util.Map;
  *
  * @author happyyangyuan
  */
-public abstract class AbstractApidocUnit implements Unit {
+public abstract class AbstractMdApidocUnit implements Unit {
+
+    @Override
+    public UnitMeta getMeta() {
+        return UnitMeta.create().setDataOnly(true);
+    }
 
     @Override
     public Group getGroup() {
@@ -51,7 +57,7 @@ public abstract class AbstractApidocUnit implements Unit {
      */
     private static String specifyBuild(String description, String docName, Map<String, List<String>> filters) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ApiBuilder.build(new UnitBuildHandler(description, docName, filters).callback(data -> {
+        ApiBuilder.build(new UnitMdBuilderHandler(description, docName, filters).callback(data -> {
             try {
                 bos.write(data);
                 if (data.length > 0) {

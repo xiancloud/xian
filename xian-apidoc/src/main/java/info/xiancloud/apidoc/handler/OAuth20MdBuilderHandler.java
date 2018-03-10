@@ -18,7 +18,7 @@ import info.xiancloud.plugin.util.Reflection;
  *
  * @author yyq
  */
-public class OAuth20BuildHandler extends BaseBuildHandler {
+public class OAuth20MdBuilderHandler extends BaseMdBuilderHandler {
 
     @Override
     public void build() {

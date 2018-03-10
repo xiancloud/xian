@@ -1,4 +1,4 @@
-package info.xiancloud.apidoc.unit;
+package info.xiancloud.apidoc.unit.md;
 
 import info.xiancloud.plugin.Input;
 import info.xiancloud.plugin.UnitMeta;
@@ -15,11 +15,11 @@ import java.util.Map;
  *
  * @author yyq, happyyangyuan
  */
-public class CustomApidocUnit extends AbstractApidocUnit {
+public class CustomizedMdApidocUnit extends AbstractMdApidocUnit {
 
     @Override
     public String getName() {
-        return "customApidoc";
+        return "customizedMd";
     }
 
     @Override

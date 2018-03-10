@@ -327,6 +327,19 @@ final public class UnitResponse {
     }
 
     /**
+     * No matter context pretty attribute is true or not, this method formats the json string you want.
+     *
+     * @param pretty pretty or not.
+     * @return formatted json string.
+     */
+    public String toVoJSONString(boolean pretty) {
+        if (pretty)
+            return JSON.toJSONStringWithDateFormat(toVoJSONObject(), Constant.DATE_SERIALIZE_FORMAT, SerializerFeature.PrettyFormat);
+        else
+            return JSONObject.toJSONStringWithDateFormat(toVoJSONObject(), Constant.DATE_SERIALIZE_FORMAT);
+    }
+
+    /**
      * Our api gateway uses this method to generate a desensitized json object instead of the {@link #toJSONObject()} method.
      *
      * @return JSONObject with the sensitive properties(context property) hidden.
@@ -346,16 +359,18 @@ final public class UnitResponse {
         }
     }
 
-    public void throwExceptionIfNotSuccess() {
+    public UnitResponse throwExceptionIfNotSuccess() {
         if (!succeeded()) {
             throw new RuntimeException(toString());
         }
+        return this;
     }
 
-    public void throwExceptionIfNotSuccess(String exceptionMsg) {
+    public UnitResponse throwExceptionIfNotSuccess(String exceptionMsg) {
         if (!succeeded()) {
             throw new RuntimeException(exceptionMsg, new Throwable(toString()));
         }
+        return this;
     }
 
     /**

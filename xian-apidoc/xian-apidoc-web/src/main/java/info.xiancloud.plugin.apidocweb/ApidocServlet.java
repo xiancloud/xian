@@ -1,9 +1,9 @@
 package info.xiancloud.plugin.apidocweb;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.apidoc.unit.CustomApidocUnit;
-import info.xiancloud.apidoc.unit.FullApidocUnit;
-import info.xiancloud.apidoc.unit.GroupedApidocUnit;
+import info.xiancloud.apidoc.unit.md.CustomizedMdApidocUnit;
+import info.xiancloud.apidoc.unit.md.FullMdApidocUnit;
+import info.xiancloud.apidoc.unit.md.GroupMdApidocUnit;
 import info.xiancloud.plugin.Unit;
 import info.xiancloud.plugin.message.Xian;
 import info.xiancloud.plugin.util.HttpUtil;
@@ -41,22 +41,23 @@ public class ApidocServlet extends HttpServlet {
         Class<? extends Unit> apidocUnitClass;
         switch (docType) {
             case DOC_TYPE_CUSTOM:
-                apidocUnitClass = CustomApidocUnit.class;
+                apidocUnitClass = CustomizedMdApidocUnit.class;
                 break;
             case DOC_TYPE_FULL:
-                apidocUnitClass = FullApidocUnit.class;
+                apidocUnitClass = FullMdApidocUnit.class;
                 break;
             case DOC_TYPE_GROUP:
-                apidocUnitClass = GroupedApidocUnit.class;
+                apidocUnitClass = GroupMdApidocUnit.class;
                 break;
             default:
-                apidocUnitClass = FullApidocUnit.class;
+                apidocUnitClass = FullMdApidocUnit.class;
         }
         JSONObject params = HttpUtil.parseQueryString(req.getQueryString(), false);
         PrintWriter out = resp.getWriter();
         try {
             Unit apidocUnit = apidocUnitClass.newInstance();
-            out.print(Xian.call(apidocUnit.getGroup().getName(), apidocUnit.getName(), params, 2 * 60 * 1000).dataToStr());
+            out.print(Xian.call(apidocUnit.getGroup().getName(), apidocUnit.getName(), params, 2 * 60 * 1000)
+                    .throwExceptionIfNotSuccess().dataToStr());
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

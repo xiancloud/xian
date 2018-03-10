@@ -1,4 +1,4 @@
-package info.xiancloud.apidoc.unit;
+package info.xiancloud.apidoc.unit.md;
 
 import info.xiancloud.plugin.Input;
 import info.xiancloud.plugin.distribution.GroupBean;
@@ -17,7 +17,13 @@ import java.util.Map;
  *
  * @author happyyangyuan
  */
-public class GroupedApidocUnit extends AbstractApidocUnit {
+public class GroupMdApidocUnit extends AbstractMdApidocUnit {
+
+    @Override
+    public String getName() {
+        return "groupMd";
+    }
+
     @Override
     public Input otherInput() {
         return Input.create().add("groupName", String.class, "group name", REQUIRED);

@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * @author yyq
  */
-public class UnitBuildHandler extends BaseBuildHandler {
+public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
 
     /**
      * 筛选map集 只生成该集合中指定的接口
@@ -46,19 +46,19 @@ public class UnitBuildHandler extends BaseBuildHandler {
 
     private String subDec;
 
-    public UnitBuildHandler() {
+    public UnitMdBuilderHandler() {
 
     }
 
-    public UnitBuildHandler(Map<String, List<String>> filters) {
+    public UnitMdBuilderHandler(Map<String, List<String>> filters) {
         this.filters = filters;
     }
 
-    public UnitBuildHandler(String docName) {
+    public UnitMdBuilderHandler(String docName) {
         this.docName = docName;
     }
 
-    public UnitBuildHandler(String subDec, String docName, Map<String, List<String>> filters) {
+    public UnitMdBuilderHandler(String subDec, String docName, Map<String, List<String>> filters) {
         this(docName);
         this.subDec = subDec;
         this.filters = filters;
@@ -88,6 +88,7 @@ public class UnitBuildHandler extends BaseBuildHandler {
             }
             bw.newLine();
             for (GroupBean groupBean : groupList) {
+                bw.write("<br/>\r\n");
                 //todo it recommended to use a template to generate this MD fragment.
                 bw.write("## " + String.format("%s\r\n", StringUtil.isEmpty(groupBean.getDescription()) ? groupBean.getName() : groupBean.getDescription()));
                 bw.newLine();
@@ -137,10 +138,10 @@ public class UnitBuildHandler extends BaseBuildHandler {
                     bw.newLine();
                     bw.write(" * 返回数据格式\r\n");
                     bw.newLine();// `
-                    bw.write(String.format("`%s`",
-                            StringUtil.isEmpty(unitBean.getMeta().getSuccessfulUnitResponse()) ?
-                                    "暂无" : unitBean.getMeta().getSuccessfulUnitResponse().toVoJSONString()));
-                    bw.newLine();
+                    bw.write(String.format("````json\r\n%s\r\n````",
+                            unitBean.getMeta().getSuccessfulUnitResponse() == null ?
+                                    "暂无" : unitBean.getMeta().getSuccessfulUnitResponse().toVoJSONString(true)));
+                    bw.write("<br/><br/>\r\n");
                 }
             }
             bw.flush();
