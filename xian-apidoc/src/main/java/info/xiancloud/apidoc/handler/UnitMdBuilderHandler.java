@@ -33,11 +33,9 @@ import java.util.Map;
 public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
 
     /**
-     * 筛选map集 只生成该集合中指定的接口
-     * <p>
-     * key-对应group名称
-     * <p>
-     * values-对应当前group的unit集合
+     * 筛选map集 只生成该集合中指定的接口.
+     * key--对应group名称,
+     * values--对应当前group的unit集合
      */
     private Map<String, List<String>> filters;
 
@@ -88,7 +86,6 @@ public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
             }
             bw.newLine();
             for (GroupBean groupBean : groupList) {
-                bw.write("<br/>\r\n");
                 //todo it recommended to use a template to generate this MD fragment.
                 bw.write("## " + String.format("%s\r\n", StringUtil.isEmpty(groupBean.getDescription()) ? groupBean.getName() : groupBean.getDescription()));
                 bw.newLine();
@@ -137,13 +134,14 @@ public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
                     bw.write("</table>\r\n");
                     bw.newLine();
                     bw.write(" * 返回数据格式\r\n");
-                    bw.newLine();// `
-                    bw.write(String.format("````json\r\n%s\r\n````",
+                    bw.newLine();
+                    bw.write(String.format("````json\r\n%s\r\n````\r\n",
                             unitBean.getMeta().getSuccessfulUnitResponse() == null ?
                                     "暂无" : unitBean.getMeta().getSuccessfulUnitResponse().toVoJSONString(true)));
-                    bw.write("<br/><br/>\r\n");
+                    bw.write("&nbsp;&nbsp;\r\n");
                 }
             }
+            bw.write("&nbsp;&nbsp;\r\n");
             bw.flush();
             invokeCallback(bos.toByteArray());
             LOG.info("-----unit接口文档构建完成----");
