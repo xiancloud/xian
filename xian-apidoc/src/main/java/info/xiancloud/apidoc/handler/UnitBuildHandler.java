@@ -80,7 +80,7 @@ public class UnitBuildHandler extends BaseBuildHandler {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             Writer wout = new OutputStreamWriter(bos);
             BufferedWriter bw = new BufferedWriter(wout);
-            bw.write(String.format("# %s", StringUtil.isEmpty(docName) ? EnvUtil.getEnv() + "业务接口文档" : docName));
+            bw.write(String.format("# %s", StringUtil.isEmpty(docName) ? EnvUtil.getShortEnvName() + "业务接口文档" : docName));
             // 自定义描述
             if (!StringUtil.isEmpty(subDec)) {
                 bw.newLine();
@@ -104,7 +104,7 @@ public class UnitBuildHandler extends BaseBuildHandler {
                     LOG.info(String.format(" ---api-doc-unit接口开始生成:%s/%s", groupBean.getName(), unitBean.getName()));
 
                     Input io = unitBean.getInput();
-                    bw.write(String.format("### /v1.0/%s/%s", groupBean.getName(), unitBean.getName()));
+                    bw.write(String.format("### /%s/%s", groupBean.getName(), unitBean.getName()));
                     bw.newLine();
                     bw.write(String.format(" * 接口描述: %s\r\n",
                             StringUtil.isEmpty(unitBean.getMeta().getDescription()) ? "暂无" : unitBean.getMeta().getDescription()));
@@ -113,7 +113,7 @@ public class UnitBuildHandler extends BaseBuildHandler {
                     bw.newLine();
                     bw.write(" * 入参数据结构说明\r\n");
                     bw.newLine();
-                    bw.write(" <table class='table table-bordered table-striped table-condensed'>");
+                    bw.write(" <table border='1' class='table table-bordered table-striped table-condensed'>");
                     bw.newLine();
                     bw.write("<tr><td>名称</td><td>数据类型</td><td>参数说明</td><td>必须</td></tr>");
                     bw.newLine();

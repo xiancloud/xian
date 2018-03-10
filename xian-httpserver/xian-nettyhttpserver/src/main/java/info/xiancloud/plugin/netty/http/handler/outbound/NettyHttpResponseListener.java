@@ -22,7 +22,7 @@ public class NettyHttpResponseListener implements IServerResponder {
             LOG.error("httpServer内找不到msgId " + responseBean.getMsgId() + " 的请求记录", new RuntimeException());
         } else {
             request.getChannelHandlerContext().channel().attr(ReqQueue.REQ_QUEUE).get().writeAndFlush(
-                    new ResponseWrapper(request, responseBean.getResponseBody())
+                    new ResponseWrapper(request, responseBean.getResponseBody()).setHttpContentType(responseBean.getHttpContentType())
             );
         }
     }

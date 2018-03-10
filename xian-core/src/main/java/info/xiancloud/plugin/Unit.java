@@ -68,7 +68,7 @@ public interface Unit {
     }
 
     //同上，用于限制unit对象只序列化指定属性，规避未知业务unit的意外getter被触发调用
-    SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Unit.class, "meta", "input", "version");
+    SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Unit.class, "name","group","meta", "input", "version");
 
     /**
      * Unified unit full name. The full name is the combination of group name and unit name.

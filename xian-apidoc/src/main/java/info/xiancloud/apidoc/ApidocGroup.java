@@ -2,13 +2,16 @@ package info.xiancloud.apidoc;
 
 import info.xiancloud.plugin.Group;
 
-public class APIBuildServiceGroup implements Group {
+/**
+ * @author yyq, happyyangyuan
+ */
+public class ApidocGroup implements Group {
 
-    public static final Group singleton = new APIBuildServiceGroup();
+    public static final Group singleton = new ApidocGroup();
 
     @Override
     public String getName() {
-        return "apiBuildService";
+        return "apidoc";
     }
 
     @Override

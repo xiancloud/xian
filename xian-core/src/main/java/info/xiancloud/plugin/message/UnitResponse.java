@@ -537,6 +537,25 @@ final public class UnitResponse {
          */
         private MessageType messageType = MessageType.response;
 
+        /**
+         * the {@link HttpContentType content type} for the gateway to response in the http header.
+         */
+        private String httpContentType;
+
+        public String getHttpContentType() {
+            return httpContentType;
+        }
+
+        /**
+         * @param httpContentType the {@link HttpContentType content type string}
+         * @return this context object.
+         * @see HttpContentType
+         */
+        public Context setHttpContentType(String httpContentType) {
+            this.httpContentType = httpContentType;
+            return this;
+        }
+
         public String getSsid() {
             return ssid;
         }

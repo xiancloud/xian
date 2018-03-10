@@ -1,0 +1,19 @@
+<html>
+<title>api doc demo</title>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body id="md" onload="load()">
+</body>
+</html>
+<script src="js/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/showdown/showdown-1.8.6/showdown.min.js"></script>
+<script type="text/javascript">
+    function load() {
+        var converter = new showdown.Converter();
+        $.get("/apidoc/full", function (text) {
+            document.getElementById("md").innerHTML = converter.makeHtml(text);
+        });
+    }
+</script>
+

@@ -9,7 +9,7 @@ subprojects {
     apply plugin: 'signing'
 
     group 'info.xiancloud'
-    version '0.1.1'
+    version '0.1.1.1-beta'
 
     repositories {
         jcenter()
@@ -43,7 +43,7 @@ subprojects {
     }
 
     artifacts {
-        archives javadocJar, sourcesJar
+        archives /*javadocJar,*/ sourcesJar
     }
 
     //publish artifacts into private nexus
@@ -82,6 +82,9 @@ subprojects {
                     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
                     // Target repository
                     repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                        authentication(userName: ossrhUser, password: ossrhPassword)
+                    }
+                    snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots') {
                         authentication(userName: ossrhUser, password: ossrhPassword)
                     }
                     pom.project {
@@ -125,12 +128,11 @@ subprojects {
         println 'web detected:' + project.name
         apply plugin: 'war'
         dependencies {
-            /*providedRuntime group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"*/
             providedRuntime project(':xian-core')
         }
         configurations {
             war {
-                archiveName 'web.war' // here we give the fixed archive name.
+                //we can not use archiveName to set custom name, because it is without signature.
                 from 'WebRoot'
                 //We fix the web root name as 'WebRoot', whoever uses this xian framework's web plugin must obey it.
             }

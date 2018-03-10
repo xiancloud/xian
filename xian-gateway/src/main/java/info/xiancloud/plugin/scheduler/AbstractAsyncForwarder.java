@@ -5,6 +5,7 @@ import info.xiancloud.plugin.distribution.exception.BadRequestException;
 import info.xiancloud.plugin.executor.BaseController;
 import info.xiancloud.plugin.executor.URIBean;
 import info.xiancloud.plugin.handle.TransactionalNotifyHandler;
+import info.xiancloud.plugin.message.HttpContentType;
 import info.xiancloud.plugin.message.RequestContext;
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.message.UnitResponse;
@@ -45,6 +46,7 @@ public abstract class AbstractAsyncForwarder implements IAsyncForwarder, IRespon
             LOG.warn(badRequestException);
             ServerResponseBean responseBean = new ServerResponseBean();
             responseBean.setMsgId(msgId);
+            responseBean.setHttpContentType(HttpContentType.APPLICATION_JSON);
             responseBean.setResponseBody(UnitResponse.error(Group.CODE_BAD_REQUEST, null, badRequestException.getLocalizedMessage()).toVoJSONString());
             IServerResponder.singleton.response(responseBean);
             return;
@@ -73,6 +75,7 @@ public abstract class AbstractAsyncForwarder implements IAsyncForwarder, IRespon
                 ServerResponseBean responseBean = new ServerResponseBean();
                 responseBean.setResponseBody(extractContext(unitResponse));
                 responseBean.setMsgId(msgId);
+                responseBean.setHttpContentType(unitResponse.getContext().getHttpContentType());
                 IServerResponder.singleton.response(responseBean);
             }
         });

@@ -28,9 +28,9 @@ public class RequestDecoderAux extends MessageToMessageDecoder<FullHttpRequest> 
     @Override
     protected void decode(ChannelHandlerContext ctx, FullHttpRequest msg, List<Object> out) throws Exception {
         LOG.debug("    httpRequest  ---->   UnitRequest Pojo");
-        if (!HttpMethod.POST.equals(msg.method())) {
+        /*if (!HttpMethod.POST.equals(msg.method())) {
             throw new BadRequestException(new IllegalArgumentException("拒绝非POST请求！"));
-        }
+        }*/
         DecoderResult result = msg.decoderResult();
         if (!result.isSuccess()) {
             throw new BadRequestException(result.cause());

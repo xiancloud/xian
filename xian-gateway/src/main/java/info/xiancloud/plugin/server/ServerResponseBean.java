@@ -11,6 +11,7 @@ public class ServerResponseBean extends Bean {
 
     private String msgId;
     private String responseBody;
+    private String httpContentType;
 
     public String getMsgId() {
         return msgId;
@@ -26,5 +27,13 @@ public class ServerResponseBean extends Bean {
 
     public void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
+    }
+
+    public String getHttpContentType() {
+        return httpContentType;
+    }
+
+    public void setHttpContentType(String httpContentType) {
+        this.httpContentType = httpContentType;
     }
 }

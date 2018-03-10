@@ -6,8 +6,10 @@ import info.xiancloud.plugin.message.SyncXian;
 import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.socket.ConnectTimeoutException;
 import info.xiancloud.plugin.socket.ISocketGroup;
+import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.net.SocketTimeoutException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +59,30 @@ public class HttpUtil {
             }
             return stringBuilder.substring(0, stringBuilder.length() - 1);
         }
+    }
+
+    /**
+     * parse the given http query string
+     *
+     * @param queryString the standard http query string
+     * @param hasPath     whether the query string contains uri
+     * @return the parsed json object. if the given query string is empty then an empty json object is returned.
+     */
+    public static JSONObject parseQueryString(String queryString, boolean hasPath) {
+        JSONObject uriParameters = new JSONObject();
+        if (queryString == null) return uriParameters;
+        QueryStringDecoder queryStringDecoder = new QueryStringDecoder(queryString, hasPath);
+        Map<String, List<String>> parameters = queryStringDecoder.parameters();
+        parameters.forEach((key, values) -> {
+            if (values == null || values.isEmpty()) {
+                LOG.debug("空参数统一对应空字符串");
+                uriParameters.put(key, "");
+            } else if (values.size() == 1)
+                uriParameters.put(key, values.get(0));
+            else
+                uriParameters.put(key, values);
+        });
+        return uriParameters;
     }
 
     public static String post(String url, String body, Map<String, String> headers) throws ConnectTimeoutException, SocketTimeoutException {

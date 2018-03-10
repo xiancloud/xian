@@ -4,6 +4,7 @@ import info.xiancloud.plugin.util.ArrayUtil;
 import info.xiancloud.plugin.util.LOG;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * util class for plugin jars.
@@ -12,6 +13,8 @@ import java.io.File;
  */
 public class PluginFileUtil {
 
+    private static final String PLUGINS_DIR_NAME = "plugins/";
+
     /**
      * @return all jars in classpath, no cache.
      */
@@ -19,6 +22,18 @@ public class PluginFileUtil {
         File[] jarsInPluginsDir = jarsInPlugins(),
                 jarsInLibsDir = jarsInLibs();
         return ArrayUtil.concat(jarsInLibsDir, jarsInPluginsDir);
+    }
+
+    /**
+     * @return the war file in the plugins dir.
+     * @throws FileNotFoundException unable to find a war file in the plugins directory.
+     */
+    public static File war() throws FileNotFoundException {
+        String[] wars = new File(PLUGINS_DIR_NAME).list((dir, name) -> name.endsWith(".war"));
+        if (wars == null || wars.length == 0) {
+            throw new FileNotFoundException("unable to find a war file in " + PLUGINS_DIR_NAME);
+        }
+        return new File(PLUGINS_DIR_NAME + wars[0]);
     }
 
     /**

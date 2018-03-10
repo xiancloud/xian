@@ -4,4 +4,6 @@ dependencies {
     runtime project(':xian-rpc:xian-rpcNettyServer')
     runtime project(':xian-redis')
     runtime project(':xian-apidoc')
+    runtime project(':xian-web:xian-jettyweb')
+    runtime project(path: ':xian-apidoc:xian-apidoc-web', configuration: 'war')
 }
