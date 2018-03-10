@@ -43,7 +43,7 @@ subprojects {
     }
 
     artifacts {
-        archives /*javadocJar,*/ sourcesJar
+        archives javadocJar, sourcesJar
     }
 
     //publish artifacts into private nexus
