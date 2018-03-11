@@ -15,7 +15,49 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 ![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://happyyangyuan.top/xian/基于xian的微服务逻辑架构图.png)
 
 ## 30分钟学会使用xian frame开发微服务
-我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xianframe的依赖。
+
+### 编写一个微服务单元
+编写一个微服务单元只需要实现接口Unit即可：
+````java
+public class HelloWorldUnit implements Unit {
+    @Override
+    public String getName() { // 指定一个unit名称
+        return "helloWorld";
+    }
+    
+    @Override
+    public Group getGroup() { // 指定当前微服务单元所属的group对象
+        return TestGroup.singleton;
+    }
+
+    @Override
+    public Input getInput() { // 指定微服务单元的入参定义
+        return Input.create().add("yourName", String.class, "你的名字", REQUIRED);
+    }
+
+    @Override
+    public UnitResponse execute(UnitRequest msg) { // 当前微服务单元的执行逻辑
+        System.out.println("hello world, "+ msg.getString("yourName"));
+        return UnitResponse.success();
+    }
+}
+````
+定义一个微服务单元是不是很简单？ 接下来我们展示如何使用RPC来调用该服务单元：
+````java
+UnitResponse resp = Xian.call("test", "helloWorld", map/bean);
+````
+以上是同步RPC调用，下面暂时异步RPC调用：
+````java
+Xian.call("test", "helloWorld", map/bean, new NotifyHandler() {
+    toContinue(UnitResponse response){
+        // do sth with the response.
+    }
+});
+````
+接下来，你只需要在各个微服务内编写各自的微服务单元，然后就可以实现自己的分布式应用啦，就是这么简单！
+
+### xian_template
+我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xian frame的依赖。
 
 #### 1、下载gradle项目模板源码
 ````bash
@@ -72,7 +114,7 @@ rpc调用关系见上文微服务关系图。
 
 
 #### 可运行的application
-我们在/xian_template/xian_runtime/下存在四个application如下：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
+我们在/xian_template/xian_runtime/下存在几个application：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
 我们将每个application看作是一个微服务，下面依次讲解。
 
 1. demoWebApplication01插件demo_web_plugin01被部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle:
@@ -112,6 +154,15 @@ api_gateway_port=
 curl -XPOST http://localhost:9123/demoGroup01/demoUnit01
 ````
 同样的你可以访问 curl -XPOST http://localhost:9123/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
+
+5. API文档微服务 apidocApplication 
+顾名思义，它就是为你自动生成API文档的，执行start.sh来启动该微服务，然后访问如下地址查看文档效果:
+http://localhost:9123/apidoc/customizedHtml?docName=docName&unitFilter=apidoc.customizedHtml&docDescription=docDescription
+http://localhost:9123/apidoc/fullHtml?docName=docName
+http://localhost:9123/apidoc/groupHtml?groupName=apidoc&docName=docName&docDescription=docDescription
+
+tips: 可以设置你自己想要的参数来定制不同的API文档出来哦。
+
 
 #### 惯例和约定
 1. 从上文你不难看出，每一个unit都以http api形式通过demoGateway暴露给外部了，这个URI的格式如上所述： http://gatewayHost:gatewayPort/groupName/unitName
