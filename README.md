@@ -155,12 +155,12 @@ curl -XPOST http://localhost:9123/demoGroup01/demoUnit01
 ````
 同样的你可以访问 curl -XPOST http://localhost:9123/demoGroup02/demoUnit02 来访问DemoUnit02，不过它会提示缺少参数，需要什么参数可以参见DemoUnit02的实现。
 
-5. API文档微服务 apidocApplication 
-顾名思义，它就是为你自动生成API文档的，执行start.sh来启动该微服务，然后访问如下地址查看文档效果:
-http://localhost:9123/apidoc/customizedHtml?docName=docName&unitFilter=apidoc.customizedHtml&docDescription=docDescription
-http://localhost:9123/apidoc/fullHtml?docName=docName
-http://localhost:9123/apidoc/groupHtml?groupName=apidoc&docName=docName&docDescription=docDescription
-
+#### API文档微服务 apidocApplication
+顾名思义，它就是为你自动生成API文档的，执行start.sh来启动该微服务，然后访问如下地址查看文档效果:  
+http://localhost:9123/apidoc/customizedHtml?docName=docName&unitFilter=apidoc.customizedHtml&docDescription=docDescription  
+http://localhost:9123/apidoc/fullHtml?docName=docName  
+http://localhost:9123/apidoc/groupHtml?groupName=apidoc&docName=docName&docDescription=docDescription  
+  
 tips: 可以设置你自己想要的参数来定制不同的API文档出来哦。
 
 
