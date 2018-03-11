@@ -46,7 +46,7 @@ public class HelloWorldUnit implements Unit {
 ````java
 UnitResponse resp = Xian.call("test", "helloWorld", map/bean);
 ````
-以上是同步RPC调用，下面暂时异步RPC调用：
+以上是同步RPC调用，下面展示异步RPC调用：
 ````java
 Xian.call("test", "helloWorld", map/bean, new NotifyHandler() {
     toContinue(UnitResponse response){
