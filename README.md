@@ -15,9 +15,8 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 ![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://happyyangyuan.top/xian/基于xian的微服务逻辑架构图.png)
 
 ## 30分钟学会使用xian frame开发微服务
-
-### 引入依赖
 我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xianframe的依赖。
+
 #### 1、下载gradle项目模板源码
 ````bash
 git clone https://github.com/happyyangyuan/xian_template
@@ -60,7 +59,7 @@ demoApplication02、demoWebApplication亦是如此。
 该“服务单元”调用另外一个“服务单元” DemoUnit02.java，形成rpc调用关系，具体见这两个unit代码的execute方法体：
 ````java
 public class DemoUnit01 implements Unit {
-    ...
+    //...
     
     @Override
     public UnitResponse execute(UnitRequest msg) {
@@ -97,8 +96,8 @@ demoWebApplication01以“微服务”的身份定义于微服务集群内。我
 
 2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9123，并且可配置，配置文件在xian_runtime/demoGateway/conf/application.properties：
 ````properties
-...
-#gateway http server port, the default port is 9123 if you leave this empty.
+# ...
+# gateway http server port, the default port is 9123 if you leave this empty.
 api_gateway_port=
 ````
 
