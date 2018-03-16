@@ -54,9 +54,9 @@ public interface Unit {
     /**
      * 组件业务执行方法
      *
-     * @param msg 具体的消息
+     * @param request 具体的消息
      */
-    UnitResponse execute(UnitRequest msg);
+    UnitResponse execute(UnitRequest request);
 
     /**
      * 用于序列化unit定义；

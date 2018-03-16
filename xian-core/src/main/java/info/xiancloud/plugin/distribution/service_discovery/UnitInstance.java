@@ -25,4 +25,9 @@ public class UnitInstance extends Instance<UnitProxy> {
         this.unitInstanceIdBean = new UnitInstanceIdBean(id);
     }
 
+    public void setUnitInstanceIdBean(UnitInstanceIdBean unitInstanceIdBean) {
+        super.setId(unitInstanceIdBean.getUnitInstanceId());
+        this.unitInstanceIdBean = unitInstanceIdBean;
+    }
+
 }

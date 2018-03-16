@@ -19,4 +19,9 @@ public class GroupInstance extends Instance<GroupProxy> {
         super.setId(id);
         this.groupInstanceIdBean = new GroupInstanceIdBean(id);
     }
+
+    public void setGroupInstanceIdBean(GroupInstanceIdBean groupInstanceIdBean) {
+        super.setId(groupInstanceIdBean.getGroupInstanceId());
+        this.groupInstanceIdBean = groupInstanceIdBean;
+    }
 }

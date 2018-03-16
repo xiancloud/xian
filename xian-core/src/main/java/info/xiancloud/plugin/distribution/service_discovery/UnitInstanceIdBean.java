@@ -15,8 +15,8 @@ public class UnitInstanceIdBean {
         setUnitInstanceId(unitInstanceId);
     }
 
-    public UnitInstanceIdBean(String fullName, String nodeId) {
-        setUnitInstanceId(nodeId.concat(NODEID_UNIT_DELIMITER).concat(fullName));
+    public UnitInstanceIdBean(String fullUnitName, String nodeId) {
+        setUnitInstanceId(nodeId.concat(NODEID_UNIT_DELIMITER).concat(fullUnitName));
     }
 
     public String getFullName() {
