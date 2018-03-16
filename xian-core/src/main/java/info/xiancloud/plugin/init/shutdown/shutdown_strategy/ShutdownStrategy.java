@@ -130,11 +130,11 @@ public abstract class ShutdownStrategy {
         Map<String, Runnable> allShutdowns = new LinkedHashMap<String, Runnable>() /*必须使用有序map */ {{
             put(ReadySignal.class.getSimpleName() + ".destroy", ReadySignal.singleton::destroy);
             if (ApplicationDiscovery.singleton != null)
-                put(ApplicationDiscovery.class.getSimpleName() + ".unregister", ApplicationDiscovery.singleton::unregister);
+                put(ApplicationDiscovery.class.getSimpleName() + ".unregister", ApplicationDiscovery.singleton::selfUnregister);
             if (GroupDiscovery.singleton != null)
-                put(GroupDiscovery.class.getSimpleName() + ".unregister", GroupDiscovery.singleton::unregister);
+                put(GroupDiscovery.class.getSimpleName() + ".unregister", GroupDiscovery.singleton::selfUnregister);
             if (UnitDiscovery.singleton != null)
-                put(UnitDiscovery.class.getSimpleName() + ".unregister", UnitDiscovery.singleton::unregister);
+                put(UnitDiscovery.class.getSimpleName() + ".unregister", UnitDiscovery.singleton::selfUnregister);
             for (ShutdownHook hook : shutdowns) {
                 put(hook.getClass().getSimpleName(), hook::shutdown);
             }

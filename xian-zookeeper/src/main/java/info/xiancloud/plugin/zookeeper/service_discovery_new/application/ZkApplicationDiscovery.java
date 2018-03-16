@@ -5,8 +5,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
-import info.xiancloud.plugin.distribution.LocalNodeManager;
-import info.xiancloud.plugin.distribution.Node;
 import info.xiancloud.plugin.distribution.NodeStatus;
 import info.xiancloud.plugin.distribution.event.NodeOfflineEvent;
 import info.xiancloud.plugin.distribution.event.NodeOnlineEvent;
@@ -15,7 +13,6 @@ import info.xiancloud.plugin.distribution.service_discovery.ApplicationDiscovery
 import info.xiancloud.plugin.distribution.service_discovery.ApplicationInstance;
 import info.xiancloud.plugin.event.EventPublisher;
 import info.xiancloud.plugin.message.id.NodeIdBean;
-import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.LOG;
 import info.xiancloud.plugin.zookeeper.ZkConnection;
 import info.xiancloud.plugin.zookeeper.ZkPathManager;
@@ -141,31 +138,32 @@ public class ZkApplicationDiscovery implements ApplicationDiscovery {
         }
     }
 
-    public void register() {
+    public void selfRegister() {
         try {
-            serviceDiscovery.registerService(thisInstance());
+            serviceDiscovery.registerService(ZkServiceInstanceAdaptor.thisCuratorServiceInstance());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void unregister() {
+    public void selfUnregister() {
         try {
-            serviceDiscovery.unregisterService(thisInstance());
+            serviceDiscovery.unregisterService(ZkServiceInstanceAdaptor.thisCuratorServiceInstance());
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static ServiceInstance<NodeStatus> thisInstance() throws Exception {
-        return ServiceInstance.<NodeStatus>builder()
-                .address(EnvUtil.getLocalIp())
-                .enabled(true)
-                .id(LocalNodeManager.LOCAL_NODE_ID)
-                .name(EnvUtil.getApplication())
-                .port(Node.RPC_PORT)
-                .payload(LocalNodeManager.singleton.getFullStatus())
-                .build();
+    @Override
+    public void register(ApplicationInstance applicationInstance) throws Exception {
+        ServiceInstance<NodeStatus> serviceInstance = ZkServiceInstanceAdaptor.curatorServiceInstance(applicationInstance);
+        serviceDiscovery.registerService(serviceInstance);
+    }
+
+    @Override
+    public void unregister(ApplicationInstance applicationInstance) throws Exception {
+        ServiceInstance<NodeStatus> serviceInstance = ZkServiceInstanceAdaptor.curatorServiceInstance(applicationInstance);
+        serviceDiscovery.unregisterService(serviceInstance);
     }
 
     @Override

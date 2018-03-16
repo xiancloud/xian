@@ -97,11 +97,11 @@ public class StartServer {
             }
         }
         if (ApplicationDiscovery.singleton != null)
-            ApplicationDiscovery.singleton.register();
+            ApplicationDiscovery.singleton.selfRegister();
         if (GroupDiscovery.singleton != null)
-            GroupDiscovery.singleton.register();
+            GroupDiscovery.singleton.selfRegister();
         if (UnitDiscovery.singleton != null)
-            UnitDiscovery.singleton.register();
+            UnitDiscovery.singleton.selfRegister();
         ReadySignal.singleton.init();
     }
 }

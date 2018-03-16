@@ -5,20 +5,19 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
-import info.xiancloud.plugin.Unit;
 import info.xiancloud.plugin.LocalUnitsManager;
 import info.xiancloud.plugin.distribution.UnitProxy;
-import info.xiancloud.plugin.distribution.LocalNodeManager;
-import info.xiancloud.plugin.distribution.Node;
 import info.xiancloud.plugin.distribution.service_discovery.UnitDiscovery;
 import info.xiancloud.plugin.distribution.service_discovery.UnitInstance;
 import info.xiancloud.plugin.distribution.service_discovery.UnitInstanceIdBean;
-import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.LOG;
 import info.xiancloud.plugin.zookeeper.ZkConnection;
 import info.xiancloud.plugin.zookeeper.ZkPathManager;
 import info.xiancloud.plugin.zookeeper.service_discovery_new.ZkServiceInstanceAdaptor;
-import org.apache.curator.x.discovery.*;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
+import org.apache.curator.x.discovery.ServiceInstance;
+import org.apache.curator.x.discovery.ServiceProvider;
 import org.apache.curator.x.discovery.details.FastjsonServiceDefinitionSerializer;
 import org.apache.curator.x.discovery.details.InstanceProvider;
 
@@ -26,9 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 /**
  * @author happyyangyuan
@@ -106,30 +103,25 @@ public class ZkUnitDiscovery implements UnitDiscovery {
      * 向zk server注册本节点内所有unit；
      * 注意，必须先init然后才可以执行本方法
      */
-    public void register() {
-        LocalUnitsManager.searchUnitMap(new Consumer<Map<String, Unit>>() {
-            @Override
-            public void accept(Map<String, Unit> searchUnitMap) {
-                searchUnitMap.forEach((unitFullName, unit) -> {
-                    try {
-                        ServiceInstance<UnitProxy> thisInstance = thisInstance(unitFullName, unit);
-                        serviceDiscovery.registerService(thisInstance);
-                    } catch (Exception e) {
-                        LOG.error(e);//别打断循环内其他操作
-                    }
-                });
+    public void selfRegister() {
+        LocalUnitsManager.searchUnitMap(searchUnitMap -> searchUnitMap.forEach((unitFullName, unit) -> {
+            try {
+                ServiceInstance<UnitProxy> thisInstance = ZkServiceInstanceAdaptor.thisCuratorServiceInstance(unit);
+                serviceDiscovery.registerService(thisInstance);
+            } catch (Exception e) {
+                LOG.error(e);//别打断循环内其他操作
             }
-        });
+        }));
     }
 
     /**
      * 注销本节点内所有unit实例
      */
-    public void unregister() {
+    public void selfUnregister() {
         LocalUnitsManager.searchUnitMap(searchUnitMap ->
                 searchUnitMap.forEach((unitFullName, unit) -> {
                     try {
-                        ServiceInstance<UnitProxy> thisInstance = thisInstance(unitFullName, unit);
+                        ServiceInstance<UnitProxy> thisInstance = ZkServiceInstanceAdaptor.thisCuratorServiceInstance(unit);
                         serviceDiscovery.unregisterService(thisInstance);
                     } catch (Throwable e) {
                         LOG.error(e);//别打断循环内其他操作
@@ -137,16 +129,14 @@ public class ZkUnitDiscovery implements UnitDiscovery {
                 }));
     }
 
-    private static ServiceInstance<UnitProxy> thisInstance(String unitFullName, Unit unit) throws Exception {
-        return ServiceInstance.<UnitProxy>builder()
-                .address(EnvUtil.getLocalIp())
-                .enabled(true)
-                .id(new UnitInstanceIdBean(unitFullName, LocalNodeManager.LOCAL_NODE_ID).getUnitInstanceId())
-                .name(unitFullName)
-                .port(Node.RPC_PORT)
-                .payload(UnitProxy.create(unit))
-                .serviceType(ServiceType.DYNAMIC)
-                .build();
+    @Override
+    public void register(UnitInstance unitInstance) throws Exception {
+        serviceDiscovery.registerService(ZkServiceInstanceAdaptor.curatorServiceInstance(unitInstance));
+    }
+
+    @Override
+    public void unregister(UnitInstance unitInstance) throws Exception {
+        serviceDiscovery.unregisterService(ZkServiceInstanceAdaptor.curatorServiceInstance(unitInstance));
     }
 
     @Override

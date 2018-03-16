@@ -76,18 +76,30 @@ public interface IDiscovery<Instance, Definition> extends Initable, Destroyable 
      */
     Definition newestDefinition(String name);
 
-
-    //==========================================以下是初始化和销毁================================
-
     /**
      * 向注册中心注册自己
+     * register services of itself
      */
-    void register();
+    void selfRegister();
 
     /**
      * 从注册中心把自己给注销掉
+     * un register services of itself
      */
-    void unregister();
+    void selfUnregister();
 
+    /**
+     * register a specified service instance.
+     *
+     * @param instance service instance to register
+     */
+    void register(Instance instance) throws Exception;
+
+    /**
+     * un register a specified service instance.
+     *
+     * @param instance the instance to un register.
+     */
+    void unregister(Instance instance) throws Exception;
 
 }

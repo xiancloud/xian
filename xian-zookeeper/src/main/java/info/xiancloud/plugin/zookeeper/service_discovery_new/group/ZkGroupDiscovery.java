@@ -10,9 +10,6 @@ import info.xiancloud.plugin.distribution.GroupProxy;
 import info.xiancloud.plugin.distribution.service_discovery.GroupDiscovery;
 import info.xiancloud.plugin.distribution.service_discovery.GroupInstance;
 import info.xiancloud.plugin.distribution.service_discovery.GroupInstanceIdBean;
-import info.xiancloud.plugin.distribution.LocalNodeManager;
-import info.xiancloud.plugin.distribution.Node;
-import info.xiancloud.plugin.util.EnvUtil;
 import info.xiancloud.plugin.util.LOG;
 import info.xiancloud.plugin.zookeeper.ZkConnection;
 import info.xiancloud.plugin.zookeeper.ZkPathManager;
@@ -106,11 +103,12 @@ public class ZkGroupDiscovery implements GroupDiscovery {
      * 向zk server注册本节点内所有units；
      * 注意，必须先init然后才可以执行本方法
      */
-    public void register() {
+    public void selfRegister() {
         LocalUnitsManager.unitMap(unitMap -> {
             unitMap.forEach((groupName, unitsIgnored) -> {
                 try {
-                    serviceDiscovery.registerService(thisInstance(groupName));
+                    ServiceInstance<GroupProxy> serviceInstance = ZkServiceInstanceAdaptor.thisCuratorServiceInstance(groupName);
+                    serviceDiscovery.registerService(serviceInstance);
                 } catch (Exception e) {
                     LOG.error(e);
                     //the registration should not be interrupted due to one error.
@@ -122,11 +120,12 @@ public class ZkGroupDiscovery implements GroupDiscovery {
     /**
      * 注销本节点内所有unit实例
      */
-    public void unregister() {
+    public void selfUnregister() {
         LocalUnitsManager.unitMap(unitMap -> {
             unitMap.forEach((groupName, unitListIgnored) -> {
                 try {
-                    serviceDiscovery.unregisterService(thisInstance(groupName));
+                    ServiceInstance<GroupProxy> serviceInstance = ZkServiceInstanceAdaptor.thisCuratorServiceInstance(groupName);
+                    serviceDiscovery.unregisterService(serviceInstance);
                 } catch (Exception e) {
                     LOG.error(e);
                     //should not be interrupted due to one error.
@@ -135,15 +134,14 @@ public class ZkGroupDiscovery implements GroupDiscovery {
         });
     }
 
-    private static ServiceInstance<GroupProxy> thisInstance(String groupName) throws Exception {
-        return ServiceInstance.<GroupProxy>builder()
-                .address(EnvUtil.getLocalIp())
-                .enabled(true)
-                .id(new GroupInstanceIdBean(groupName, LocalNodeManager.LOCAL_NODE_ID).getGroupInstanceId())
-                .name(groupName)
-                .port(Node.RPC_PORT)
-                .payload(GroupProxy.create(LocalUnitsManager.getGroupByName(groupName)))
-                .build();
+    @Override
+    public void register(GroupInstance groupInstance) throws Exception {
+        serviceDiscovery.registerService(ZkServiceInstanceAdaptor.curatorServiceInstance(groupInstance));
+    }
+
+    @Override
+    public void unregister(GroupInstance groupInstance) throws Exception {
+        serviceDiscovery.unregisterService(ZkServiceInstanceAdaptor.curatorServiceInstance(groupInstance));
     }
 
     @Override
@@ -214,4 +212,5 @@ public class ZkGroupDiscovery implements GroupDiscovery {
     public GroupProxy newestDefinition(String name) {
         return serviceProviders.getUnchecked(name).getNewestServiceDefinition();
     }
+
 }
