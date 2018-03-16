@@ -1,16 +1,11 @@
 package info.xiancloud.apidoc.unit.md;
 
+import info.xiancloud.apidoc.handler.filter.FilterByGroups;
+import info.xiancloud.apidoc.handler.filter.IUnitFilter;
 import info.xiancloud.plugin.Input;
-import info.xiancloud.plugin.distribution.GroupBean;
-import info.xiancloud.plugin.distribution.exception.GroupOfflineException;
-import info.xiancloud.plugin.distribution.exception.GroupUndefinedException;
-import info.xiancloud.plugin.distribution.loadbalance.GroupRouter;
-import info.xiancloud.plugin.distribution.service_discovery.GroupInstance;
 import info.xiancloud.plugin.message.UnitRequest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * apidoc builder for a specified group
@@ -18,7 +13,6 @@ import java.util.Map;
  * @author happyyangyuan
  */
 public class GroupMdApidocUnit extends AbstractMdApidocUnit {
-
     @Override
     public String getName() {
         return "groupMd";
@@ -30,17 +24,12 @@ public class GroupMdApidocUnit extends AbstractMdApidocUnit {
     }
 
     @Override
-    protected Map<String, List<String>> filter(UnitRequest request) {
-        Map<String, List<String>> filter = new HashMap<>();
-        String groupName = request.getString("groupName");
-        try {
-            GroupInstance groupInstance = GroupRouter.singleton.firstInstance(groupName);
-            GroupBean groupBean = groupInstance.getPayload();
-            filter.put(groupName, groupBean.getUnitNames());
-            return filter;
-        } catch (GroupOfflineException | GroupUndefinedException e) {
-            throw new RuntimeException(e);
-        }
+    protected IUnitFilter getFilter(UnitRequest request) {
+        IUnitFilter filter = new FilterByGroups();
+        filter.setValues(new ArrayList<String>() {{
+            add(request.getString("groupName"));
+        }});
+        return filter;
     }
 
 }

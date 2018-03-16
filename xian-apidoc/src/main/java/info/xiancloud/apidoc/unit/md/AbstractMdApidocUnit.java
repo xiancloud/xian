@@ -3,6 +3,7 @@ package info.xiancloud.apidoc.unit.md;
 import info.xiancloud.apidoc.ApiBuilder;
 import info.xiancloud.apidoc.ApidocGroup;
 import info.xiancloud.apidoc.handler.UnitMdBuilderHandler;
+import info.xiancloud.apidoc.handler.filter.IUnitFilter;
 import info.xiancloud.plugin.Group;
 import info.xiancloud.plugin.Input;
 import info.xiancloud.plugin.Unit;
@@ -12,8 +13,6 @@ import info.xiancloud.plugin.message.UnitResponse;
 import info.xiancloud.plugin.util.LOG;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Map;
 
 /**
  * super class for api doc builder unit.
@@ -34,7 +33,7 @@ public abstract class AbstractMdApidocUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        String doc = specifyBuild(msg.getString("docDescription"), msg.getString("docName"), filter(msg));
+        String doc = specifyBuild(msg.getString("docDescription"), msg.getString("docName"), getFilter(msg));
         return UnitResponse.success(doc);
     }
 
@@ -48,16 +47,16 @@ public abstract class AbstractMdApidocUnit implements Unit {
     protected abstract Input otherInput();
 
     /**
-     * @return the filter to unit filter. the filter map's key is group name and value is unit name list.
+     * @return the filter to unit filter. the filter is a unit full name list.
      */
-    protected abstract Map<String, List<String>> filter(UnitRequest request);
+    protected abstract IUnitFilter getFilter(UnitRequest request);
 
     /**
      * 返回生成MD的文件字符串
      */
-    private static String specifyBuild(String description, String docName, Map<String, List<String>> filters) {
+    private static String specifyBuild(String description, String docName, IUnitFilter filter) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ApiBuilder.build(new UnitMdBuilderHandler(description, docName, filters).callback(data -> {
+        ApiBuilder.build(new UnitMdBuilderHandler(description, docName, filter).callback(data -> {
             try {
                 bos.write(data);
                 if (data.length > 0) {

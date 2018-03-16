@@ -1,14 +1,13 @@
 package info.xiancloud.apidoc.handler;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import info.xiancloud.apidoc.handler.filter.IUnitFilter;
+import info.xiancloud.apidoc.handler.filter.NothingFilter;
 import info.xiancloud.plugin.Input;
 import info.xiancloud.plugin.Input.Obj;
-import info.xiancloud.plugin.LocalUnitsManager;
-import info.xiancloud.plugin.Unit;
-import info.xiancloud.plugin.distribution.GroupBean;
 import info.xiancloud.plugin.distribution.GroupProxy;
-import info.xiancloud.plugin.distribution.UnitBean;
-import info.xiancloud.plugin.distribution.exception.GroupUndefinedException;
-import info.xiancloud.plugin.distribution.loadbalance.GroupRouter;
+import info.xiancloud.plugin.distribution.UnitProxy;
 import info.xiancloud.plugin.distribution.service_discovery.GroupDiscovery;
 import info.xiancloud.plugin.distribution.service_discovery.UnitDiscovery;
 import info.xiancloud.plugin.util.EnvUtil;
@@ -19,10 +18,8 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * unit接口文档创建Handler
@@ -32,46 +29,36 @@ import java.util.Map;
  */
 public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
 
-    /**
-     * 筛选map集 只生成该集合中指定的接口.
-     * key--对应group名称,
-     * values--对应当前group的unit集合
-     */
-    private Map<String, List<String>> filters;
-
     // 文档名称
     private String docName;
 
     private String subDec;
 
+    private IUnitFilter filter = new NothingFilter();
+
     public UnitMdBuilderHandler() {
-
-    }
-
-    public UnitMdBuilderHandler(Map<String, List<String>> filters) {
-        this.filters = filters;
     }
 
     public UnitMdBuilderHandler(String docName) {
         this.docName = docName;
     }
 
-    public UnitMdBuilderHandler(String subDec, String docName, Map<String, List<String>> filters) {
+    public UnitMdBuilderHandler(String subDec, String docName, IUnitFilter filter) {
         this(docName);
         this.subDec = subDec;
-        this.filters = filters;
+        this.filter = filter;
     }
 
     @Override
     public void build() {
         LOG.info("-----unit接口文档开始构建----");
-        List<GroupBean> groupList = buildUnit(filters);
-        if (groupList == null || groupList.isEmpty()) {
+        Multimap<String, UnitProxy> unitMultimap = filter.filter(buildUnits());
+        if (unitMultimap == null || unitMultimap.isEmpty()) {
             LOG.info("-----unit接口没扫描到业务模块，退出构建");
             invokeCallback(null);
             return;
         }
-        LOG.info(String.format("-----unit接口扫描到业务模块数量:%s", groupList.size()));
+        LOG.info(String.format("-----unit接口扫描到业务模块数量:%s", unitMultimap.size()));
         try {
             LOG.info("----unit接口开始生成API文档-----");
             // FileWriter fw = new FileWriter(storePath);
@@ -85,24 +72,23 @@ public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
                 bw.write(subDec);
             }
             bw.newLine();
-            for (GroupBean groupBean : groupList) {
+            for (String groupName : unitMultimap.keySet()) {
+                GroupProxy groupProxy = GroupDiscovery.singleton.newestDefinition(groupName);
                 //todo it recommended to use a template to generate this MD fragment.
-                bw.write("## " + String.format("%s\r\n", StringUtil.isEmpty(groupBean.getDescription()) ? groupBean.getName() : groupBean.getDescription()));
+                bw.write("## " + String.format("%s\r\n", StringUtil.isEmpty(groupProxy.getDescription()) ? groupProxy.getName() : groupProxy.getDescription()));
                 bw.newLine();
                 bw.write(" 接口列表\r\n");
-                List<String> unitNames = groupBean.getUnitNames();
-                for (int i = 1; i <= unitNames.size(); i++) {
-                    String unitName = unitNames.get(i - 1);
-                    UnitBean unitBean = UnitDiscovery.singleton.newestDefinition(Unit.fullName(groupBean.getName(), unitName));
+                Collection<UnitProxy> unitProxies = unitMultimap.get(groupName);
+                for (UnitProxy unitBean : unitProxies) {
                     if (!unitBean.getMeta().isPublic()) {
-                        LOG.info(String.format(" ---api-doc-unit接口:%s/%s非公开访问的，跳过生成", groupBean.getName(),
+                        LOG.info(String.format(" ---api-doc-unit接口:%s/%s非公开访问的，跳过生成", groupProxy.getName(),
                                 unitBean.getName()));
                         continue;
                     }
-                    LOG.info(String.format(" ---api-doc-unit接口开始生成:%s/%s", groupBean.getName(), unitBean.getName()));
+                    LOG.info(String.format(" ---api-doc-unit接口开始生成:%s/%s", groupProxy.getName(), unitBean.getName()));
 
                     Input io = unitBean.getInput();
-                    bw.write(String.format("### /%s/%s", groupBean.getName(), unitBean.getName()));
+                    bw.write(String.format("### /%s/%s", groupProxy.getName(), unitBean.getName()));
                     bw.newLine();
                     bw.write(String.format(" * 接口描述: %s\r\n",
                             StringUtil.isEmpty(unitBean.getMeta().getDescription()) ? "暂无" : unitBean.getMeta().getDescription()));
@@ -150,56 +136,19 @@ public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
         }
     }
 
-    /**
-     * only return specified group baans
-     */
-    private List<GroupBean> buildUnit(final Map<String, List<String>> filters) {
-        List<GroupBean> groups = buildUnit();
-        if (groups != null && filters != null && !filters.isEmpty()) {
-            Iterator<GroupBean> groupIterator = groups.iterator();
-            while (groupIterator.hasNext()) {
-                GroupBean groupBean = groupIterator.next();
-                if (filters.containsKey(groupBean.getName())) {
-                    List<String> unitNames = groupBean.getUnitNames();
-                    // 不存在于生成列表中，移除
-                    unitNames.removeIf(unitName -> !filters.get(groupBean.getName()).contains(unitName));
-                } else {
-                    groupIterator.remove();
-                }
-            }
+    private Multimap<String, UnitProxy> buildUnits() {
+        Multimap<String, UnitProxy> groupedUnits = ArrayListMultimap.create();
+        List<String> unitFullNames = UnitDiscovery.singleton.queryForNames();
+        for (String unitFullName : unitFullNames) {
+            UnitProxy unitProxy = UnitDiscovery.singleton.newestDefinition(unitFullName);
+            if (unitProxy != null)
+                groupedUnits.put(unitProxy.getGroup().getName(), unitProxy);
         }
-        return groups;
+        return groupedUnits;
     }
 
-    /**
-     * build unit list
-     */
-    private List<GroupBean> buildUnit() {
-        List<GroupBean> groupList = new ArrayList<>();
-        if (EnvUtil.isIDE()) {
-            LocalUnitsManager.unitMap(unitMap -> {
-                unitMap.forEach((groupName, unitList) ->
-                        groupList.add(GroupProxy.create(LocalUnitsManager.getGroupByName(groupName))));
-            });
-        } else {// server runtime environment
-            for (String groupName : GroupDiscovery.singleton.queryForNames()) {
-                try {
-                    groupList.add(GroupRouter.singleton.newestDefinition(groupName));
-                } catch (GroupUndefinedException e) {
-                    LOG.info("group " + groupName + "'s definition does not exist, ignored for api doc.");
-                }
-            }
-            LOG.info(String.format("api-doc接口文档构建过程中扫描到[%s]个group", groupList.size()));
-        }
-        return groupList;
-    }
-
-    public Map<String, List<String>> getFilters() {
-        return filters;
-    }
-
-    public void setFilters(Map<String, List<String>> filters) {
-        this.filters = filters;
+    public void setFilter(IUnitFilter filter) {
+        this.filter = filter;
     }
 
     public String getDocName() {
