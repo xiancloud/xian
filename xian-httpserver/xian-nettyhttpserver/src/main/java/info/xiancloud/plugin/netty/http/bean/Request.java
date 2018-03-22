@@ -40,9 +40,9 @@ public class Request {
     @JSONField(serialize = false)
     private ChannelHandlerContext channelHandlerContext;
 
-    public Request(FullHttpRequest httpRequest, String $msgId) {
+    public Request(FullHttpRequest httpRequest, String msgId) {
         this.httpRequest = httpRequest;
-        this.msgId = $msgId;
+        this.msgId = msgId;
         /*QueryStringDecoder queryStringDecoder = new QueryStringDecoder(httpRequest.uri());*/
         url = httpRequest.uri()/*queryStringDecoder.path()*/;
         header = new HashMap<>();
@@ -55,7 +55,8 @@ public class Request {
         String rawBody = httpRequest.content().toString(Config.defaultUtf8()).trim();
         if ((rawBody.startsWith("[") && rawBody.endsWith("]"))
                 || (rawBody.startsWith("{") && rawBody.endsWith("}"))
-                || (rawBody.startsWith("<") && rawBody.endsWith(">"))) {
+                || (rawBody.startsWith("<") && rawBody.endsWith(">"))
+                || (!rawBody.contains("&") && !rawBody.contains("="))) {
             LOG.debug("目前就用这种粗鲁的方式来判断请求为application/json或 text/xml，不依赖客户端给定contentType，客户端往往不靠谱");
             body = rawBody;
         } else {

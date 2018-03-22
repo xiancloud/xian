@@ -6,9 +6,10 @@ import info.xiancloud.plugin.distribution.exception.UnitUndefinedException;
 import info.xiancloud.plugin.distribution.loadbalance.UnitRouter;
 import info.xiancloud.plugin.executor.BaseController;
 import info.xiancloud.plugin.executor.URIBean;
-import info.xiancloud.plugin.scheduler.input_through.RequestBodyRequiredAndResponseDataOnlyAsyncForwarder;
-import info.xiancloud.plugin.scheduler.non_input_through.DefaultAsyncForwarder;
-import info.xiancloud.plugin.scheduler.non_input_through.RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder;
+import info.xiancloud.plugin.scheduler.body_not_required.DefaultAsyncForwarder;
+import info.xiancloud.plugin.scheduler.body_not_required.RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder;
+import info.xiancloud.plugin.scheduler.body_required.BodyRequiredAndResponseDataOnlyAsyncForwarder;
+import info.xiancloud.plugin.scheduler.body_required.BodyRequiredAsyncForwarder;
 import info.xiancloud.plugin.server.ServerRequestBean;
 
 import java.util.Map;
@@ -49,9 +50,9 @@ public interface IAsyncForwarder {
         try {
             UnitMeta unitMeta = UnitRouter.singleton.newestDefinition(Unit.fullName(uriBean.getGroup(), uriBean.getUnit())).getMeta();
             if (unitMeta.isBodyRequired() && unitMeta.isDataOnly())
-                return RequestBodyRequiredAndResponseDataOnlyAsyncForwarder.singleton;
+                return BodyRequiredAndResponseDataOnlyAsyncForwarder.singleton;
             else if (unitMeta.isBodyRequired() && !unitMeta.isDataOnly())
-                throw new RuntimeException("暂时不支持入参透传body，而响应非透传请求。");
+                return BodyRequiredAsyncForwarder.singleton;
             else if (!unitMeta.isBodyRequired() && unitMeta.isDataOnly())
                 return RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder.singleton;
             else

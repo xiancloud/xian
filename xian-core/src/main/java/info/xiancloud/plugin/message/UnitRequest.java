@@ -5,6 +5,7 @@ import info.xiancloud.plugin.LocalUnitsManager;
 import info.xiancloud.plugin.Unit;
 import info.xiancloud.plugin.util.Reflection;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,8 @@ final public class UnitRequest {
     }
 
     public Map<String, Object> getArgMap() {
+        if (argMap == null)
+            argMap = new HashMap<>();//avoid a null pointer exception.
         return argMap;
     }
 

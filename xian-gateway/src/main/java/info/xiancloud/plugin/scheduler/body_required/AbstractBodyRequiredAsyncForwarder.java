@@ -1,4 +1,4 @@
-package info.xiancloud.plugin.scheduler.input_through;
+package info.xiancloud.plugin.scheduler.body_required;
 
 import info.xiancloud.plugin.message.UnitRequest;
 import info.xiancloud.plugin.scheduler.AbstractAsyncForwarder;

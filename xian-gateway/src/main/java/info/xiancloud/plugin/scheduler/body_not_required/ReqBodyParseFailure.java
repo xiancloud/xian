@@ -1,4 +1,4 @@
-package info.xiancloud.plugin.scheduler.non_input_through;
+package info.xiancloud.plugin.scheduler.body_not_required;
 
 import info.xiancloud.plugin.distribution.exception.BadRequestException;
 
