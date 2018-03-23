@@ -118,7 +118,8 @@ rpc调用关系见上文微服务关系图。
 我们在/xian_template/xian_runtime/下存在几个application：demoApplication01、demoApplication02、demoGateway、demoWebApplication01。
 我们将每个application看作是一个微服务，下面依次讲解。
 
-1. demoWebApplication01插件demo_web_plugin01被部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle:
+1. demoWebApplication01  
+插件demo_web_plugin01被部署在这个application内了，因此它是一个web应用，部署配置见xian_runtime/demoWebApplication01/build.gradle:
 ````gradle
 runtime "info.xiancloud:xian-jettyweb:${xianVersion}"
 runtime project(path: ':demo_web_plugin01', configuration: "war")
@@ -137,14 +138,16 @@ demoWebApplication01以“微服务”的身份定义于微服务集群内。我
 ````
 
 
-2. demoGateway，这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9123，并且可配置，配置文件在xian_runtime/demoGateway/conf/application.properties：
+2. demoGateway
+这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9123，并且可配置，配置文件在xian_runtime/demoGateway/conf/application.properties：
 ````properties
 # ...
 # gateway http server port, the default port is 9123 if you leave this empty.
 api_gateway_port=
 ````
 
-3. demoApplication01、demoApplication02分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application：
+3. demoApplication01、demoApplication02  
+分别部署了demo_plugin01和demo_plugin02，两个application之间形成了rpc调用关系。我们执行./xian_runtime/buildAll.sh构建所有application：
 ````bash
 ./xian_runtime/buildAll.sh
 ````
