@@ -283,7 +283,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 #### 与spring cloud对比
 1. xian frame不仅仅是个微服务框架，它也是一个微服务套件，但是它做不到像spring cloud那么强大能集成业界N多优秀的第三方开源lib形成丰富的套装，目前Spring Cloud下面有17个子项目（可能还会新增）分别覆盖了微服务架构下的方方面面，我这个轻量级的微服务框架怎可与之庞然大物比呢。
 2. 以上是spring cloud的优势，这个优势的背后是它引入了无数第三方依赖包，一个基础spring cloud微服务就已经引入了接近100个第三方依赖的jar包，这么多第三方依赖往往很容易赖冲突，比如你的程序要使用log4j，而它默认使用的是logback，你会发现二者是冲突的，然后你还得想办法兼容起来，耗时也费力。
-3. xian frame的拆分灵活性秒杀spring cloud，xian frame是基于方法级粒度的服务治理框架，而spring cloud是基于微服务application粒度的服务治理。xian frame可以在不修改任何代码的情况下，实现线上微服务服务平滑拆分。而对于spring cloud，你会发现随着你方系统的复杂度越来越高，将来必定会有拆分微服务的需求，这时你会发现，你需要修改每个rpc调用处的注解上的目标app名称，而且还要剪切粘贴很多地方的代码，这是一个很大的工作量，改动量大，回归测试难度大，风险高。
+3. 随着你方系统的复杂度越来越高，将来必定会面临拆分微服务的需求，而xian frame的拆分灵活性秒杀spring cloud，因为它是基于方法级粒度的服务治理框架，而spring cloud是基于微服务application粒度的服务治理。xian frame可以在不修改任何代码的情况下，实现线上微服务服务平滑拆分。而对于spring cloud，你需要修改每个rpc调用处的注解上的目标app名称，而且还要剪切粘贴很多地方的代码，这是一个很大的工作量，改动量大，回归测试难度大，风险高。
 3. xian frame的rpc方案是基于netty Nio框架实现，使用纯异步IO非阻塞线程，以socket长连接形式实现rpc调用和通讯的，因此理论上性能是远大于spring cloud的微服务间基于七层网络http短连接通信协议的。由于我还没有时间进行测试，所以这里没法给出具性能对比数据出来。
 4. 当然xian frame和spring cloud一样都还没支持多语言，即都还没满足微服务的一个关键特性，即不依赖特定语言来开发微服务业务。不过让xian frame支持.NET、golang、kotlin等语言，我已经有一些想法了。
 5. 题外话，打个小广告，如果你对spring cloud感兴趣，同时你习惯使用gradle构建工具的，推荐一个我写的基于gradle的spring cloud入门教程https://github.com/happyyangyuan/springcloud-quickstart
