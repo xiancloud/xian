@@ -73,7 +73,7 @@ git clone https://github.com/happyyangyuan/xian_template
 ##### 3.1、gradle.properties配置文件
 该配置文件指明了xian依赖的版本号
 ````properties
-xianVersion=0.2.1
+xianVersion=x.x.x
 ````
 
 ##### 3.2、 根路径内的build.gradle依赖配置文件
