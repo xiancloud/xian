@@ -304,6 +304,6 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 1. xian，即“贤”，来自某个人的名，代表“好”、“佳”的意思。谨以此名字纪念我死去的爱情。
 2. 请大家多多指点，加星加星！关注！ 那些开发中和规划中的功能就全靠你们的星星了，可怜脸。
 3. 鸣谢：  
-    netty.io, github.com/alibaba/fastjson, log4j.apache.org, zookeeper.apache.org, curator.apache.org;
+    http://netty.io, https://github.com/alibaba/fastjson, https://github.com/google/guava, https://logging.apache.org/log4j, http://zookeeper.apache.org, http://curator.apache.org;
 
 
