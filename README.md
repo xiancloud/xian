@@ -139,7 +139,7 @@ demoWebApplication01以“微服务”的身份定义于微服务集群内。我
 
 
 2. demoGateway
-这是我们xianframe关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9123，并且可配置，配置文件在xian_runtime/demoGateway/conf/application.properties：
+这是我们xian frame关键的业务网关application。它内置了一个高性能netty httpserver作为网关server对外提供服务，默认端口是9123，并且可配置，配置文件在xian_runtime/demoGateway/conf/application.properties：
 ````properties
 # ...
 # gateway http server port, the default port is 9123 if you leave this empty.
@@ -170,7 +170,7 @@ tips: 可以设置你自己想要的参数来定制不同的API文档出来哦�
 
 #### 惯例和约定
 1. 从上文你不难看出，每一个unit都以http api形式通过demoGateway暴露给外部了，这个URI的格式如上所述： http://gatewayHost:gatewayPort/groupName/unitName
-http method为post，这是xianframe的网关标准。
+http method为post，这是xian frame的网关标准。
 2. 而demoUnit01调用demoUnit02的rpc标准代码如下：
 ````java
 Xian.call("demoGroup02", "demoUnit02", map/bean);
@@ -214,7 +214,7 @@ group定义了unit分组，每个unit都属于唯一一个group，groupName和un
 ##### zookeeper
 Apache ZooKeeper是Apache软件基金会的一个软件项目，他为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。 ZooKeeper曾经是Hadoop的一个子项目，但现在是一个独立的顶级项目。 ZooKeeper的架构通过冗余服务实现高可用性。 参考自“维基百科”。
 
-在xian_templcate示例项目中，我提供了一个zookeeper server用于测试使用，请勿用于生产环境。可以在你的application.properties中配置你zookeeper服务端地址
+在xian_template示例项目中，我提供了一个zookeeper server用于测试使用，请勿用于生产环境。可以在你的application.properties中配置你zookeeper服务端地址
 ````properties
 #service registration center internet url
 zookeeperConnectionStringInternet=zk.xiancloud.info:19129
@@ -233,7 +233,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 
 
 
-### xianframe现有功能
+### xian frame现有功能
 1. 微服务间通讯RPC、MQ。
 2. 方法级粒度的服务治理、服务可视化管理。
 3. 集中日志收集和可视化日志查询。
@@ -281,18 +281,18 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 
 ### 与各大主流微服务框架的优劣对比
 #### 与spring cloud对比
-1. xianframe不仅仅是个微服务框架，它也是一个微服务套件，但是它做不到像springcloud那么强大能集成业界N多优秀的第三方开源lib形成丰富的套装，目前Spring Cloud下面有17个子项目（可能还会新增）分别覆盖了微服务架构下的方方面面，我这个轻量级的微服务框架怎可与之庞然大物比呢。
-2. 以上是springcloud的优势，这个优势的背后是它引入了无数第三方依赖包，一个基础springcloud微服务就已经引入了接近100个第三方依赖的jar包，这么多第三方依赖往往很容易赖冲突，比如你的程序要使用log4j，而它默认使用的是logback，你会发现二者是冲突的，然后你还得想办法兼容起来，耗时也费力。
-3. xianframe的拆分灵活性秒杀springcloud，xianframe是基于方法级粒度的服务治理框架，而springcloud是基于微服务application粒度的服务治理。xianframe可以在不修改任何代码的情况下，实现线上微服务服务平滑拆分。而对于springcloud，你会发现随着你方系统的复杂度越来越高，将来必定会有拆分微服务的需求，这时你会发现，你需要修改每个rpc调用处的注解上的目标app名称，而且还要剪切粘贴很多地方的代码，这是一个很大的工作量，改动量大，回归测试难度大，风险高。
-3. xianframe的rpc方案是基于netty Nio框架实现，使用纯异步IO非阻塞线程，以socket长连接形式实现rpc调用和通讯的，因此理论上性能是远大于springcloud的微服务间基于七层网络http短连接通信协议的。由于我还没有时间进行测试，所以这里没法给出具性能对比数据出来。
-4. 当然xianframe和springcloud一样都还没支持多语言，即都还没满足微服务的一个关键特性，即不依赖特定语言来开发微服务业务。不过让xianframe支持.NET、golang、kotlin等语言，我已经有一些想法了。
-5. 题外话，打个小广告，如果你对springcloud感兴趣，同时你习惯使用gradle构建工具的，推荐一个我写的基于gradle的springcloud入门教程https://github.com/happyyangyuan/springcloud-quickstart
+1. xian frame不仅仅是个微服务框架，它也是一个微服务套件，但是它做不到像spring cloud那么强大能集成业界N多优秀的第三方开源lib形成丰富的套装，目前Spring Cloud下面有17个子项目（可能还会新增）分别覆盖了微服务架构下的方方面面，我这个轻量级的微服务框架怎可与之庞然大物比呢。
+2. 以上是spring cloud的优势，这个优势的背后是它引入了无数第三方依赖包，一个基础spring cloud微服务就已经引入了接近100个第三方依赖的jar包，这么多第三方依赖往往很容易赖冲突，比如你的程序要使用log4j，而它默认使用的是logback，你会发现二者是冲突的，然后你还得想办法兼容起来，耗时也费力。
+3. xian frame的拆分灵活性秒杀spring cloud，xian frame是基于方法级粒度的服务治理框架，而spring cloud是基于微服务application粒度的服务治理。xian frame可以在不修改任何代码的情况下，实现线上微服务服务平滑拆分。而对于spring cloud，你会发现随着你方系统的复杂度越来越高，将来必定会有拆分微服务的需求，这时你会发现，你需要修改每个rpc调用处的注解上的目标app名称，而且还要剪切粘贴很多地方的代码，这是一个很大的工作量，改动量大，回归测试难度大，风险高。
+3. xian frame的rpc方案是基于netty Nio框架实现，使用纯异步IO非阻塞线程，以socket长连接形式实现rpc调用和通讯的，因此理论上性能是远大于spring cloud的微服务间基于七层网络http短连接通信协议的。由于我还没有时间进行测试，所以这里没法给出具性能对比数据出来。
+4. 当然xian frame和spring cloud一样都还没支持多语言，即都还没满足微服务的一个关键特性，即不依赖特定语言来开发微服务业务。不过让xian frame支持.NET、golang、kotlin等语言，我已经有一些想法了。
+5. 题外话，打个小广告，如果你对spring cloud感兴趣，同时你习惯使用gradle构建工具的，推荐一个我写的基于gradle的spring cloud入门教程https://github.com/happyyangyuan/spring cloud-quickstart
 
 #### 与dubbo的对比
-1. dubbo服务提供方与调用方接口依赖方式太强：调用方对提供方的抽象接口存在强依赖关系，需要严格的管理版本依赖，才不会出现服务方与调用方的不一致导致应用无法编译成功等一系列问题；而xianframe调用方与被调用方之间是物理强解耦的，没有接口依赖关系，只有逻辑依赖关系，只要参数和响应是适配的，就能相互兼容，尤其是单方面增加和减少可选字段参数完全不影响对端的兼容性。
-2. 外部系统无法直接对接dubbo协议，即服务对平台敏感，难以简单复用：通常我们在提供对外服务时，都会以REST的方式提供出去，这样可以实现跨平台的特点。在dubbo中我们要提供REST接口时，不得不实现一层代理，用来将RPC接口转换成REST接口进行对外发布。所以当当网在dubbox（基于dubbo的开源扩展）中增加了对REST支持。而xianframe已经通过http gateway网关将xian内部的服务一一映射成为了可以直接访问的httpURI地址了，外部系统可以访问当xianframe提供的任何微服务而不需要任何二次开发来实现一个http代理server来提供rest服务。
-3. dubbo只是一个rpc框架，而xianframe是一个包含服务治理、调用链路追踪、dao层内置框架、集中配置、分布式锁、缓存技术、内置监控、部署和持续集成解决方案等等的微服务框架套件。
-4. 当然xianframe和dubbo一样都还没支持多语言。
+1. dubbo服务提供方与调用方接口依赖方式太强：调用方对提供方的抽象接口存在强依赖关系，需要严格的管理版本依赖，才不会出现服务方与调用方的不一致导致应用无法编译成功等一系列问题；而xian frame调用方与被调用方之间是物理强解耦的，没有接口依赖关系，只有逻辑依赖关系，只要参数和响应是适配的，就能相互兼容，尤其是单方面增加和减少可选字段参数完全不影响对端的兼容性。
+2. 外部系统无法直接对接dubbo协议，即服务对平台敏感，难以简单复用：通常我们在提供对外服务时，都会以REST的方式提供出去，这样可以实现跨平台的特点。在dubbo中我们要提供REST接口时，不得不实现一层代理，用来将RPC接口转换成REST接口进行对外发布。所以当当网在dubbox（基于dubbo的开源扩展）中增加了对REST支持。而xian frame已经通过http gateway网关将xian内部的服务一一映射成为了可以直接访问的httpURI地址了，外部系统可以访问当xian frame提供的任何微服务而不需要任何二次开发来实现一个http代理server来提供rest服务。
+3. dubbo只是一个rpc框架，而xian frame是一个包含服务治理、调用链路追踪、dao层内置框架、集中配置、分布式锁、缓存技术、内置监控、部署和持续集成解决方案等等的微服务框架套件。
+4. 当然xian frame和dubbo一样都还没支持多语言。
 
 #### 与华为开源的serviceComb对比
 暂时还没写
@@ -301,7 +301,9 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 暂时还没写
 
 ## 写在末尾
-1. xian的命名来自某个人的名，代表“好”、“佳”的意思。谨以此名字纪念我死去的爱情。
+1. xian，即“贤”，来自某个人的名，代表“好”、“佳”的意思。谨以此名字纪念我死去的爱情。
 2. 请大家多多指点，加星加星！关注！ 那些开发中和规划中的功能就全靠你们的星星了，可怜脸。
+3. 鸣谢：  
+    netty.io, github.com/alibaba/fastjson, log4j.apache.org, zookeeper.apache.org, curator.apache.org;
 
 
