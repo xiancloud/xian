@@ -286,7 +286,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 3. xian frame的拆分灵活性秒杀spring cloud，xian frame是基于方法级粒度的服务治理框架，而spring cloud是基于微服务application粒度的服务治理。xian frame可以在不修改任何代码的情况下，实现线上微服务服务平滑拆分。而对于spring cloud，你会发现随着你方系统的复杂度越来越高，将来必定会有拆分微服务的需求，这时你会发现，你需要修改每个rpc调用处的注解上的目标app名称，而且还要剪切粘贴很多地方的代码，这是一个很大的工作量，改动量大，回归测试难度大，风险高。
 3. xian frame的rpc方案是基于netty Nio框架实现，使用纯异步IO非阻塞线程，以socket长连接形式实现rpc调用和通讯的，因此理论上性能是远大于spring cloud的微服务间基于七层网络http短连接通信协议的。由于我还没有时间进行测试，所以这里没法给出具性能对比数据出来。
 4. 当然xian frame和spring cloud一样都还没支持多语言，即都还没满足微服务的一个关键特性，即不依赖特定语言来开发微服务业务。不过让xian frame支持.NET、golang、kotlin等语言，我已经有一些想法了。
-5. 题外话，打个小广告，如果你对spring cloud感兴趣，同时你习惯使用gradle构建工具的，推荐一个我写的基于gradle的spring cloud入门教程https://github.com/happyyangyuan/spring cloud-quickstart
+5. 题外话，打个小广告，如果你对spring cloud感兴趣，同时你习惯使用gradle构建工具的，推荐一个我写的基于gradle的spring cloud入门教程https://github.com/happyyangyuan/springcloud-quickstart
 
 #### 与dubbo的对比
 1. dubbo服务提供方与调用方接口依赖方式太强：调用方对提供方的抽象接口存在强依赖关系，需要严格的管理版本依赖，才不会出现服务方与调用方的不一致导致应用无法编译成功等一系列问题；而xian frame调用方与被调用方之间是物理强解耦的，没有接口依赖关系，只有逻辑依赖关系，只要参数和响应是适配的，就能相互兼容，尤其是单方面增加和减少可选字段参数完全不影响对端的兼容性。
