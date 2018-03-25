@@ -10,7 +10,7 @@ fi
 
 
 
-nohup java -Xms128m -XX:-OmitStackTraceInFastThrow -cp conf:plugins/*:../libs/* info.xiancloud.plugin.init.start.StartServer \
+nohup java -Xms128m -XX:-OmitStackTraceInFastThrow -cp conf:plugins/*:../libs/* info.xiancloud.core.init.start.StartServer \
 "${PWD##*/}" \
 > logs/xianframe.log &
 

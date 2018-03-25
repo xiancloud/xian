@@ -8,7 +8,7 @@ if [ ! -d "logs" ]; then
   mkdir logs
 fi
 
-java  -Xms128m -XX:-OmitStackTraceInFastThrow -cp conf:plugins/*:../libs/* info.xiancloud.plugin.init.start.StartServer "${PWD##*/}"
+java  -Xms128m -XX:-OmitStackTraceInFastThrow -cp conf:plugins/*:../libs/* info.xiancloud.core.init.start.StartServer "${PWD##*/}"
 
 sleep 1
 
