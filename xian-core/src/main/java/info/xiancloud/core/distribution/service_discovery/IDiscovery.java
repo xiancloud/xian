@@ -9,7 +9,7 @@ import jdk.nashorn.internal.runtime.regexp.joni.constants.NodeStatus;
 import java.util.List;
 
 /**
- * @param <Instance>   eg. {@link UnitInstance UnitInstance}、{@link info.xiancloud.plugin.distribution.service_discovery.ApplicationInstance ApplicationInstance}
+ * @param <Instance>   eg. {@link UnitInstance UnitInstance}、{@link info.xiancloud.core.distribution.service_discovery.ApplicationInstance ApplicationInstance}
  * @param <Definition> eg. {@link UnitProxy UnitProxy}、{@link NodeStatus Node.Status}、{@link GroupProxy GroupProxy}
  * @author happyyangyuan
  */
