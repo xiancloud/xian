@@ -1,6 +1,6 @@
 package org.graylog2;
 
-import info.xiancloud.plugin.util.RetryUtil;
+import info.xiancloud.core.util.RetryUtil;
 
 import java.io.IOException;
 import java.net.InetAddress;

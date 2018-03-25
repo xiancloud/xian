@@ -2,7 +2,7 @@ package info.xiancloud.plugin.monitor.open_falcon.custom_push.model;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import info.xiancloud.plugin.util.StringUtil;
+import info.xiancloud.core.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;

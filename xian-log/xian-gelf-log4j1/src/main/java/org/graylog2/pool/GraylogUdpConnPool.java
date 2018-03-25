@@ -1,7 +1,7 @@
 package org.graylog2.pool;
 
-import info.xiancloud.plugin.util.EnvUtil;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.util.EnvUtil;
+import info.xiancloud.core.util.LOG;
 
 import java.io.IOException;
 import java.net.InetAddress;

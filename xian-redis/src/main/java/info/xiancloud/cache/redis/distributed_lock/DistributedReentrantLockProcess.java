@@ -4,10 +4,10 @@ import info.xiancloud.cache.redis.Cache;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.operate.ObjectCacheOperate;
 import info.xiancloud.cache.redis.util.FormatUtil;
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.support.cache.CacheConfigBean;
-import info.xiancloud.plugin.util.EnvUtil;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.support.cache.CacheConfigBean;
+import info.xiancloud.core.util.EnvUtil;
+import info.xiancloud.core.util.LOG;
 import redis.clients.jedis.Jedis;
 
 import java.util.Map;

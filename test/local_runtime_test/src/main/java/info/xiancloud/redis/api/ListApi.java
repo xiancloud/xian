@@ -1,6 +1,6 @@
 package info.xiancloud.redis.api;
 
-import info.xiancloud.plugin.support.cache.api.CacheListUtil;
+import info.xiancloud.core.support.cache.api.CacheListUtil;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -8,52 +8,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 @FixMethodOrder(MethodSorters.JVM)
-public class ListApi
-{
+public class ListApi {
 
     @Before
-    public void initialize ()
-    {
+    public void initialize() {
         CacheListUtil.delete("LIST_API");
     }
 
     @After
-    public void finish ()
-    {
+    public void finish() {
 
     }
 
     @Test
-    public void exists ()
-    {
+    public void exists() {
         boolean exists = CacheListUtil.exists("LIST_API");
         Assert.assertFalse(exists);
     }
 
     @Test
-    public void length ()
-    {
+    public void length() {
         long length = CacheListUtil.length("LIST_API");
         assert length > 0;
     }
 
     @Test
-    public void isEmpty ()
-    {
+    public void isEmpty() {
         boolean isEmpty = CacheListUtil.isEmpty("LIST_API");
         Assert.assertTrue(isEmpty);
     }
 
     @Test
-    public void addHead ()
-    {
+    public void addHead() {
         boolean addHead = CacheListUtil.addHead("LIST_API", "addHead_0");
         Assert.assertTrue(addHead);
     }
 
     @Test
-    public void add ()
-    {
+    public void add() {
         boolean add = CacheListUtil.add("LIST_API", "add_10");
         Assert.assertTrue(add);
     }
@@ -62,8 +54,7 @@ public class ListApi
      * LRANGE LIST_API 0 -1
      */
     @Test
-    public void addAll ()
-    {
+    public void addAll() {
         List<String> lists = new ArrayList<>();
         lists.add("lists_0");
         lists.add("lists_1");
@@ -74,76 +65,67 @@ public class ListApi
     }
 
     @Test
-    public void set ()
-    {
+    public void set() {
         boolean set = CacheListUtil.set("LIST_API", 0, "set_0");
         Assert.assertTrue(set);
     }
 
     @Test
-    public void remove ()
-    {
+    public void remove() {
         boolean add = CacheListUtil.add("LIST_API", "remove_0");
         Assert.assertTrue(add);
 
-        boolean remove = CacheListUtil.remove("LIST_API","remove_0");
+        boolean remove = CacheListUtil.remove("LIST_API", "remove_0");
         Assert.assertTrue(remove);
     }
 
     @Test
-    public void clear ()
-    {
+    public void clear() {
         boolean clear = CacheListUtil.clear("LIST_API");
         Assert.assertTrue(clear);
     }
 
     @Test
-    public void delete ()
-    {
+    public void delete() {
         boolean delete = CacheListUtil.delete("LIST_API");
         Assert.assertTrue(delete);
     }
 
     @Test
-    public void getAll ()
-    {
+    public void getAll() {
         List<String> values = CacheListUtil.getAll("LIST_API");
 
         Assert.assertNotNull(values);
 
-        if(values != null)
-        {
+        if (values != null) {
             System.out.println("values.size: " + values.size());
 
-            for(String value : values)
+            for (String value : values)
                 System.out.println(value);
         }
     }
 
     @Test
-    public void getRange ()
-    {
+    public void getRange() {
         List<String> values = CacheListUtil.getRange("LIST_API", String.class);
 //        List<String> values = CacheListUtil.getRange("LIST_API", 0, -1, String.class);
 
         Assert.assertNotNull(values);
 
-        if(values != null)
-        {
+        if (values != null) {
             System.out.println("values.size: " + values.size());
 
-            for(String value : values)
+            for (String value : values)
                 System.out.println(value);
         }
     }
 
     @Test
-    public void get ()
-    {
+    public void get() {
         String value = CacheListUtil.get("LIST_API", 0, String.class);
         Assert.assertNotNull(value);
 
-        if(value != null)
+        if (value != null)
             System.out.println(value);
     }
 

@@ -1,6 +1,7 @@
 package info.xiancloud.yy.port;
 
-import info.xiancloud.plugin.distribution.Node;
+
+import info.xiancloud.core.distribution.Node;
 
 import java.io.IOException;
 

@@ -1,9 +1,8 @@
 package info.xiancloud.qclouddocker.api;
 
-import info.xiancloud.plugin.conf.XianConfig;
+import info.xiancloud.core.conf.XianConfig;
 
 /**
- * @author yyq
  * in order to hide security info, we do not provide the configuration in the plugin.properties,application.properties,jvm system properties.
  * Instead we set configuration via the operation system environment.
  * For mac os x, edit the ~/.bash_profile add the following content in this file:
@@ -17,6 +16,8 @@ import info.xiancloud.plugin.conf.XianConfig;
  * export dockerServiceRegion=gz/bj/sh
  * <p>
  * See res/plugin.properties
+ *
+ * @author yyq
  */
 public class QCloudConfig {
 

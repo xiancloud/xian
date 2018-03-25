@@ -1,7 +1,7 @@
 package org.graylog2.log;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.util.LOG;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;

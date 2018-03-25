@@ -2,9 +2,12 @@ package info.xiancloud.cache.service.unit.system;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.plugin.*;
-import info.xiancloud.plugin.message.UnitResponse;
-import info.xiancloud.plugin.message.UnitRequest;
+import info.xiancloud.core.Group;
+import info.xiancloud.core.Input;
+import info.xiancloud.core.Unit;
+import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
 
 /**
  * 新增 JedisPool

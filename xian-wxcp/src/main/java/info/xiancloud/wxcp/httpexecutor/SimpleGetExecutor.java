@@ -1,9 +1,9 @@
 package info.xiancloud.wxcp.httpexecutor;
 
 
+import info.xiancloud.core.util.http.HttpKit;
 import info.xiancloud.wxcp.exception.WxError;
 import info.xiancloud.wxcp.exception.WxErrorException;
-import info.xiancloud.plugin.util.http.HttpKit;
 
 /**
  * 简单型的get请求执行器

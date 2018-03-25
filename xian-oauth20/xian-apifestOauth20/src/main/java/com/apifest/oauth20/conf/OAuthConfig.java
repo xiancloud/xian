@@ -16,13 +16,13 @@
 
 package com.apifest.oauth20.conf;
 
+import com.apifest.oauth20.LifecycleEventHandlers;
 import com.apifest.oauth20.api.ICustomGrantTypeHandler;
 import com.apifest.oauth20.api.IUserAuthentication;
 import com.apifest.oauth20.persistence.DBManagerFactory;
-import com.apifest.oauth20.LifecycleEventHandlers;
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.util.LOG;
-import info.xiancloud.plugin.util.TraverseClasspath;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.TraverseClasspath;
 
 import java.util.Set;
 

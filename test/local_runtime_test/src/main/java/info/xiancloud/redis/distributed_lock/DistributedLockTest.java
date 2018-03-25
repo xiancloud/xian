@@ -1,14 +1,14 @@
 package info.xiancloud.redis.distributed_lock;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.message.UnitResponse;
-import info.xiancloud.plugin.message.Xian;
-import info.xiancloud.plugin.support.cache.CacheService;
-import info.xiancloud.plugin.support.cache.lock.DistributedLockSynchronizer;
-import info.xiancloud.plugin.thread_pool.ThreadPoolManager;
-import info.xiancloud.plugin.util.EnvUtil;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.message.Xian;
+import info.xiancloud.core.support.cache.CacheService;
+import info.xiancloud.core.support.cache.lock.DistributedLockSynchronizer;
+import info.xiancloud.core.thread_pool.ThreadPoolManager;
+import info.xiancloud.core.util.EnvUtil;
+import info.xiancloud.core.util.LOG;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

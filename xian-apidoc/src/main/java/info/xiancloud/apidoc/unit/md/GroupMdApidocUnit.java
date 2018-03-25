@@ -2,8 +2,8 @@ package info.xiancloud.apidoc.unit.md;
 
 import info.xiancloud.apidoc.handler.filter.FilterByGroups;
 import info.xiancloud.apidoc.handler.filter.IUnitFilter;
-import info.xiancloud.plugin.Input;
-import info.xiancloud.plugin.message.UnitRequest;
+import info.xiancloud.core.Input;
+import info.xiancloud.core.message.UnitRequest;
 
 import java.util.ArrayList;
 

@@ -3,8 +3,8 @@ package info.xiancloud.yy.oauth;
 import com.alibaba.fastjson.JSONObject;
 import com.apifest.oauth20.unit.IssueAccessToken;
 import info.xiancloud.cache.startup.RedisStartup;
-import info.xiancloud.plugin.message.UnitRequest;
-import info.xiancloud.plugin.message.UnitResponse;
+import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
 
 /**
  * @author happyyangyuan

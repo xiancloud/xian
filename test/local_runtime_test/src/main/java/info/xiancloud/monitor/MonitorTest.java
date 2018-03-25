@@ -1,10 +1,10 @@
 package info.xiancloud.monitor;
 
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.message.Xian;
-import info.xiancloud.plugin.message.UnitResponse;
-import info.xiancloud.plugin.support.cache.CacheService;
-import info.xiancloud.plugin.util.EnvUtil;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.message.Xian;
+import info.xiancloud.core.support.cache.CacheService;
+import info.xiancloud.core.util.EnvUtil;
 
 import java.util.HashMap;
 
@@ -25,7 +25,7 @@ public class MonitorTest {
     }
 
     private static String getUrl() {
-        if (EnvUtil.isQcloudLan())
+        if (EnvUtil.isLan())
             return XianConfig.get("redisLanUrl"); // 腾讯云内网内
         else
             return XianConfig.get("redisInternetUrl"); // 外网

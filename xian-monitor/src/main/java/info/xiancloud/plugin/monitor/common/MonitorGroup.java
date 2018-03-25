@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.monitor.common;
 
-import info.xiancloud.plugin.Group;
+import info.xiancloud.core.Group;
 
 /**
  * @author happyyangyuan

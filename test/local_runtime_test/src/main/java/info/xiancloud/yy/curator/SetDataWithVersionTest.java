@@ -1,6 +1,6 @@
 package info.xiancloud.yy.curator;
 
-import info.xiancloud.plugin.zookeeper.ZkConnection;
+import info.xiancloud.zookeeper.ZkConnection;
 import org.junit.Test;
 
 /**

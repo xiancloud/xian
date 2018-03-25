@@ -1,7 +1,7 @@
 package info.xiancloud.yy.log;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.util.LOG;
 
 /**
  * 测试LOG打印error json，并且传递一个异常对象的场景

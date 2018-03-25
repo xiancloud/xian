@@ -1,9 +1,9 @@
 package info.xiancloud.cache.redis;
 
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.support.cache.CacheConfigBean;
-import info.xiancloud.plugin.util.EnvUtil;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.support.cache.CacheConfigBean;
+import info.xiancloud.core.util.EnvUtil;
+import info.xiancloud.core.util.LOG;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
 

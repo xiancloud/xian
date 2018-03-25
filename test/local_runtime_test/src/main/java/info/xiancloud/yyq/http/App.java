@@ -1,6 +1,6 @@
 package info.xiancloud.yyq.http;
 
-import info.xiancloud.plugin.util.http.HttpKit;
+import info.xiancloud.core.util.http.HttpKit;
 
 public class App {
 

@@ -1,7 +1,7 @@
 package info.xiancloud.plugins.yyq.retry;
 
-import info.xiancloud.plugin.util.LOG;
-import info.xiancloud.plugin.util.RetryUtil;
+import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.RetryUtil;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;

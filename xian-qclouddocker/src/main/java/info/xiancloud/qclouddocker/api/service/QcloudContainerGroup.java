@@ -1,6 +1,6 @@
 package info.xiancloud.qclouddocker.api.service;
 
-import info.xiancloud.plugin.socket.ISocketGroup;
+import info.xiancloud.core.socket.ISocketGroup;
 
 /**
  * 腾讯云容器

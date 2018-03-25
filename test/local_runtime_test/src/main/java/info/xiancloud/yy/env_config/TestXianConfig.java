@@ -1,6 +1,6 @@
 package info.xiancloud.yy.env_config;
 
-import info.xiancloud.plugin.conf.XianConfig;
+import info.xiancloud.core.conf.XianConfig;
 
 import java.util.Arrays;
 

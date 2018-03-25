@@ -1,18 +1,19 @@
 package info.xiancloud.qclouddocker.api.unit;
 
 import com.alibaba.fastjson.JSON;
-import info.xiancloud.plugin.Group;
-import info.xiancloud.plugin.message.UnitResponse;
-import info.xiancloud.plugin.message.UnitRequest;
+import info.xiancloud.core.Group;
+import info.xiancloud.core.Input;
+import info.xiancloud.core.Unit;
+import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.RandomUtils;
+import info.xiancloud.core.util.StringUtil;
+import info.xiancloud.core.util.http.HttpKit;
+import info.xiancloud.core.util.http.Request;
 import info.xiancloud.qclouddocker.api.QCloudBaseArgs;
 import info.xiancloud.qclouddocker.api.QCloudConfig;
 import info.xiancloud.qclouddocker.api.service.QcloudContainerGroup;
-import info.xiancloud.plugin.Unit;
-import info.xiancloud.plugin.Input;
-import info.xiancloud.plugin.util.LOG;
-import info.xiancloud.plugin.util.RandomUtils;
-import info.xiancloud.plugin.util.StringUtil;
-import info.xiancloud.plugin.util.http.HttpKit;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -54,7 +55,7 @@ public abstract class QCloudBaseUnit implements Unit {
         LOG.info(String.format("腾讯云API调用,请求参数:%s", JSON.toJSONString(params)));
 
         try {
-            info.xiancloud.plugin.util.http.Request request = HttpKit.get("https://" + getAPIHost() + HHTP_APIURL);
+            Request request = HttpKit.get("https://" + getAPIHost() + HHTP_APIURL);
             for (Entry<String, String> param : params.entrySet()) {
                 request.addParam(param.getKey(), param.getValue());
             }

@@ -1,6 +1,6 @@
 package info.xiancloud.yy.log;
 
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.util.LOG;
 
 public class TestLogInfo {
     public static void main(String[] args) {

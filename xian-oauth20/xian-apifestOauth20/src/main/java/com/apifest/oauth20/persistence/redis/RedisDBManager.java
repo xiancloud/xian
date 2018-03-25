@@ -22,10 +22,10 @@ import com.apifest.oauth20.bean.AuthCode;
 import com.apifest.oauth20.bean.ClientCredentials;
 import com.apifest.oauth20.bean.Scope;
 import com.apifest.oauth20.persistence.DBManager;
-import info.xiancloud.plugin.support.authen.AccessToken;
-import info.xiancloud.plugin.support.cache.api.CacheMapUtil;
-import info.xiancloud.plugin.support.cache.api.CacheObjectUtil;
-import info.xiancloud.plugin.util.StringUtil;
+import info.xiancloud.core.support.authen.AccessToken;
+import info.xiancloud.core.support.cache.api.CacheMapUtil;
+import info.xiancloud.core.support.cache.api.CacheObjectUtil;
+import info.xiancloud.core.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;

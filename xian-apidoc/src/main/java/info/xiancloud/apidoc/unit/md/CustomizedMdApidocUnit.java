@@ -2,14 +2,12 @@ package info.xiancloud.apidoc.unit.md;
 
 import info.xiancloud.apidoc.handler.filter.FilterByUnits;
 import info.xiancloud.apidoc.handler.filter.IUnitFilter;
-import info.xiancloud.plugin.Input;
-import info.xiancloud.plugin.UnitMeta;
-import info.xiancloud.plugin.message.UnitRequest;
-import info.xiancloud.plugin.util.StringUtil;
+import info.xiancloud.core.Input;
+import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.util.StringUtil;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * custom api doc generator unit.

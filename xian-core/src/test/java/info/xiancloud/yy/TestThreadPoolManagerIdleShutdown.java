@@ -1,7 +1,7 @@
 package info.xiancloud.yy;
 
-import info.xiancloud.plugin.thread_pool.ThreadPoolManager;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.thread_pool.ThreadPoolManager;
+import info.xiancloud.core.util.LOG;
 
 /**
  * 超时线程池idle时自行销毁

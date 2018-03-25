@@ -7,11 +7,11 @@ import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import info.xiancloud.plugin.apidoc.annotation.DocOAuth20;
-import info.xiancloud.plugin.apidoc.annotation.DocOAuth20Sub;
-import info.xiancloud.plugin.apidoc.annotation.DocOAuth20SubIn;
-import info.xiancloud.plugin.util.LOG;
-import info.xiancloud.plugin.util.Reflection;
+import info.xiancloud.core.apidoc.annotation.DocOAuth20;
+import info.xiancloud.core.apidoc.annotation.DocOAuth20Sub;
+import info.xiancloud.core.apidoc.annotation.DocOAuth20SubIn;
+import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.Reflection;
 
 /**
  * OAuth20 is inner interface, we do not need to generate doc for them.

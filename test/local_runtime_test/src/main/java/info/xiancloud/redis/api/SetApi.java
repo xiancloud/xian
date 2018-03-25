@@ -1,6 +1,6 @@
 package info.xiancloud.redis.api;
 
-import info.xiancloud.plugin.support.cache.api.CacheSetUtil;
+import info.xiancloud.core.support.cache.api.CacheSetUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,38 +9,32 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SetApi
-{
+public class SetApi {
 
     @Before
-    public void initialize ()
-    {
+    public void initialize() {
 
     }
 
     @After
-    public void finish ()
-    {
+    public void finish() {
 
     }
 
     @Test
-    public void exists ()
-    {
+    public void exists() {
         boolean exists = CacheSetUtil.exists("SET_API", "exists_0");
         Assert.assertFalse(exists);
     }
 
     @Test
-    public void add ()
-    {
+    public void add() {
         long add = CacheSetUtil.add("SET_API", "add_0");
         Assert.assertEquals(1, add);
     }
 
     @Test
-    public void adds ()
-    {
+    public void adds() {
         Set<String> values = new HashSet<>();
         values.add("add_1");
         values.add("add_2");
@@ -52,24 +46,21 @@ public class SetApi
     }
 
     @Test
-    public void values ()
-    {
+    public void values() {
         Set<String> values = CacheSetUtil.values("SET_API");
 //        Set<String> values = CacheSetUtil.values("SET_API", String.class);
 
         Assert.assertNotNull(values);
 
-        if(values != null)
-        {
+        if (values != null) {
             System.out.println("values.size: " + values.size());
-            for(String value : values)
+            for (String value : values)
                 System.out.println(value);
         }
     }
 
     @Test
-    public void remove ()
-    {
+    public void remove() {
         CacheSetUtil.add("SET_API", "remove_0");
         CacheSetUtil.add("SET_API", "remove_0");
         CacheSetUtil.add("SET_API", "remove_1");
@@ -81,8 +72,7 @@ public class SetApi
     }
 
     @Test
-    public void removes ()
-    {
+    public void removes() {
         Set<String> values = new HashSet<>();
         values.add("removes_10");
         values.add("removes_11");

@@ -1,7 +1,7 @@
 package info.xiancloud.yy.sender;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.message.SyncXian;
+import info.xiancloud.core.message.SyncXian;
 
 /**
  * @author happyyangyuan

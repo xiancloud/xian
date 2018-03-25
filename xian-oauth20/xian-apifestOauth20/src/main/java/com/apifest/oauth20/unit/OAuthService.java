@@ -1,7 +1,7 @@
 package com.apifest.oauth20.unit;
 
 import com.apifest.oauth20.Authenticator;
-import info.xiancloud.plugin.Group;
+import info.xiancloud.core.Group;
 
 /**
  * oauth2.0 unit group

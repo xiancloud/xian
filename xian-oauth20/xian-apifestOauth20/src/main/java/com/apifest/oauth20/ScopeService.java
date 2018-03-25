@@ -27,7 +27,7 @@ import com.apifest.oauth20.persistence.DBManager;
 import com.apifest.oauth20.persistence.DBManagerFactory;
 import com.apifest.oauth20.utils.ResponseBuilder;
 import com.apifest.oauth20.validator.InputValidator;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.util.LOG;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
@@ -228,7 +228,7 @@ public class ScopeService {
                         throw new OAuthException(SCOPE_NOT_EXIST, HttpResponseStatus.BAD_REQUEST);
                     } else {
                         setScopeEmptyValues(scope, foundScope);
-                		DBManagerFactory.getInstance().storeScope(scope);
+                        DBManagerFactory.getInstance().storeScope(scope);
                     }
                 } else {
                     LOG.error("scope is not valid");

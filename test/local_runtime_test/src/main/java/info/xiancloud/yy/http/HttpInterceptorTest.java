@@ -1,8 +1,8 @@
 package info.xiancloud.yy.http;
 
-import info.xiancloud.plugin.socket.ConnectTimeoutException;
-import info.xiancloud.plugin.util.HttpUtil;
-import info.xiancloud.plugin.util.Xmap;
+import info.xiancloud.core.socket.ConnectTimeoutException;
+import info.xiancloud.core.util.HttpUtil;
+import info.xiancloud.core.util.Xmap;
 
 import java.net.SocketTimeoutException;
 

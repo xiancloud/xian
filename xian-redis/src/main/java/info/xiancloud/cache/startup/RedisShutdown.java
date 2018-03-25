@@ -1,7 +1,7 @@
 package info.xiancloud.cache.startup;
 
 import info.xiancloud.cache.redis.Redis;
-import info.xiancloud.plugin.init.shutdown.ShutdownHook;
+import info.xiancloud.core.init.shutdown.ShutdownHook;
 
 /**
  * Redis 资源回收

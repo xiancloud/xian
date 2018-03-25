@@ -1,6 +1,9 @@
 package info.xiancloud.plugin.stream;
 
-import info.xiancloud.plugin.util.file.FileUtil;
+import info.xiancloud.core.stream.Stream;
+import info.xiancloud.core.stream.StreamManager;
+import info.xiancloud.core.stream.StreamSerializer;
+import info.xiancloud.core.util.file.FileUtil;
 import org.junit.Test;
 
 import java.io.FileInputStream;

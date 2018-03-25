@@ -1,7 +1,7 @@
 package info.xiancloud.yy;
 
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.util.EnvUtil;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.util.EnvUtil;
 import org.junit.Test;
 
 /**

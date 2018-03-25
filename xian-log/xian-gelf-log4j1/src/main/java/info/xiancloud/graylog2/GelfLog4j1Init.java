@@ -1,12 +1,12 @@
 package info.xiancloud.graylog2;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.distribution.LocalNodeManager;
-import info.xiancloud.plugin.log.ICentralizedLogInitializer;
-import info.xiancloud.plugin.util.EnvUtil;
-import info.xiancloud.plugin.util.JavaPIDUtil;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.distribution.LocalNodeManager;
+import info.xiancloud.core.log.ICentralizedLogInitializer;
+import info.xiancloud.core.util.EnvUtil;
+import info.xiancloud.core.util.JavaPIDUtil;
+import info.xiancloud.core.util.LOG;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.graylog2.log.GelfAppender;

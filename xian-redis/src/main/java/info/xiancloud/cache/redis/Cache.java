@@ -1,6 +1,6 @@
 package info.xiancloud.cache.redis;
 
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.util.LOG;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

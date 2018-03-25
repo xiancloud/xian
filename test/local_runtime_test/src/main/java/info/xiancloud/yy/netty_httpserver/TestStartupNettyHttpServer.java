@@ -1,6 +1,6 @@
 package info.xiancloud.yy.netty_httpserver;
 
-import info.xiancloud.plugin.netty.NettyServer;
+import info.xiancloud.nettyhttpserver.NettyServer;
 
 /**
  * @author happyyangyuan

@@ -1,6 +1,6 @@
 package info.xiancloud.cache.service;
 
-import info.xiancloud.plugin.Group;
+import info.xiancloud.core.Group;
 
 /**
  * Cache service group.

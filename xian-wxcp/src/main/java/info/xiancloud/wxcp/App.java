@@ -1,7 +1,7 @@
 package info.xiancloud.wxcp;
 
-import info.xiancloud.plugin.message.SyncXian;
-import info.xiancloud.plugin.message.UnitResponse;
+import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.UnitResponse;
 
 import java.util.HashMap;
 import java.util.Map;

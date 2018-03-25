@@ -1,7 +1,7 @@
 package info.xiancloud.apidoc.handler.filter;
 
 import com.google.common.collect.Multimap;
-import info.xiancloud.plugin.distribution.UnitProxy;
+import info.xiancloud.core.distribution.UnitProxy;
 
 import java.util.List;
 

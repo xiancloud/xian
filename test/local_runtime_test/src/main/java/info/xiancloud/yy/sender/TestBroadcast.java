@@ -2,9 +2,9 @@ package info.xiancloud.yy.sender;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.socket.ConnectTimeoutException;
-import info.xiancloud.plugin.thread_pool.ThreadPoolManager;
-import info.xiancloud.plugin.util.HttpUtil;
+import info.xiancloud.core.socket.ConnectTimeoutException;
+import info.xiancloud.core.thread_pool.ThreadPoolManager;
+import info.xiancloud.core.util.HttpUtil;
 
 import java.net.SocketTimeoutException;
 

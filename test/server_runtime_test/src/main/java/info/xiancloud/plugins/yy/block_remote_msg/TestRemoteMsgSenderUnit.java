@@ -1,13 +1,13 @@
 package info.xiancloud.plugins.yy.block_remote_msg;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.Group;
-import info.xiancloud.plugin.Input;
-import info.xiancloud.plugin.Unit;
-import info.xiancloud.plugin.message.SyncXian;
-import info.xiancloud.plugin.message.UnitRequest;
-import info.xiancloud.plugin.message.UnitResponse;
-import info.xiancloud.plugin.test.TestGroup;
+import info.xiancloud.core.Group;
+import info.xiancloud.core.Input;
+import info.xiancloud.core.Unit;
+import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.test.TestGroup;
 
 /**
  * 屏蔽远程消息发送的功能点的测试，发送者

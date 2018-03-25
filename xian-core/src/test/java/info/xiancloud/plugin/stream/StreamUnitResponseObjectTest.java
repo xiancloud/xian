@@ -1,6 +1,6 @@
 package info.xiancloud.plugin.stream;
 
-import info.xiancloud.plugin.message.UnitResponse;
+import info.xiancloud.core.message.UnitResponse;
 import org.junit.Test;
 
 import java.io.FileInputStream;

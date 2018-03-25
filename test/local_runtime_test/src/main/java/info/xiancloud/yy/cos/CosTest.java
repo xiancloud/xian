@@ -1,6 +1,6 @@
 package info.xiancloud.yy.cos;
 
-import info.xiancloud.plugin.support.cos.CloudFile;
+import info.xiancloud.core.support.cos.CloudFile;
 
 /**
  * @author happyyangyuan

@@ -8,7 +8,7 @@
 
     <servlet>
         <servlet-name>apidocServlet</servlet-name>
-        <servlet-class>info.xiancloud.plugin.apidocweb.ApidocServlet</servlet-class>
+        <servlet-class>info.xiancloud.apidocweb.ApidocServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

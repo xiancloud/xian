@@ -1,6 +1,6 @@
 package info.xiancloud.redis.multiple_data_sources;
 
-import info.xiancloud.plugin.support.cache.CacheConfigBean;
+import info.xiancloud.core.support.cache.CacheConfigBean;
 import info.xiancloud.redis.BaseRedis;
 
 import java.net.InetAddress;

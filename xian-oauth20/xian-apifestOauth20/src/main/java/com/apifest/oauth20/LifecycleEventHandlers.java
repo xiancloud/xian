@@ -17,8 +17,8 @@
 package com.apifest.oauth20;
 
 import com.apifest.oauth20.api.*;
-import info.xiancloud.plugin.util.LOG;
-import info.xiancloud.plugin.util.TraverseClasspath;
+import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.TraverseClasspath;
 
 import java.util.ArrayList;
 import java.util.Collections;

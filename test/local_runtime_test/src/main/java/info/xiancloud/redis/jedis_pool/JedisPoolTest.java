@@ -2,9 +2,9 @@ package info.xiancloud.redis.jedis_pool;
 
 import info.xiancloud.cache.redis.Cache;
 import info.xiancloud.cache.redis.Redis;
-import info.xiancloud.plugin.support.cache.api.CacheListUtil;
-import info.xiancloud.plugin.thread_pool.ThreadPoolManager;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.support.cache.api.CacheListUtil;
+import info.xiancloud.core.thread_pool.ThreadPoolManager;
+import info.xiancloud.core.util.LOG;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

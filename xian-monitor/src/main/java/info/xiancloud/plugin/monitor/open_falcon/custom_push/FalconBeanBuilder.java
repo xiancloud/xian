@@ -2,13 +2,13 @@ package info.xiancloud.plugin.monitor.open_falcon.custom_push;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.Bean;
+import info.xiancloud.core.Bean;
+import info.xiancloud.core.util.EnvUtil;
+import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.Reflection;
 import info.xiancloud.plugin.monitor.common.StaticNodeIdManager;
-import info.xiancloud.plugin.monitor.open_falcon.custom_push.model.OpenFalconBean;
 import info.xiancloud.plugin.monitor.open_falcon.custom_push.model.CounterType;
-import info.xiancloud.plugin.util.EnvUtil;
-import info.xiancloud.plugin.util.LOG;
-import info.xiancloud.plugin.util.Reflection;
+import info.xiancloud.plugin.monitor.open_falcon.custom_push.model.OpenFalconBean;
 
 import java.util.*;
 
@@ -30,16 +30,14 @@ public class FalconBeanBuilder {
     public OpenFalconBean build(String metric, JSONObject valueJSON) {
         OpenFalconBean falconBean = initDefault(metric);
         falconBean.setValue((Number) valueJSON.get("value"));
-        if (valueJSON.containsKey("title"))
-        {
+        if (valueJSON.containsKey("title")) {
             String title = valueJSON.getString("title");
-            if(title != null)
+            if (title != null)
                 falconBean.getTitles().addAll(new ArrayList<>(Arrays.asList(title.split(","))));
         }
-        if (valueJSON.containsKey("dashboard"))
-        {
+        if (valueJSON.containsKey("dashboard")) {
             String dashboard = valueJSON.getString("dashboard");
-            if(dashboard != null)
+            if (dashboard != null)
                 falconBean.getDashboards().addAll(new ArrayList<>(Arrays.asList(dashboard.split(","))));
         }
         for (String tag : valueJSON.keySet()) {

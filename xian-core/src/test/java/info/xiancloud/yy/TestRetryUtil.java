@@ -1,6 +1,6 @@
 package info.xiancloud.yy;
 
-import info.xiancloud.plugin.util.RetryUtil;
+import info.xiancloud.core.util.RetryUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

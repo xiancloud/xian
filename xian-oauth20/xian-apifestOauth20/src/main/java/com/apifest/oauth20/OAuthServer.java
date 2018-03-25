@@ -16,8 +16,8 @@
 
 package com.apifest.oauth20;
 
-import info.xiancloud.plugin.thread_pool.ThreadPoolManager;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.thread_pool.ThreadPoolManager;
+import info.xiancloud.core.util.LOG;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;

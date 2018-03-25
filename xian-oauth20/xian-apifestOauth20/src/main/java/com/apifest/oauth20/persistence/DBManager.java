@@ -23,7 +23,7 @@ import com.apifest.oauth20.bean.ApplicationInfo;
 import com.apifest.oauth20.bean.AuthCode;
 import com.apifest.oauth20.bean.ClientCredentials;
 import com.apifest.oauth20.bean.Scope;
-import info.xiancloud.plugin.support.authen.AccessToken;
+import info.xiancloud.core.support.authen.AccessToken;
 
 import java.util.List;
 import java.util.Map;
@@ -96,7 +96,7 @@ public interface DBManager {
     /**
      * Loads an auth code record from DB by passed authCode and redirect uri.
      *
-     * @param authCode    authCode
+     * @param authCode authCode
      * @return auth code object if it is valid, otherwise <code>null</code>
      */
     AuthCode findAuthCode(String authCode/*, String redirectUri*/);

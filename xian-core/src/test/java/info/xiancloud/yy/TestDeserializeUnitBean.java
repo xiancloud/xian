@@ -2,8 +2,8 @@ package info.xiancloud.yy;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.distribution.UnitProxy;
-import info.xiancloud.plugin.util.Reflection;
+import info.xiancloud.core.distribution.UnitProxy;
+import info.xiancloud.core.util.Reflection;
 import org.junit.Test;
 
 /**

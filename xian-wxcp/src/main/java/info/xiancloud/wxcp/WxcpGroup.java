@@ -1,6 +1,6 @@
 package info.xiancloud.wxcp;
 
-import info.xiancloud.plugin.Group;
+import info.xiancloud.core.Group;
 
 /**
  * 企业微信服务

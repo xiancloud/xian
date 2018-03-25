@@ -2,11 +2,11 @@ package info.xiancloud.qclouddocker.api.unit.custom;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.LocalUnitsManager;
-import info.xiancloud.plugin.conf.XianConfig;
-import info.xiancloud.plugin.message.SyncXian;
-import info.xiancloud.plugin.message.UnitResponse;
-import info.xiancloud.plugin.util.*;
+import info.xiancloud.core.LocalUnitsManager;
+import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.*;
 import info.xiancloud.qclouddocker.api.unit.service.*;
 import info.xiancloud.qclouddocker.api.unit.serviceinstance.ModifyServiceReplicasUnit;
 
@@ -256,7 +256,7 @@ public class DeploymentUtil {
     /**
      * 检查application是否存在于xian_runtime包内，如果不存在那么抛出异常
      *
-     * @param applications                待检查的application列表
+     * @param applications              待检查的application列表
      * @param applicationsInXianRuntime xian_runtime包内的application集合
      * @throws RuntimeException 提示application不存在
      */

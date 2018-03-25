@@ -1,6 +1,6 @@
 package info.xiancloud.yy;
 
-import info.xiancloud.plugin.util.Reflection;
+import info.xiancloud.core.util.Reflection;
 import org.junit.Assert;
 import org.junit.Test;
 

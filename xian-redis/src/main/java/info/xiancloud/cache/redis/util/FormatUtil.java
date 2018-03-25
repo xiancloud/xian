@@ -1,6 +1,6 @@
 package info.xiancloud.cache.redis.util;
 
-import info.xiancloud.plugin.util.Reflection;
+import info.xiancloud.core.util.Reflection;
 
 /**
  * 格式化

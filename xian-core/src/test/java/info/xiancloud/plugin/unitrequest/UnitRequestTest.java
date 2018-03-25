@@ -1,10 +1,10 @@
 package info.xiancloud.plugin.unitrequest;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.plugin.Unit;
-import info.xiancloud.plugin.distribution.UnitProxy;
-import info.xiancloud.plugin.message.UnitRequest;
-import info.xiancloud.plugin.test.output_test.UnitResponseTestUnit;
+import info.xiancloud.core.Unit;
+import info.xiancloud.core.distribution.UnitProxy;
+import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.test.output_test.UnitResponseTestUnit;
 import org.junit.Assert;
 import org.junit.Test;
 

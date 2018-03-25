@@ -1,8 +1,8 @@
 package info.xiancloud.yy.send_local_stream;
 
-import info.xiancloud.plugin.message.UnitResponse;
-import info.xiancloud.plugin.message.Xian;
-import info.xiancloud.plugin.support.mq.mqtt.handle.NotifyHandler;
+import info.xiancloud.core.NotifyHandler;
+import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.message.Xian;
 import info.xiancloud.plugins.yy.stream_rpc.StreamRpcTestReqUnit;
 
 /**

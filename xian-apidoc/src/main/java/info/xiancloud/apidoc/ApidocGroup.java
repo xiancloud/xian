@@ -1,6 +1,6 @@
 package info.xiancloud.apidoc;
 
-import info.xiancloud.plugin.Group;
+import info.xiancloud.core.Group;
 
 /**
  * @author yyq, happyyangyuan

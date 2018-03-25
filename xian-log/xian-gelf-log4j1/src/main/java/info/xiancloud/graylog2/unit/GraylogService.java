@@ -1,6 +1,6 @@
 package info.xiancloud.graylog2.unit;
 
-import info.xiancloud.plugin.Group;
+import info.xiancloud.core.Group;
 
 /**
  * @author happyyangyuan

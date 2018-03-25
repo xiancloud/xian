@@ -1,6 +1,6 @@
 package info.xiancloud.yy.application_config;
 
-import info.xiancloud.plugin.conf.application.ApplicationConfig;
+import info.xiancloud.core.conf.application.ApplicationConfig;
 
 /**
  * @author happyyangyuan

@@ -3,9 +3,9 @@ package info.xiancloud.cache.redis;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.cache.redis.operate.ServerOperate;
-import info.xiancloud.plugin.distribution.LocalNodeManager;
-import info.xiancloud.plugin.util.EnvUtil;
-import info.xiancloud.plugin.util.LOG;
+import info.xiancloud.core.distribution.LocalNodeManager;
+import info.xiancloud.core.util.EnvUtil;
+import info.xiancloud.core.util.LOG;
 import redis.clients.jedis.Jedis;
 
 import java.util.Map;

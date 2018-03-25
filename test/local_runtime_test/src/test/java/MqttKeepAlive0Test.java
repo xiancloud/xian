@@ -1,9 +1,9 @@
-import info.xiancloud.plugin.distribution.LocalNodeManager;
-import info.xiancloud.plugin.message.IdManager;
-import info.xiancloud.plugin.util.LOG;
-import info.xiancloud.plugin.mqtt.IMqttPublisher;
-import info.xiancloud.plugin.mqtt.MqttCallbackAdaptor;
-import info.xiancloud.plugin.mqtt.MqttClientBuilder;
+import info.xiancloud.core.distribution.LocalNodeManager;
+import info.xiancloud.core.message.IdManager;
+import info.xiancloud.core.util.LOG;
+import info.xiancloud.mqttclient.IMqttPublisher;
+import info.xiancloud.mqttclient.MqttCallbackAdaptor;
+import info.xiancloud.mqttclient.MqttClientBuilder;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.After;
 import org.junit.Test;
