@@ -4,7 +4,7 @@ import info.xiancloud.gateway.scheduler.IResponseDataOnly;
 
 /**
  * 1、request body is not required
- * 2、response only the data in the {@link info.xiancloud.plugin.message.UnitResponse}
+ * 2、response only the data in the {@link info.xiancloud.core.message.UnitResponse}
  *
  * @author happyyangyuan
  */
