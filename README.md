@@ -50,7 +50,7 @@ UnitResponse resp = Xian.call("test", "helloWorld", map/bean);
 以上是同步RPC调用，下面展示异步RPC调用：
 ````java
 Xian.call("test", "helloWorld", map/bean, new NotifyHandler() {
-    toContinue(UnitResponse response){
+    handle(UnitResponse response){
         // do sth with the response.
     }
 });
