@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author happyyangyuan
  */
-public class SyncXian {
+class SyncXian {
 
     public static UnitResponse call(UnitRequest request, long timeoutInMilli) {
         String group = request.getContext().getGroup(),

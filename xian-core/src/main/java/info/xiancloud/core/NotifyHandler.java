@@ -15,19 +15,9 @@ public abstract class NotifyHandler {
     private boolean timeout = false;
     private List<Action> beforeActions = new ArrayList<>();
     private List<Action> afterActions = new ArrayList<>();
-    private boolean async = true;
 
     public NotifyHandler setTimeout(boolean timeout) {
         this.timeout = timeout;
-        return this;
-    }
-
-    public boolean isAsync() {
-        return async;
-    }
-
-    public NotifyHandler setAsync(boolean async) {
-        this.async = async;
         return this;
     }
 
@@ -40,7 +30,7 @@ public abstract class NotifyHandler {
             }
         }
         if (timeout) {
-            LOG.error("本次消息已经被判定为超时,但是超时后又收到了响应!  需要人工恢复。 unitResponseObject= " + unitResponseObject);
+            LOG.error("本次消息已经被判定为超时,但是超时后又收到了响应! unitResponseObject= " + unitResponseObject);
         } else {
             try {
                 handle(unitResponseObject);
@@ -55,7 +45,6 @@ public abstract class NotifyHandler {
                 LOG.error("afterAction执行失败，但是不妨碍下一个action执行", e);
             }
         }
-
     }
 
     public void addBefore(Action... oneOrMoreActions) {

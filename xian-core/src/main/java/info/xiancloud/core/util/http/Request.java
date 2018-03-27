@@ -1,7 +1,7 @@
 package info.xiancloud.core.util.http;
 
-import info.xiancloud.core.message.SyncXian;
-import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.NotifyHandler;
+import info.xiancloud.core.message.*;
 import info.xiancloud.core.socket.ISocketGroup;
 import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.message.SyncXian;
@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class Request implements Serializable {
 
@@ -95,18 +96,18 @@ public class Request implements Serializable {
      */
     /*
      * public UnitRequest setSSL(byte[] cerByte, String storePass) { InputStream
-	 * cerIn = new ByteArrayInputStream(cerByte); sslSocketFactory =
-	 * Https.getSslSocketFactory( (cerByte != null && cerByte.length > 0) ? new
-	 * ByteArrayInputStream(cerByte) : null, storePass); return this; }
-	 * 
-	 * public UnitRequest setSSL(String cerBase64, String storePass) { byte[]
-	 * cerByte=Base64.getDecoder().decode(cerBase64); setSSL(cerByte,
-	 * storePass); return this; }
-	 * 
-	 * public UnitRequest setSSL(InputStream cerIn, String storePass) {
-	 * //sslSocketFactory = Https.getSslSocketFactory(cerIn, storePass); return
-	 * this; }
-	 */
+     * cerIn = new ByteArrayInputStream(cerByte); sslSocketFactory =
+     * Https.getSslSocketFactory( (cerByte != null && cerByte.length > 0) ? new
+     * ByteArrayInputStream(cerByte) : null, storePass); return this; }
+     *
+     * public UnitRequest setSSL(String cerBase64, String storePass) { byte[]
+     * cerByte=Base64.getDecoder().decode(cerBase64); setSSL(cerByte,
+     * storePass); return this; }
+     *
+     * public UnitRequest setSSL(InputStream cerIn, String storePass) {
+     * //sslSocketFactory = Https.getSslSocketFactory(cerIn, storePass); return
+     * this; }
+     */
     public Request setSSL(InputStream cerIn, String storePass) {
         this.useSSL = true;
         // LOG.info("--启用Https访问---");
@@ -153,7 +154,7 @@ public class Request implements Serializable {
      *
      * @throws IOException IOException
      */
-    public String execute() throws IOException {
+    public void execute(Consumer<String> consumer) throws IOException {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -163,20 +164,23 @@ public class Request implements Serializable {
         String reqBase64 = new String(Base64.getEncoder().encode(bos.toByteArray()));
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("req", reqBase64);
-        UnitResponse out = SyncXian.call("httpClient", "http", map);
-
-        if (out.succeeded()) {
-            return out.dataToJson().getString("entity");
-        } else {
-            switch (out.getCode()) {
-                case ISocketGroup.CODE_CONNECT_TIMEOUT:
-                    throw new ConnectException("连接超时：" + url);
-                case ISocketGroup.CODE_SOCKET_TIMEOUT:
-                    throw new SocketTimeoutException("响应超时：" + url);
-                default:
-                    throw new RuntimeException("请求失败：" + url);
+        Xian.call("httpClient", "http", map, new NotifyHandler() {
+            @Override
+            protected void handle(UnitResponse out) {
+                if (out.succeeded()) {
+                    consumer.accept(out.dataToJson().getString("entity"));
+                } else {
+                    switch (out.getCode()) {
+                        case ISocketGroup.CODE_CONNECT_TIMEOUT:
+                            throw new ConnectException("连接超时：" + url);
+                        case ISocketGroup.CODE_SOCKET_TIMEOUT:
+                            throw new SocketTimeoutException("响应超时：" + url);
+                        default:
+                            throw new RuntimeException("请求失败：" + url);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**

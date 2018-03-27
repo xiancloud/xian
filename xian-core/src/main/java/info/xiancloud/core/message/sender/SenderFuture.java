@@ -36,6 +36,9 @@ public class SenderFuture implements Future<UnitResponse> {
 
     /**
      * 等待执行结果，永不超时
+     * Note, this method will return right after finishing execution of the unit and before the remote handler is called.
+     *
+     * @return the unit response
      */
     public UnitResponse get() {
         synchronized (responseLock) {

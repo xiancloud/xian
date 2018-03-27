@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import info.xiancloud.core.message.sender.IAsyncSender;
 import info.xiancloud.core.thread_pool.SingleThreadExecutorGroup;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.message.UnitResponse;
@@ -62,15 +63,7 @@ public class DefaultSequencer implements ISequencer {
     }
 
     @Override
-    public void sequence(Runnable runnable) throws LackParamException {
-        getSequentialData();
-        Set<String> sequential = sequentialData.keySet();
-        Collection<Object> values = sequentialData.values();
-        getGroup(sequential).execute(computeKey(values), runnable);
-    }
-
-    @Override
-    public void sequence(Runnable runnable, NotifyHandler onFailure) {
+    public void sequence(IAsyncSender asyncSender, NotifyHandler onFailure) {
         try {
             getSequentialData();
         } catch (LackParamException lackParam) {
@@ -80,7 +73,7 @@ public class DefaultSequencer implements ISequencer {
         }
         Set<String> sequential = sequentialData.keySet();
         Collection<Object> values = sequentialData.values();
-        getGroup(sequential).execute(computeKey(values), runnable);
+        getGroup(sequential).execute(computeKey(values), () -> asyncSender.send().get());
     }
 
     public Map<String, Object> getSequentialData() throws LackParamException {

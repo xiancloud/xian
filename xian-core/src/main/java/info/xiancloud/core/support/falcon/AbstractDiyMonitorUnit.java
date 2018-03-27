@@ -2,16 +2,18 @@ package info.xiancloud.core.support.falcon;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.Unit;
 import info.xiancloud.core.Bean;
+import info.xiancloud.core.Group;
+import info.xiancloud.core.NotifyHandler;
+import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Reflection;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * 自定义业务监控
@@ -26,12 +28,12 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, NotifyHandler handler) {
         JSONArray responseMonitor = new JSONArray();
 
         String title = title();
         if (title == null || "".equals(title.trim()))
-            return UnitResponse.success(responseMonitor);//todo why success with empty array? not failure or exception?
+            handler.callback(UnitResponse.success(responseMonitor));//todo why success with empty array? not failure or exception?
 
         Object monitor = execute0();
         if (monitor != null) {
@@ -41,7 +43,7 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
                 padding(responseMonitor, monitor);
         }
 
-        return UnitResponse.success(responseMonitor);
+        handler.callback(UnitResponse.success(responseMonitor));
     }
 
     private void padding(JSONArray responseMonitor, Object monitor) {
@@ -63,8 +65,8 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
             responseMonitor.add(_monitor);
         } else if (monitor instanceof Collection || monitor.getClass().isArray()) {
             JSONArray jsonArray = Reflection.toType(monitor, JSONArray.class);
-            for (int i = 0; i < jsonArray.size(); i++) {
-                padding(responseMonitor, jsonArray.get(i));
+            for (Object aJsonArray : jsonArray) {
+                padding(responseMonitor, aJsonArray);
             }
         } else {
             LOG.warn("暂时不支持识别的监控数据: " + monitor);

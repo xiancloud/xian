@@ -6,10 +6,8 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.util.Pair;
-import info.xiancloud.core.util.StringUtil;
+
+import java.util.function.Consumer;
 
 /**
  * Super interface for all service units.
@@ -56,11 +54,12 @@ public interface Unit {
     }
 
     /**
-     * 组件业务执行方法
+     * asynchronous execution of this unit.
      *
-     * @param request 具体的消息
+     * @param request the request object.
+     * @param handler the unit response consumer, this handler must be executed asynchronously.
      */
-    UnitResponse execute(UnitRequest request);
+    void execute(UnitRequest request, NotifyHandler handler);
 
     /**
      * 用于序列化unit定义；
@@ -72,7 +71,7 @@ public interface Unit {
     }
 
     //同上，用于限制unit对象只序列化指定属性，规避未知业务unit的意外getter被触发调用
-    SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Unit.class, "name","group","meta", "input", "version");
+    SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Unit.class, "name", "group", "meta", "input", "version");
 
     /**
      * Unified unit full name. The full name is the combination of group name and unit name.

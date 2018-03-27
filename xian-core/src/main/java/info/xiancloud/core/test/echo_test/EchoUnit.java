@@ -1,10 +1,8 @@
 package info.xiancloud.core.test.echo_test;
 
-import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.*;
-import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.test.TestGroup;
 
 /**
@@ -28,12 +26,13 @@ public class EchoUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest request) {
-        return UnitResponse.success(request.getContext().getBody());
-    }
-
-    @Override
     public UnitMeta getMeta() {
         return UnitMeta.create().setBodyRequired(true);
     }
+
+    @Override
+    public void execute(UnitRequest request, NotifyHandler handler) {
+        handler.callback(UnitResponse.success(request.getContext().getBody()));
+    }
+
 }

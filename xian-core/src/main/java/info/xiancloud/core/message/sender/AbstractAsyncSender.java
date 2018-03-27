@@ -4,7 +4,6 @@ import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.message.IdManager;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.core.util.thread.MsgIdHolder;
@@ -30,7 +29,6 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
                 //既然你不需要callback,那么这里什么也不用做啰
             }
         } : handler;
-        callback.setAsync(handler != null);
         callback.addBefore(new NotifyHandler.Action() {
             protected void run(UnitResponse asyncUnitResponse) {
                 senderFuture.setUnitResponse(asyncUnitResponse);
@@ -49,7 +47,7 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
                 asyncSend();
             }
         } catch (Throwable throwable) {
-            //not needed really, just in case.
+            //just in case.
             LOG.error(throwable);
             callback.callback(UnitResponse.exception(throwable));
         } finally {

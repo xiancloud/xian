@@ -1,14 +1,8 @@
 package info.xiancloud.core.message;
 
-import info.xiancloud.core.NotifyHandler;
-import info.xiancloud.core.distribution.GroupJudge;
-import info.xiancloud.core.message.sender.IAsyncSender;
-import info.xiancloud.core.message.sender.SenderFactory;
-import info.xiancloud.core.message.sender.virtureunit.DefaultVirtualUnitConverter;
-import info.xiancloud.core.message.sender.virtureunit.IVirtualUnitConverter;
-import info.xiancloud.core.message.sender.virtureunit.VirtualDaoUnitConverter;
 import info.xiancloud.core.Bean;
 import info.xiancloud.core.LocalUnitsManager;
+import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.distribution.GroupJudge;
 import info.xiancloud.core.message.sender.IAsyncSender;
@@ -16,7 +10,6 @@ import info.xiancloud.core.message.sender.SenderFactory;
 import info.xiancloud.core.message.sender.virtureunit.DefaultVirtualUnitConverter;
 import info.xiancloud.core.message.sender.virtureunit.IVirtualUnitConverter;
 import info.xiancloud.core.message.sender.virtureunit.VirtualDaoUnitConverter;
-import info.xiancloud.core.NotifyHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +19,7 @@ import java.util.Map;
  *
  * @author happyyangyuan
  */
-public class Xian extends SyncXian {
+public class Xian /*extends SyncXian*/ {
 
     /**
      * @param destinationUnitBean the destination unit description bean. group name and unit name required.

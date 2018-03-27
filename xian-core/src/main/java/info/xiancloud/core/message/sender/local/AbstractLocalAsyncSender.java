@@ -1,10 +1,6 @@
 package info.xiancloud.core.message.sender.local;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.NotifyHandler;
-import info.xiancloud.core.distribution.LocalNodeManager;
-import info.xiancloud.core.distribution.exception.UnitUndefinedException;
-import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.distribution.exception.UnitUndefinedException;
@@ -12,8 +8,6 @@ import info.xiancloud.core.message.LackParamException;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.sender.AbstractAsyncSender;
-import info.xiancloud.core.NotifyHandler;
-import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 
@@ -21,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Sender class for Local unit call. We also make this process asynchronous. The mechanism is we submit the request to our business thread pool for execution,
@@ -52,45 +45,28 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
 
     @Override
     protected void asyncSend() {
-        ThreadPoolManager.execute(() -> {
-            /*IdManager.makeSureMsgId(unitRequest.getContext()); No need, because super asyncSender has made sure msg id.*/
-            UnitResponse unitResponse;
-            long start = System.nanoTime();
-            Unit unit = LocalUnitsManager.getLocalUnit(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit());
-            if (unit == null) {
-                unitResponse = new UnitUndefinedException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()).toUnitResponse();
+        long start = System.nanoTime();
+        Unit unit = LocalUnitsManager.getLocalUnit(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit());
+        if (unit == null) {
+            UnitResponse unitResponse = new UnitUndefinedException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()).toUnitResponse();
+            responseCallbck(unitResponse, start);
+        } else {
+            Set<Input.Obj> required = getRequired(unit, unitRequest);
+            if (!required.isEmpty()) {
+                String[] requiredParamNames = required.stream().map(Input.Obj::getName).toArray(String[]::new);
+                LackParamException lackParamException = new LackParamException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit(), requiredParamNames);
+                UnitResponse unitResponse = UnitResponse.error(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
+                responseCallbck(unitResponse, start);
             } else {
-                Set<Input.Obj> required = getRequired(unit, unitRequest);
-                if (!required.isEmpty()) {
-                    String[] requiredParamNames = required.stream().map(Input.Obj::getName).collect(Collectors.toList()).toArray(new String[0]);
-                    LackParamException lackParamException = new LackParamException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit(), requiredParamNames);
-                    unitResponse = UnitResponse.error(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
-                } else {
-                    try {
-                        unitResponse = unit.execute(unitRequest);
-                    } catch (Throwable anyExceptionCaughtHere) {
-                        unitResponse = UnitResponse.exception(anyExceptionCaughtHere);
-                    }
+                unit.execute(unitRequest, unitResponse -> {
                     if (unitResponse == null) {
                         unitResponse = UnitResponse.failure(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
                         LOG.error(unitResponse);
                     }
-                }
+                    responseCallbck(unitResponse, start);
+                });
             }
-            fillResponseContext(unitResponse.getContext());
-            UnitResponse finalResponse = unitResponse;
-            long cost = (System.nanoTime() - start) / 1000000;
-            JSONObject logJson = new JSONObject() {{
-                put("group", unitRequest.getContext().getGroup());
-                put("unit", unitRequest.getContext().getUnit());
-                put(Constant.COST, cost);
-                put("unitRequest", originalMap);
-                put("unitResponse", finalResponse);
-                put("type", "unit");
-            }};
-            LOG.info(logJson.toJSONString());
-            callback.callback(finalResponse);
-        });
+        }
     }
 
     private static Set<Input.Obj> getRequired(Unit recipient, UnitRequest unitRequest) {
@@ -103,6 +79,20 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
             }
         }
         return required;
+    }
+
+    private void responseCallbck(UnitResponse unitResponse1, long start) {
+        fillResponseContext(unitResponse1.getContext());
+        long cost = (System.nanoTime() - start) / 1000000;
+        JSONObject logJson = new JSONObject().
+                fluentPut("group", unitRequest.getContext().getGroup()).
+                fluentPut("unit", unitRequest.getContext().getUnit()).
+                fluentPut(Constant.COST, cost).
+                fluentPut("unitRequest", originalMap).
+                fluentPut("unitResponse", unitResponse1).
+                fluentPut("type", "unit");
+        LOG.info(logJson.toJSONString());
+        callback.callback(unitResponse1);
     }
 
     //note that context data is full-filled step by step, not at once.

@@ -4,10 +4,7 @@ import info.xiancloud.apidoc.ApiBuilder;
 import info.xiancloud.apidoc.ApidocGroup;
 import info.xiancloud.apidoc.handler.UnitMdBuilderHandler;
 import info.xiancloud.apidoc.handler.filter.IUnitFilter;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
@@ -32,9 +29,9 @@ public abstract class AbstractMdApidocUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, NotifyHandler handler) {
         String doc = specifyBuild(msg.getString("docDescription"), msg.getString("docName"), getFilter(msg));
-        return UnitResponse.success(doc);
+        handler.callback(UnitResponse.success(doc));
     }
 
     @Override

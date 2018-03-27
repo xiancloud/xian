@@ -3,6 +3,7 @@ package info.xiancloud.dao.group.unit;
 import com.alibaba.fastjson.JSON;
 import info.xiancloud.core.Group;
 import info.xiancloud.core.Input;
+import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -62,8 +63,17 @@ public abstract class DaoUnit implements Unit {
         }
     }
 
+    /**
+     *
+     * @param request the request object.
+     * @param handler the unit response consumer, this handler must be executed asynchronously.
+     */
     @Override
-    public final UnitResponse execute(UnitRequest msg) {
+    public final void execute(UnitRequest request, NotifyHandler handler) {
+        handler.callback(execute(request));
+    }
+
+    private UnitResponse execute(UnitRequest msg) {
         try {
             init(msg);
             transaction.get().begin();

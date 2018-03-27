@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObject> {
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         LOG.info(new JSONObject() {{
             put("myMsg", "rpc connected.");
             put("type", "serverSideChannelActive");
@@ -40,7 +40,7 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, JSONObject untRequestOrResponse) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, JSONObject untRequestOrResponse) {
         if (MessageType.isPing(untRequestOrResponse)) {
             LOG.info("Received a ping from client size.");
         } else {
@@ -67,13 +67,11 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
                     ctx.writeAndFlush(payload + Constant.RPC_DELIMITER);
                 };
                 ISequencer.build(group, unit, json).sequence(
-                        //run this runnable if sequence operation is succeeded.
-                        () -> new DefaultLocalAsyncSender(request, new NotifyHandler() {
+                        new DefaultLocalAsyncSender(request, new NotifyHandler() {
                             protected void handle(UnitResponse unitResponse) {
                                 LocalNodeManager.sendBack(unitResponse, backPayloadConsumerOnFailure);
                             }
-                        }).send(),
-                        /*if the sequence operation failed directly, call this handler*/
+                        }),
                         new NotifyHandler() {
                             protected void handle(UnitResponse failureOut) {
                                 LocalNodeManager.sendBack(failureOut, backPayloadConsumerOnFailure);
@@ -110,7 +108,7 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
     }
 
     /**
-     * 打印mqtt消息传输耗时等信息:术语mqttFly
+     * 打印rpc消息传输耗时等信息:术语rpcFly
      *
      * @deprecated 打印日志消耗性能，即使是debug级别也是，因此废弃，请不要再调用本方法
      */

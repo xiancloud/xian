@@ -11,6 +11,9 @@ public interface IAsyncSender {
 
     /*UnitResponse getOutput();*/
 
+    /**
+     * send the unit request asynchronously, and return the sender future object.
+     */
     SenderFuture send();
 
     /*boolean isCompleted();*/

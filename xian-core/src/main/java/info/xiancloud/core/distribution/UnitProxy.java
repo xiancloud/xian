@@ -2,10 +2,10 @@ package info.xiancloud.core.distribution;
 
 import com.alibaba.fastjson.JSON;
 import info.xiancloud.core.Input;
+import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.UnitMeta;
 import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
 
 /**
  * unit proxy bean, for performance consideration this class extends {@link UnitBean} which cached the {@link UnitMeta} and the {@link Input}
@@ -25,8 +25,8 @@ public class UnitProxy extends UnitBean {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        return unit.execute(msg);
+    public void execute(UnitRequest request, NotifyHandler handler) {
+        unit.execute(request, handler);
     }
 
 }
