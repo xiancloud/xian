@@ -4,4 +4,6 @@ dependencies {
     runtime project(':xian-rpc:xian-rpcNettyServer')
     runtime project(':xian-redis')
     runtime project(":test:server_runtime_web_test")
+    runtime project(':xian-web:xian-jettyweb')
+    runtime project(path: ':test:server_runtime_web_test0', configuration: 'war')
 }
