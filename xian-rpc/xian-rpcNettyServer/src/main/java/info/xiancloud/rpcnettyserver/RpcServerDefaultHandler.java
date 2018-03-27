@@ -67,12 +67,12 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
                     ctx.writeAndFlush(payload + Constant.RPC_DELIMITER);
                 };
                 ISequencer.build(group, unit, json).sequence(
-                        //run this runnable if succeeded.
-                        () -> new DefaultLocalAsyncSender(request, new NotifyHandler() {
+                        //call this sender if sequencer is succeeded.
+                        new DefaultLocalAsyncSender(request, new NotifyHandler() {
                             protected void handle(UnitResponse unitResponse) {
                                 LocalNodeManager.sendBack(unitResponse, backPayloadConsumerOnFailure);
                             }
-                        }).send(),
+                        }),
                         /*failed directly, call this handler*/
                         new NotifyHandler() {
                             protected void handle(UnitResponse failureOut) {
