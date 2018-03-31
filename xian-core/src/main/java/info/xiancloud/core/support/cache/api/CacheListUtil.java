@@ -1,8 +1,7 @@
 package info.xiancloud.core.support.cache.api;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.message.SyncXian;
-import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.AsyncResult;
 import info.xiancloud.core.message.Xian;
 import info.xiancloud.core.support.cache.CacheConfigBean;
 import info.xiancloud.core.support.cache.CacheService;
@@ -10,11 +9,12 @@ import info.xiancloud.core.util.Reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * cache List operation util.
+ * cache List operation asynchronous util.
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public final class CacheListUtil {
 
@@ -22,47 +22,45 @@ public final class CacheListUtil {
     }
 
     @Deprecated
-    public static boolean exists(String cacheKey) {
-        return exists(CacheService.CACHE_CONFIG_BEAN, cacheKey);
+    public static void exists(String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        exists(CacheService.CACHE_CONFIG_BEAN, cacheKey, consumer);
     }
 
     @Deprecated
-    public static boolean exists(CacheConfigBean cacheConfigBean, String cacheKey) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListExists", new JSONObject() {{
+    public static void exists(CacheConfigBean cacheConfigBean, String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListExists", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-
-        return (boolean) unitResponseObject.getData();
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse)));
     }
 
-    public static long length(String cacheKey) {
-        return length(CacheService.CACHE_CONFIG_BEAN, cacheKey);
+    public static void length(String cacheKey, Consumer<AsyncResult<Long>> consumer) {
+        length(CacheService.CACHE_CONFIG_BEAN, cacheKey, consumer);
     }
 
-    public static long length(CacheConfigBean cacheConfigBean, String cacheKey) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListLength", new JSONObject() {{
+    public static void length(CacheConfigBean cacheConfigBean, String cacheKey, Consumer<AsyncResult<Long>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListLength", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-
-        long length = (long) unitResponseObject.getData();
-        return length > 0 ? length : 0;
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, () -> {
+            long length = unitResponse.getData();
+            return length > 0 ? length : 0;
+        })));
     }
 
-    public static boolean isEmpty(String cacheKey) {
-        return isEmpty(CacheService.CACHE_CONFIG_BEAN, cacheKey);
+    public static void isEmpty(String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        isEmpty(CacheService.CACHE_CONFIG_BEAN, cacheKey, consumer);
     }
 
-    public static boolean isEmpty(CacheConfigBean cacheConfigBean, String cacheKey) {
-        long length = length(cacheConfigBean, cacheKey);
-        return length == 0;
+    public static void isEmpty(CacheConfigBean cacheConfigBean, String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        length(cacheConfigBean, cacheKey, asyncResult -> {
+            if (asyncResult.succeeded())
+                consumer.accept(AsyncResult.from(asyncResult, () -> asyncResult.result() == 0));
+        });
     }
 
-    public static boolean addHead(String cacheKey, Object value) {
-        return addHead(CacheService.CACHE_CONFIG_BEAN, cacheKey, value);
+    public static void addHead(String cacheKey, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        addHead(CacheService.CACHE_CONFIG_BEAN, cacheKey, value, consumer);
     }
 
     /**
@@ -71,24 +69,18 @@ public final class CacheListUtil {
      * @param cacheConfigBean cacheConfigBean
      * @param cacheKey        cacheKey
      * @param value           value
-     * @return true on success, false on failure.
+     * @param consumer        true on success, false on failure.
      */
-    public static boolean addHead(CacheConfigBean cacheConfigBean, String cacheKey, Object value) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListAddHead", new JSONObject() {{
+    public static void addHead(CacheConfigBean cacheConfigBean, String cacheKey, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListAddHead", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("valueObj", value);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-
-        if (unitResponseObject.succeeded())
-            return true;
-        else
-            return false;
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, unitResponse::succeeded)));
     }
 
-    public static boolean add(String cacheKey, Object value) {
-        return add(CacheService.CACHE_CONFIG_BEAN, cacheKey, value);
+    public static void add(String cacheKey, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        add(CacheService.CACHE_CONFIG_BEAN, cacheKey, value, consumer);
     }
 
     /**
@@ -97,178 +89,161 @@ public final class CacheListUtil {
      * @param cacheConfigBean cacheConfigBean
      * @param cacheKey        cacheKey
      * @param value           value
-     * @return true on success, false on faulure.
+     * @param consumer        true on success, false on faulure.
      */
-    public static boolean add(CacheConfigBean cacheConfigBean, String cacheKey, Object value) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListAdd", new JSONObject() {{
+    public static void add(CacheConfigBean cacheConfigBean, String cacheKey, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListAdd", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("valueObj", value);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        return unitResponseObject.succeeded();
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, unitResponse::succeeded)));
     }
 
-    public static boolean addAll(String cacheKey, List list) {
-        return addAll(CacheService.CACHE_CONFIG_BEAN, cacheKey, list);
+    public static void addAll(String cacheKey, List list, Consumer<AsyncResult<Boolean>> consumer) {
+        addAll(CacheService.CACHE_CONFIG_BEAN, cacheKey, list, consumer);
     }
 
-    public static boolean addAll(CacheConfigBean cacheConfigBean, String cacheKey, List list) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListAddAll", new JSONObject() {{
+    public static void addAll(CacheConfigBean cacheConfigBean, String cacheKey, List list, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListAddAll", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("values", list);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        return unitResponseObject.succeeded();
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, unitResponse::succeeded)));
     }
 
-    public static boolean set(String cacheKey, int index, Object value) {
-        return set(CacheService.CACHE_CONFIG_BEAN, cacheKey, index, value);
+    public static void set(String cacheKey, int index, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        set(CacheService.CACHE_CONFIG_BEAN, cacheKey, index, value, consumer);
     }
 
-    public static boolean set(CacheConfigBean cacheConfigBean, String cacheKey, int index, Object value) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListSet", new JSONObject() {{
+    public static void set(CacheConfigBean cacheConfigBean, String cacheKey, int index, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListSet", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("index", index);
             put("valueObj", value);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        return unitResponseObject.succeeded();
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, unitResponse::succeeded)));
     }
 
-    public static boolean remove(String cacheKey, Object value) {
-        return remove(CacheService.CACHE_CONFIG_BEAN, cacheKey, value);
+    public static void remove(String cacheKey, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        remove(CacheService.CACHE_CONFIG_BEAN, cacheKey, value, consumer);
     }
 
-    public static boolean remove(CacheConfigBean cacheConfigBean, String cacheKey, Object value) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListRemove", new JSONObject() {{
+    public static void remove(CacheConfigBean cacheConfigBean, String cacheKey, Object value, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListRemove", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("valueObj", value);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-
-        long result = (long) unitResponseObject.getData();
-        if (result > 0)
-            return true;
-        else
-            return false;
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, () -> {
+            long result = unitResponse.getData();
+            return result > 0;
+        })));
     }
 
-    public static boolean clear(String cacheKey) {
-        return clear(CacheService.CACHE_CONFIG_BEAN, cacheKey);
+    public static void clear(String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        clear(CacheService.CACHE_CONFIG_BEAN, cacheKey, consumer);
     }
 
-    public static boolean clear(CacheConfigBean cacheConfigBean, String cacheKey) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListClear", new JSONObject() {{
+    public static void clear(CacheConfigBean cacheConfigBean, String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListClear", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        return unitResponseObject.succeeded();
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, unitResponse::succeeded)));
     }
 
-    public static boolean delete(String cacheKey) {
-        return delete(CacheService.CACHE_CONFIG_BEAN, cacheKey);
+    public static void delete(String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        delete(CacheService.CACHE_CONFIG_BEAN, cacheKey, consumer);
     }
 
-    public static boolean delete(CacheConfigBean cacheConfigBean, String cacheKey) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheObjectRemove", new JSONObject() {{
+    public static void delete(CacheConfigBean cacheConfigBean, String cacheKey, Consumer<AsyncResult<Boolean>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheObjectRemove", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        return unitResponseObject.succeeded();
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, unitResponse::succeeded)));
     }
 
     @Deprecated
-    public static List getAll(String cacheKey) {
-        return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, 0, -1);
+    public static void getAll(String cacheKey, Consumer<AsyncResult<List>> consumer) {
+        getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, 0, -1, consumer);
     }
 
     @Deprecated
-    public static List getAll(CacheConfigBean cacheConfigBean, String cacheKey) {
-        return getRange(cacheConfigBean, cacheKey, 0, -1);
+    public static void getAll(CacheConfigBean cacheConfigBean, String cacheKey, Consumer<AsyncResult<List>> consumer) {
+        getRange(cacheConfigBean, cacheKey, 0, -1, consumer);
     }
 
     @Deprecated
-    public static List getRange(String cacheKey, int startIndex, int endIndex) {
-        return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, startIndex, endIndex);
+    public static void getRange(String cacheKey, int startIndex, int endIndex, Consumer<AsyncResult<List>> consumer) {
+        getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, startIndex, endIndex, consumer);
     }
 
     /**
      * @return 返回list，如果key不存在，那么返回null，如果key为空列表，那么返回size=0的ArrayList
      */
-    public static <T> List<T> getAll(String cacheKey, Class<T> clazz) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListGetAll", new JSONObject() {{
+    public static <T> void getAll(String cacheKey, Class<T> clazz, Consumer<AsyncResult<List<T>>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListGetAll", new JSONObject() {{
             put("key", cacheKey);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        return unitResponseObject.dataToTypedList(clazz);
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, () -> unitResponse.dataToTypedList(clazz))));
     }
 
     /**
      * 指定获取范围 (不推荐使用)
      */
     @Deprecated
-    public static List getRange(CacheConfigBean cacheConfigBean, String cacheKey, int startIndex, int endIndex) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListRange", new JSONObject() {{
+    public static void getRange(CacheConfigBean cacheConfigBean, String cacheKey, int startIndex, int endIndex, Consumer<AsyncResult<List>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListRange", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("startIndex", startIndex);
             put("endIndex", endIndex);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        if (unitResponseObject.getData() != null)
-            return unitResponseObject.getData();
-        else
-            return null;
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, () -> {
+            if (unitResponse.getData() != null)
+                return unitResponse.getData();
+            else
+                return null;
+        })));
     }
 
-    public static <T> List<T> getRange(String cacheKey, Class<T> clazz) {
-        return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, 0, -1, clazz);
+    public static <T> void getRange(String cacheKey, Class<T> clazz, Consumer<AsyncResult<List<T>>> consumer) {
+        getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, 0, -1, clazz, consumer);
     }
 
-    public static <T> List<T> getRange(CacheConfigBean cacheConfigBean, String cacheKey, Class<T> clazz) {
-        return getRange(cacheConfigBean, cacheKey, 0, -1, clazz);
+    public static <T> void getRange(CacheConfigBean cacheConfigBean, String cacheKey, Class<T> clazz, Consumer<AsyncResult<List<T>>> consumer) {
+        getRange(cacheConfigBean, cacheKey, 0, -1, clazz, consumer);
     }
 
     @Deprecated
-    public static <T> List<T> getRange(String cacheKey, int startIndex, int endIndex, Class<T> clazz) {
-        return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, startIndex, endIndex, clazz);
+    public static <T> void getRange(String cacheKey, int startIndex, int endIndex, Class<T> clazz, Consumer<AsyncResult<List<T>>> consumer) {
+        getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, startIndex, endIndex, clazz, consumer);
     }
 
     /**
-     * 指定获取范围 (推荐使用)
+     * 指定获取范围
+     *
+     * @deprecated (不推荐使用)
      */
-    @Deprecated
-    public static <T> List<T> getRange(CacheConfigBean cacheConfigBean, String cacheKey, int startIndex, int endIndex, Class<T> clazz) {
-        List<String> lists = getRange(cacheConfigBean, cacheKey, startIndex, endIndex);
-
-        List<T> _lists = new ArrayList<T>();
-        lists.forEach(value -> {
-            _lists.add(Reflection.toType(value, clazz));
-        });
-
-        return _lists;
+    public static <T> void getRange(CacheConfigBean cacheConfigBean, String cacheKey, int startIndex, int endIndex, Class<T> clazz, Consumer<AsyncResult<List<T>>> consumer) {
+        getRange(cacheConfigBean, cacheKey, startIndex, endIndex, listAsyncResult -> consumer.accept(AsyncResult.from(listAsyncResult, () -> {
+            List<String> lists = listAsyncResult.result();
+            List<T> _lists = new ArrayList<>();
+            lists.forEach(value -> _lists.add(Reflection.toType(value, clazz)));
+            return _lists;
+        })));
     }
 
-    public static <T> T get(String cacheKey, int index, Class<T> clazz) {
-        return get(CacheService.CACHE_CONFIG_BEAN, cacheKey, index, clazz);
+    public static <T> void get(String cacheKey, int index, Class<T> clazz, Consumer<AsyncResult<T>> consumer) {
+        get(CacheService.CACHE_CONFIG_BEAN, cacheKey, index, clazz, consumer);
     }
 
-    public static <T> T get(CacheConfigBean cacheConfigBean, String cacheKey, int index, Class<T> clazz) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "cacheListGetByIndex", new JSONObject() {{
+    public static <T> void get(CacheConfigBean cacheConfigBean, String cacheKey, int index, Class<T> clazz, Consumer<AsyncResult<T>> consumer) {
+        Xian.call(CacheService.CACHE_SERVICE, "cacheListGetByIndex", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("index", index);
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
-        if (unitResponseObject.getData() == null)
-            return null;
-        return Reflection.toType(unitResponseObject.getData(), clazz);
+        }}, unitResponse -> consumer.accept(AsyncResult.fromUnitResponse(unitResponse, () -> {
+            if (unitResponse.getData() == null)
+                return null;
+            return Reflection.toType(unitResponse.getData(), clazz);
+        })));
     }
 
 }

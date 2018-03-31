@@ -6,10 +6,12 @@ import info.xiancloud.core.Unit;
 import info.xiancloud.core.UnitMeta;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.zookeeper.unit.ZookeeperGroup;
+import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.zookeeper.lock.ZkDistributedLock;
+import info.xiancloud.zookeeper.unit.ZookeeperGroup;
 
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 /**
  * @author happyyangyuan
@@ -34,13 +36,15 @@ public class LockUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        try {
-            int innerId = ZkDistributedLock.lock(msg.get("lockId", String.class), msg.get("timeoutInMilli", long.class));
-            return UnitResponse.success(innerId);
-        } catch (TimeoutException e) {
-            return UnitResponse.create(Group.CODE_TIME_OUT, msg.get("lockId"), "获取锁超时:" + msg.get("lockId", String.class));
-        }
+    public void execute(UnitRequest msg, Consumer<UnitResponse> handler) {
+        ThreadPoolManager.execute(() -> {
+            try {
+                int innerId = ZkDistributedLock.lock(msg.get("lockId", String.class), msg.get("timeoutInMilli", long.class));
+                handler.accept(UnitResponse.success(innerId));
+            } catch (TimeoutException e) {
+                handler.accept(UnitResponse.create(Group.CODE_TIME_OUT, msg.get("lockId"), "获取锁超时:" + msg.get("lockId", String.class)));
+            }
+        });
     }
 
     @Override

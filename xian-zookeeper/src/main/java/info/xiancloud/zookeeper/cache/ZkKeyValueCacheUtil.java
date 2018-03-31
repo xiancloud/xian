@@ -2,7 +2,6 @@ package info.xiancloud.zookeeper.cache;
 
 import com.google.common.cache.*;
 import info.xiancloud.core.init.shutdown.ShutdownHook;
-import info.xiancloud.core.support.zk.DistLocker;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.zookeeper.ZkConnection;

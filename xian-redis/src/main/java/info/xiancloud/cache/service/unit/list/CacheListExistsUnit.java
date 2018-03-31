@@ -10,10 +10,12 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
 
+import java.util.function.Consumer;
+
 /**
  * List Exists
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheListExistsUnit implements Unit {
 
@@ -39,7 +41,7 @@ public class CacheListExistsUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Consumer<UnitResponse> consumer) {
         String key = msg.getArgMap().get("key").toString();
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
         try {

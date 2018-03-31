@@ -54,12 +54,12 @@ public interface Unit {
     }
 
     /**
-     * asynchronous execution of this unit.
+     * asynchronous execution of this unit. do not block this method!
      *
      * @param request the request object.
      * @param handler the unit response consumer, this handler must be executed asynchronously.
      */
-    void execute(UnitRequest request, NotifyHandler handler);
+    void execute(UnitRequest request, Consumer<UnitResponse> handler);
 
     /**
      * 用于序列化unit定义；

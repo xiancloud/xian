@@ -1,11 +1,10 @@
 package info.xiancloud.core.support.zk;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.message.SyncXian;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.message.Xian;
 
-import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 /**
  * 分布式锁帮助类
@@ -17,52 +16,27 @@ import java.util.concurrent.TimeoutException;
  */
 public class DistLocker {
 
-    public static void main(String... args) {
-        DistLocker locker = null;
-        try {
-            locker = DistLocker.lock("userWalletId-123456", 1000);
-            LOG.info("各种同步代码");
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        } finally {
-            if (locker != null)
-                locker.unlock();
-        }
-    }
-
     /**
      * 加锁操作，阻塞直到你拿到锁为止，或者超时
      *
      * @param lockId         业务锁的id,保证全局唯一即可
      * @param timeoutInMilli 超时时间，单位毫秒
-     * @return 如果获取锁成功则返回那个可解锁的对象，否则抛出超时异常
+     * @param consumer       如果获取锁成功则返回那个可解锁的对象，否则返回一个失败的unit response 对象
      */
-    public static DistLocker lock(String lockId, long timeoutInMilli) throws TimeoutException {
-        UnitResponse o = SyncXian.call("zookeeper", "lock", new JSONObject() {{
+    public static void lock(String lockId, long timeoutInMilli, Consumer<UnitResponse> consumer) {
+        Xian.call("zookeeper", "lock", new JSONObject() {{
             put("lockId", lockId);
             put("timeoutInMilli", timeoutInMilli);
-        }});
-        if (o.succeeded()) {
-            return new DistLocker(o.dataToInt());
-        } else {
-            throw new TimeoutException("获取锁超时:" + lockId);
-        }
+        }}, consumer);
     }
 
     /**
      * 解锁
      */
-    public void unlock() {
-        SyncXian.call("zookeeper", "unlock", new JSONObject() {{
+    public static void unlock(Integer innerId, Consumer<UnitResponse> consumer) {
+        Xian.call("zookeeper", "unlock", new JSONObject() {{
             put("innerId", innerId);
-        }}).throwExceptionIfNotSuccess();
+        }}, consumer);
     }
-
-    private DistLocker(Integer innerId) {
-        this.innerId = innerId;
-    }
-
-    private Integer innerId;
-
 
 }

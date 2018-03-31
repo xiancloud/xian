@@ -1,20 +1,15 @@
 package info.xiancloud.core.util.http;
 
 import info.xiancloud.core.NotifyHandler;
-import info.xiancloud.core.message.*;
-import info.xiancloud.core.socket.ISocketGroup;
 import info.xiancloud.core.conf.XianConfig;
-import info.xiancloud.core.message.SyncXian;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.socket.ISocketGroup;
+import info.xiancloud.core.message.Xian;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Base64;
@@ -22,6 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * Warning, not fully tested.
+ *
+ * @author happyyangyuan
+ */
 public class Request implements Serializable {
 
     /**
@@ -148,39 +148,28 @@ public class Request implements Serializable {
         return this;
     }
 
-
     /**
-     * 调用unit执行
-     *
-     * @throws IOException IOException
+     * 异步调用unit执行
      */
-    public void execute(Consumer<String> consumer) throws IOException {
+    public void execute(Consumer<UnitResponse> consumer) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(this);
+            oos.flush();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(this);
-        oos.flush();
-
-        String reqBase64 = new String(Base64.getEncoder().encode(bos.toByteArray()));
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("req", reqBase64);
-        Xian.call("httpClient", "http", map, new NotifyHandler() {
-            @Override
-            protected void handle(UnitResponse out) {
-                if (out.succeeded()) {
-                    consumer.accept(out.dataToJson().getString("entity"));
-                } else {
-                    switch (out.getCode()) {
-                        case ISocketGroup.CODE_CONNECT_TIMEOUT:
-                            throw new ConnectException("连接超时：" + url);
-                        case ISocketGroup.CODE_SOCKET_TIMEOUT:
-                            throw new SocketTimeoutException("响应超时：" + url);
-                        default:
-                            throw new RuntimeException("请求失败：" + url);
-                    }
+            String reqBase64 = new String(Base64.getEncoder().encode(bos.toByteArray()));
+            Map<String, Object> map = new HashMap<>();
+            map.put("req", reqBase64);
+            Xian.call("httpClient", "http", map, new NotifyHandler() {
+                @Override
+                protected void handle(UnitResponse out) {
+                    consumer.accept(out);
                 }
-            }
-        });
+            });
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     /**

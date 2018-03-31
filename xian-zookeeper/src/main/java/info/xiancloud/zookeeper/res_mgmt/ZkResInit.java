@@ -48,7 +48,7 @@ public class ZkResInit extends ResInit {
             } catch (Throwable innerError) {
                 LOG.error(innerError);
             }
-        });
+        }, LOG::info);
     }
 
     @Override
