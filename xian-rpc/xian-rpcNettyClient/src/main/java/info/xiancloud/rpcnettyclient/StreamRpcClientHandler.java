@@ -34,7 +34,7 @@ public class StreamRpcClientHandler extends SimpleChannelInboundHandler<JSONObje
                 //以下写出不会阻塞
                 Stream stream = StreamManager.singleton.add(streamFragmentBean);
                 if (streamFragmentBean.getHeader().isFirst()) {
-                    UnitResponse responseUnitResponse = UnitResponse.success(stream);
+                    UnitResponse responseUnitResponse = UnitResponse.createSuccess(stream);
                     try {
                         ThreadPoolManager.execute(() -> handler.callback(responseUnitResponse));
                     } catch (RejectedExecutionException threadPoolAlreadyShutdown) {

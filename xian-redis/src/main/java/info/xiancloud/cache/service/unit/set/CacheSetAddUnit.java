@@ -67,9 +67,9 @@ public class CacheSetAddUnit implements Unit {
                     return jedis.sadd(key, _members);
                 });
             }
-            return UnitResponse.success(result);
+            return UnitResponse.createSuccess(result);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

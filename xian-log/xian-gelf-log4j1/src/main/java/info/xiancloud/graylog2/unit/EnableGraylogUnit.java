@@ -34,9 +34,9 @@ public class EnableGraylogUnit implements Unit {
     public UnitResponse execute(UnitRequest msg) {
         try {
             GelfLog4j1Init.init0();
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (GelfLog4j1Init.AlreadyInitializedException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

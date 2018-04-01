@@ -4,10 +4,7 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.*;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.test.TestGroup;
-import info.xiancloud.core.util.LOG;
 
 /**
  * @author happyyangyuan
@@ -30,7 +27,7 @@ public class TimeoutTestUnit implements Unit {
         } catch (InterruptedException e) {
             LOG.error(e);
         }
-        return UnitResponse.error(Group.CODE_TIME_OUT, null, null);
+        return UnitResponse.createError(Group.CODE_TIME_OUT, null, null);
     }
 
     @Override

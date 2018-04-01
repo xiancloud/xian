@@ -46,9 +46,9 @@ public class CacheMapGetAllUnit implements Unit {
 
         try {
             Map<String, String> result = Redis.call(cacheConfigBean, jedis -> jedis.hgetAll(key));
-            return UnitResponse.success(result);
+            return UnitResponse.createSuccess(result);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

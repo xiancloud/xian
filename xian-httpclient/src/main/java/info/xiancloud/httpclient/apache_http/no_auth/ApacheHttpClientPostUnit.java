@@ -61,11 +61,11 @@ public class ApacheHttpClientPostUnit implements Unit {
                         XianConfig.getIntValue("apache.httpclient.max.try", 3),
                         ConnectTimeoutException.class);//这里对连接超时做重试，总共只尝试三次
             } catch (ConnectTimeoutException e) {
-                return UnitResponse.error(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url);
+                return UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url);
             } catch (SocketTimeoutException e) {
-                return UnitResponse.error(ISocketGroup.CODE_SOCKET_TIMEOUT, e, "Read timeout: " + url);
+                return UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, e, "Read timeout: " + url);
             } catch (Throwable e) {
-                return UnitResponse.exception(e);
+                return UnitResponse.createException(e);
             }
             responseJSON.put("statusLine", new JSONObject() {{
                 put("statusCode", "todo");
@@ -74,7 +74,7 @@ public class ApacheHttpClientPostUnit implements Unit {
             }});
             responseJSON.put("allHeaders", "todo");
             responseJSON.put("entity", responsePayload);
-            return UnitResponse.success(responseJSON);
+            return UnitResponse.createSuccess(responseJSON);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

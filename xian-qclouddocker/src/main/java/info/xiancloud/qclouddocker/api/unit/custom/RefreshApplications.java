@@ -63,7 +63,7 @@ public class RefreshApplications implements Unit {
         for (String application : applicationsToCreate) {
             DeploymentUtil.createService(newImage, env, application, clusterId);
         }
-        return UnitResponse.success(new JSONObject() {{
+        return UnitResponse.createSuccess(new JSONObject() {{
             put("runningServices", runningServices);
             put("applicationsInXianRuntime", applicationList);
             put("servicesToRemove", servicesToRemove);

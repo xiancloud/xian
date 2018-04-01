@@ -31,7 +31,7 @@ public class TestRemoteMsgReceiverUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success("YY : received");
+        return UnitResponse.createSuccess("YY : received");
     }
 
     @Override

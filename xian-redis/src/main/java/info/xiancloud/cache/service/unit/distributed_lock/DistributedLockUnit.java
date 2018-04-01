@@ -53,10 +53,10 @@ public class DistributedLockUnit implements Unit {
         boolean isLock = DistributedReentrantLockProcess.lock(cacheConfigBean, key, valueObj, expireTimeInSecond, timeOutInSecond);
         if (isLock) {
             DistributedReentrantLockProcess.lockSuccess();
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } else {
             DistributedReentrantLockProcess.lockFailure();
-            return UnitResponse.error(CacheGroup.CODE_TIME_OUT, null, null);
+            return UnitResponse.createError(CacheGroup.CODE_TIME_OUT, null, null);
         }
     }
 

@@ -50,9 +50,9 @@ public class CacheSortedSetMembersUnit implements Unit {
 
         try {
             Set<String> members = Redis.call(cacheConfigBean, jedis -> jedis.zrange(key, 0, -1));
-            return UnitResponse.success(members);
+            return UnitResponse.createSuccess(members);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

@@ -55,9 +55,9 @@ public class CacheListRangeUnit implements Unit {
         try (Jedis jedis = Redis.useDataSource(cacheConfigBean).getResource()) {
             result = ListCacheOperate.range(jedis, key, startIndex, endIndex);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(result);
+        return UnitResponse.createSuccess(result);
     }
 
 }

@@ -61,9 +61,9 @@ public class CacheScanUnit implements Unit {
                 _jsonObject.put("result", scans.getResult());
                 return _jsonObject;
             });
-            return UnitResponse.success(jsonObject);
+            return UnitResponse.createSuccess(jsonObject);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

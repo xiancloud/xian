@@ -44,6 +44,6 @@ public class CustomizedHtmlApidocUnit implements Unit {
     @Override
     public UnitResponse execute(UnitRequest msg) {
         String md = Xian.call(CustomizedMdApidocUnit.class, msg.getArgMap()).throwExceptionIfNotSuccess().dataToStr();
-        return UnitResponse.success(MdToHtml.mdToHtml(md)).setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML));
+        return UnitResponse.createSuccess(MdToHtml.mdToHtml(md)).setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML));
     }
 }

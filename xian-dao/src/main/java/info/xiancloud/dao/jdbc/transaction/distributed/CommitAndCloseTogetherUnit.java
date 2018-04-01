@@ -35,10 +35,10 @@ public class CommitAndCloseTogetherUnit implements Unit {
         try {
             IDistributedTransaction distributedTransaction = (IDistributedTransaction) TransactionFactory.getTransaction(MsgIdHolder.get());
             distributedTransaction.commitAndCloseTogether();
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Throwable e) {
             LOG.error(e);
-            return UnitResponse.error(DaoGroup.CODE_DB_ERROR, e, "db error");
+            return UnitResponse.createError(DaoGroup.CODE_DB_ERROR, e, "db error");
         }
     }
 

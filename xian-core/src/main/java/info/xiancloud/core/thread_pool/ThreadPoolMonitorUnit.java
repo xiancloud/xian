@@ -6,7 +6,6 @@ import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.UnitMeta;
-import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.support.falcon.AbstractDiyMonitorUnit;
 import info.xiancloud.core.util.EnvUtil;
 
@@ -41,7 +40,7 @@ public class ThreadPoolMonitorUnit extends AbstractDiyMonitorUnit {
 
     @Override
     public Object execute0() {
-        return UnitResponse.success(new JSONArray() {{
+        return UnitResponse.createSuccess(new JSONArray() {{
             add(new JSONObject() {{
                 put("title", "线程池");
                 put("value", ThreadPoolManager.activeCount());

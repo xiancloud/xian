@@ -33,7 +33,7 @@ class SyncXian {
             response = future.get(timeoutInMilli, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             //here catch the timeout exception, and set response's code to TIME_OUT.
-            response = UnitResponse.error(Group.CODE_TIME_OUT, e, e.getLocalizedMessage());
+            response = UnitResponse.createError(Group.CODE_TIME_OUT, e, e.getLocalizedMessage());
         }
         return response;
     }

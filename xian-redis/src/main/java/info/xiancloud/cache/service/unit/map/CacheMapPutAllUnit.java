@@ -60,9 +60,9 @@ public class CacheMapPutAllUnit implements Unit {
 
                 jedis.hmset(key, _maps);
             }
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

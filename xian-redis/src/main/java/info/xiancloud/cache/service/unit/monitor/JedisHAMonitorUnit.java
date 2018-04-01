@@ -38,7 +38,7 @@ public class JedisHAMonitorUnit extends AbstractDiyMonitorUnit {
 
     @Override
     public Object execute0() {
-        return UnitResponse.success(RedisMonitor.monitorForHA());
+        return UnitResponse.createSuccess(RedisMonitor.monitorForHA());
     }
 
 }

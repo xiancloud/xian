@@ -34,11 +34,11 @@ public final class CommitTransaction implements Unit {
     @Override
     public UnitResponse execute(UnitRequest msg) {
         if (AppTransaction.getExistedAppTrans(MsgIdHolder.get()) == null) {
-            return UnitResponse.error(DaoGroup.CODE_OPERATE_ERROR, MsgIdHolder.get(), String.format("id=%s的事务不存在!", MsgIdHolder.get()));
+            return UnitResponse.createError(DaoGroup.CODE_OPERATE_ERROR, MsgIdHolder.get(), String.format("id=%s的事务不存在!", MsgIdHolder.get()));
         } else {
             AppTransaction.getExistedAppTrans(MsgIdHolder.get()).commit();
             AppTransaction.getExistedAppTrans(MsgIdHolder.get()).close();//关闭数据库连接
-            return UnitResponse.success("Commit Transaction OK! transId=   " + MsgIdHolder.get());
+            return UnitResponse.createSuccess("Commit Transaction OK! transId=   " + MsgIdHolder.get());
         }
     }
 

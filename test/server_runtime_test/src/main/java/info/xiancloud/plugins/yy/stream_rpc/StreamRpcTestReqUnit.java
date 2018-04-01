@@ -33,9 +33,9 @@ public class StreamRpcTestReqUnit implements Unit {
         }});
         try {
             FileUtil.copyFile(o.dataToType(InputStream.class), msg.getString("newFile", "/Users/happyyangyuan/Downloads/yy.txt"));
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (IOException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         } finally {
             try {
                 o.dataToType(InputStream.class).close();

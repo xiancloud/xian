@@ -30,7 +30,7 @@ public class TestBroadcastUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(LocalNodeManager.LOCAL_NODE_ID);
+        return UnitResponse.createSuccess(LocalNodeManager.LOCAL_NODE_ID);
     }
 
     @Override

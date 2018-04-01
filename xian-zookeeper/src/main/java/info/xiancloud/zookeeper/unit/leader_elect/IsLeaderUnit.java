@@ -30,7 +30,7 @@ public class IsLeaderUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(ZkLeaderElection.isLeader());
+        return UnitResponse.createSuccess(ZkLeaderElection.isLeader());
     }
 
     @Override

@@ -35,9 +35,9 @@ public class ApplicationUnregistrationBridge implements Unit {
         NodeStatus nodeStatus = request.get("nodeStatus", NodeStatus.class);
         try {
             ApplicationDiscovery.singleton.unregister(ApplicationRegistrationBridge.applicationInstance(nodeStatus));
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 }

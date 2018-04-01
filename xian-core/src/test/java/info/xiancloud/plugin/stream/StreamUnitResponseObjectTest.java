@@ -13,7 +13,7 @@ public class StreamUnitResponseObjectTest {
 
     @Test
     public void printResponseStreamLineByLine() throws FileNotFoundException {
-        UnitResponse unitResponseObject = UnitResponse.success(new FileInputStream("/Users/happyyangyuan/Downloads/zz.txt"));
+        UnitResponse unitResponseObject = UnitResponse.createSuccess(new FileInputStream("/Users/happyyangyuan/Downloads/zz.txt"));
         unitResponseObject.processStreamLineByLine(line -> {
             System.out.println(line);
             return null;
@@ -22,7 +22,7 @@ public class StreamUnitResponseObjectTest {
 
     @Test
     public void printResponseStreamPartByPart() throws FileNotFoundException {
-        UnitResponse unitResponseObject = UnitResponse.success(new FileInputStream("/Users/happyyangyuan/Downloads/zz.txt"));
+        UnitResponse unitResponseObject = UnitResponse.createSuccess(new FileInputStream("/Users/happyyangyuan/Downloads/zz.txt"));
         unitResponseObject.processStreamPartByPart("[{]", part -> {
             System.out.println(part);
             return null;

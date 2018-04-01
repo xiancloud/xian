@@ -32,7 +32,7 @@ public class EchoUnit implements Unit {
 
     @Override
     public void execute(UnitRequest request, NotifyHandler handler) {
-        handler.callback(UnitResponse.success(request.getContext().getBody()));
+        handler.callback(UnitResponse.createSuccess(request.getContext().getBody()));
     }
 
 }

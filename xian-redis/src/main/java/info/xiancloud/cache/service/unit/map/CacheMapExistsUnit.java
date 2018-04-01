@@ -56,9 +56,9 @@ public class CacheMapExistsUnit implements Unit {
                 exists = ObjectCacheOperate.exists(jedis, key);
             }
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(exists);
+        return UnitResponse.createSuccess(exists);
     }
 
 }

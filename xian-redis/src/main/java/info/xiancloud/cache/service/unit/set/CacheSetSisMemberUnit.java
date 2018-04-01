@@ -48,9 +48,9 @@ public class CacheSetSisMemberUnit implements Unit {
 
         try {
             Boolean result = Redis.call(cacheConfigBean, jedis -> jedis.sismember(key, FormatUtil.formatValue(member)));
-            return UnitResponse.success(result);
+            return UnitResponse.createSuccess(result);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

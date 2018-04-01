@@ -28,7 +28,7 @@ public abstract class BaseController implements Runnable {
     public void run() {
         try {
             if (!ValidateAccessToken.validate(controllerRequest)) {
-                handler.callback(UnitResponse.error(Group.CODE_BAD_REQUEST, null, "请求不合法！"));
+                handler.callback(UnitResponse.createError(Group.CODE_BAD_REQUEST, null, "请求不合法！"));
             } else {
                 if (handler.isTransactional()) {
                     TransactionalCache.beginDistributedTrans();
@@ -37,7 +37,7 @@ public abstract class BaseController implements Runnable {
             }
         } catch (Throwable t) {
             LOG.error(t);
-            handler.callback(UnitResponse.exception(t));
+            handler.callback(UnitResponse.createException(t));
         }
     }
 

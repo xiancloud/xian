@@ -3,8 +3,6 @@ package info.xiancloud.core.distribution.unit;
 import info.xiancloud.core.distribution.exception.UnitUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.*;
-import info.xiancloud.core.distribution.exception.UnitUndefinedException;
-import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.UnitRequest;
 
@@ -41,9 +39,9 @@ public class GetUnitDefinition implements Unit {
     public UnitResponse execute(UnitRequest msg) {
         String fullName = Unit.fullName(msg.getString("group"), msg.getString("unit"));
         try {
-            return UnitResponse.success(UnitRouter.singleton.newestDefinition(fullName));
+            return UnitResponse.createSuccess(UnitRouter.singleton.newestDefinition(fullName));
         } catch (UnitUndefinedException e) {
-            return UnitResponse.error(e.getCode(), fullName, e.getLocalizedMessage());
+            return UnitResponse.createError(e.getCode(), fullName, e.getLocalizedMessage());
         }
     }
 }

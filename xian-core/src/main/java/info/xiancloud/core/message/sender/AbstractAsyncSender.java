@@ -40,16 +40,16 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
         final boolean newTransIdGenerated = IdManager.makeSureMsgId(unitRequest.getContext());
         try {
             if (StringUtil.isEmpty(unitRequest.getContext().getGroup())) {
-                callback.callback(UnitResponse.failure(null, "group name is required!"));
+                callback.callback(UnitResponse.createUnknownError(null, "group name is required!"));
             } else if (StringUtil.isEmpty(unitRequest.getContext().getUnit())) {
-                callback.callback(UnitResponse.failure(null, "unit name is required!"));
+                callback.callback(UnitResponse.createUnknownError(null, "unit name is required!"));
             } else {
                 asyncSend();
             }
         } catch (Throwable throwable) {
             //just in case.
             LOG.error(throwable);
-            callback.callback(UnitResponse.exception(throwable));
+            callback.callback(UnitResponse.createException(throwable));
         } finally {
             if (newTransIdGenerated) {
                 //退出时清空msgId:生没带来,死不带走

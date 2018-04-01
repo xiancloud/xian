@@ -32,7 +32,7 @@ public class TestTransferable implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success("中转成功.");
+        return UnitResponse.createSuccess("中转成功.");
     }
 
     @Override

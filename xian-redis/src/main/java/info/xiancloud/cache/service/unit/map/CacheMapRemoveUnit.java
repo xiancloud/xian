@@ -49,9 +49,9 @@ public class CacheMapRemoveUnit implements Unit {
         try {
             length = Redis.call(cacheConfigBean, jedis -> jedis.hdel(key, field));
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(length);
+        return UnitResponse.createSuccess(length);
     }
 
 }

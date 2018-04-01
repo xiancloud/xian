@@ -54,19 +54,19 @@ public class HttpUnit implements Unit {
             try {
                 response = request.executeLocal();
             } catch (ConnectException e) {
-                return UnitResponse.error(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + request.getUrl());
+                return UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + request.getUrl());
             } catch (SocketTimeoutException e) {
-                return UnitResponse.error(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + request.getUrl());
+                return UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + request.getUrl());
             } catch (Throwable e) {
-                return UnitResponse.exception(e);
+                return UnitResponse.createException(e);
             }
             JSONObject retJson = new JSONObject();
             retJson.put("status", response.getStatus());
             retJson.put("headers", response.getHeaders());
             retJson.put("entity", response.string());
-            return UnitResponse.success(retJson);
+            return UnitResponse.createSuccess(retJson);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         } finally {
 
         }

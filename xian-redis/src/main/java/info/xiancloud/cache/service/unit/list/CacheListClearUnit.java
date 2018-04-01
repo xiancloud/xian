@@ -45,9 +45,9 @@ public class CacheListClearUnit implements Unit {
 
         try {
             Redis.call(cacheConfigBean, (jedis) -> jedis.ltrim(key, 1, 0));
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

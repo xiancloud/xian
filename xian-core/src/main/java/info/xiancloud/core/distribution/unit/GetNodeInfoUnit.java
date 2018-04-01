@@ -35,9 +35,9 @@ public class GetNodeInfoUnit implements Unit {
             throw new RuntimeException("重构了服务注册，暂时不支持不指定application名称");
         }
         try {
-            consumer.accept(UnitResponse.success(ApplicationRouter.singleton.allInstances(msg.get("application", String.class))));
+            consumer.accept(UnitResponse.createSuccess(ApplicationRouter.singleton.allInstances(msg.get("application", String.class))));
         } catch (ApplicationOfflineException | ApplicationUndefinedException e) {
-            consumer.accept(UnitResponse.failure(null, "找不到application:" + msg.get("application", String.class)));
+            consumer.accept(UnitResponse.createUnknownError(null, "找不到application:" + msg.get("application", String.class)));
         }
     }
 

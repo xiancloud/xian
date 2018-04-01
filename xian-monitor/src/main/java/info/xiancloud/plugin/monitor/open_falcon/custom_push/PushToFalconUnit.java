@@ -56,8 +56,8 @@ public class PushToFalconUnit implements Unit {
                     EnvUtil.isLan() ? XianConfig.get("qCloud.falcon_transfer_url") : XianConfig.get("internet.falcon_transfer_url"),
                     falconBeans.toJSONString());
         } catch (SocketTimeoutException | ConnectTimeoutException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 }

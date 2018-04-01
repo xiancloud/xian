@@ -2,8 +2,6 @@ package info.xiancloud.core;
 
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,11 +46,11 @@ public final class UnitMeta {
      */
     private boolean transferable = false;
 
-    private UnitResponse successfulUnitResponse = UnitResponse.success();
+    private UnitResponse successfulUnitResponse = UnitResponse.createSuccess();
 
     private List<UnitResponse> failedUnitResponses = new ArrayList<UnitResponse>() {{
-        add(UnitResponse.failure(null, "error message."));
-        add(UnitResponse.lackOfParam(new ArrayList<String>() {{
+        add(UnitResponse.createUnknownError(null, "error message."));
+        add(UnitResponse.createMissingParam(new ArrayList<String>() {{
             add("the missing param 0");
             add("the missing param 1");
             add("the missing param 2");

@@ -46,9 +46,9 @@ public class CacheListLengthUnit implements Unit {
         try {
             length = Redis.call(cacheConfigBean, (jedis) -> jedis.llen(key));
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(length);
+        return UnitResponse.createSuccess(length);
     }
 
 }

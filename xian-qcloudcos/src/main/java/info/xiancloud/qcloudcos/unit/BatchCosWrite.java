@@ -52,7 +52,7 @@ public class BatchCosWrite implements Unit {
         }
         int perThread = new Double(Math.ceil(files.size() / (double) threadCount)).intValue();
         if (perThread > MAX_PER_THREAD) {
-            return UnitResponse.failure(null, "待处理文件数过多，请减小数量,fileSize=" + files.size() + "; 最大允许" + threadCount * MAX_PER_THREAD);
+            return UnitResponse.createUnknownError(null, "待处理文件数过多，请减小数量,fileSize=" + files.size() + "; 最大允许" + threadCount * MAX_PER_THREAD);
         }
         CountDownLatch latch = new CountDownLatch(threadCount);
         List<String> paths = new ArrayList<>();
@@ -79,7 +79,7 @@ public class BatchCosWrite implements Unit {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
     private Pair<Integer, Integer> getStartEnd(int i, int size, int perThread) {

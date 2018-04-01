@@ -50,7 +50,7 @@ public abstract class InsertAction extends AbstractAction implements IUnique, ID
         try {
             return new UniqueChecker(this).checkUnique();
         } catch (SQLException e) {
-            return UnitResponse.exception(e, "SQL异常");
+            return UnitResponse.createException(e, "SQL异常");
         }
     }
 

@@ -46,9 +46,9 @@ public class CacheMapValuesUnit implements Unit {
 
         try {
             List<String> values = Redis.call(cacheConfigBean, jedis -> jedis.hvals(key));
-            return UnitResponse.success(values);
+            return UnitResponse.createSuccess(values);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

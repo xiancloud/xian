@@ -4,9 +4,6 @@ import info.xiancloud.core.distribution.exception.UnitOfflineException;
 import info.xiancloud.core.distribution.exception.UnitUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.*;
-import info.xiancloud.core.distribution.exception.UnitOfflineException;
-import info.xiancloud.core.distribution.exception.UnitUndefinedException;
-import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.UnitRequest;
 
@@ -45,9 +42,9 @@ public class GetUnitNode implements Unit {
         String group = msg.getString("group");
         String unit = msg.getString("unit");
         try {
-            return UnitResponse.success(UnitRouter.singleton.allInstances(Unit.fullName(group, unit)));
+            return UnitResponse.createSuccess(UnitRouter.singleton.allInstances(Unit.fullName(group, unit)));
         } catch (UnitOfflineException | UnitUndefinedException e) {
-            return UnitResponse.failure(null, e.getLocalizedMessage());
+            return UnitResponse.createUnknownError(null, e.getLocalizedMessage());
         }
     }
 }

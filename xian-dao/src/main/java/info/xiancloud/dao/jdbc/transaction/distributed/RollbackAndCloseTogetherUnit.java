@@ -37,10 +37,10 @@ public class RollbackAndCloseTogetherUnit implements Unit {
         try {
             IDistributedTransaction distributedTransaction = (IDistributedTransaction) TransactionFactory.getTransaction(MsgIdHolder.get());
             distributedTransaction.rollbackAndCloseTogether();
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (SQLException e) {
             LOG.error(e);
-            return UnitResponse.error(DaoGroup.CODE_SQL_ERROR, e, "SQL语句异常");
+            return UnitResponse.createError(DaoGroup.CODE_SQL_ERROR, e, "SQL语句异常");
         }
     }
 

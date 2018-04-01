@@ -40,7 +40,7 @@ public class LockUnit implements Unit {
         ThreadPoolManager.execute(() -> {
             try {
                 int innerId = ZkDistributedLock.lock(msg.get("lockId", String.class), msg.get("timeoutInMilli", long.class));
-                handler.accept(UnitResponse.success(innerId));
+                handler.accept(UnitResponse.createSuccess(innerId));
             } catch (TimeoutException e) {
                 handler.accept(UnitResponse.create(Group.CODE_TIME_OUT, msg.get("lockId"), "获取锁超时:" + msg.get("lockId", String.class)));
             }

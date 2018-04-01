@@ -44,9 +44,9 @@ public class CacheObjectRemoveUnit implements Unit {
 
         try {
             long size = Redis.call(cacheConfigBean, jedis -> jedis.del(key));
-            return UnitResponse.success(size);
+            return UnitResponse.createSuccess(size);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

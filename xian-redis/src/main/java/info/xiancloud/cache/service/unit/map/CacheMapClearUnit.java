@@ -48,9 +48,9 @@ public class CacheMapClearUnit implements Unit {
         try (Jedis jedis = Redis.useDataSource(cacheConfigBean).getResource()) {
             result = MapCacheOperate.removeAll(jedis, key);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(result);
+        return UnitResponse.createSuccess(result);
     }
 
 }

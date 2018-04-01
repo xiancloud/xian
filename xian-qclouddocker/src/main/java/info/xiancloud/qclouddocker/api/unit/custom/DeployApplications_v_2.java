@@ -50,7 +50,7 @@ public class DeployApplications_v_2 implements Unit {
         String applications = msg.getString("applications");
         UnitResponse unitResponseObject;
         if (applications != null && applications.contains("=")) {
-            unitResponseObject = UnitResponse.failure(null, NOT_SUPPORTED_TIP);
+            unitResponseObject = UnitResponse.createUnknownError(null, NOT_SUPPORTED_TIP);
         } else
             unitResponseObject = deploy(msg);
         unitResponseObject.getContext().setPretty(true);
@@ -75,7 +75,7 @@ public class DeployApplications_v_2 implements Unit {
         for (String application : applicationsToCreate) {
             DeploymentUtil.createService(jobName, application, buildNumber);
         }
-        return UnitResponse.success(new JSONObject() {{
+        return UnitResponse.createSuccess(new JSONObject() {{
             put("newImage", DeploymentUtil.image(jobName, buildNumber));
             put("runningServices", envRunningServices);
             put("applicationsToUpdate", applicationsToUpdate);
@@ -93,14 +93,14 @@ public class DeployApplications_v_2 implements Unit {
                 env = jobName.split("_")[jobName.split("_").length - 1];
         String application_replicas = msg.getString("applications");
         if (StringUtil.isEmpty(application_replicas)) {
-            return UnitResponse.failure(null, "Nothing changed.");
+            return UnitResponse.createUnknownError(null, "Nothing changed.");
         }
         try {
-            return UnitResponse.success(DeploymentUtil.replicate(application_replicas, env));
+            return UnitResponse.createSuccess(DeploymentUtil.replicate(application_replicas, env));
         } catch (DeploymentUtil.CloudApiFailedException e) {
-            return UnitResponse.exception(e, "调用容器API失败");
+            return UnitResponse.createException(e, "调用容器API失败");
         } catch (IllegalArgumentException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

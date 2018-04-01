@@ -31,10 +31,10 @@ public class ApplicationRegistrationBridge implements Unit {
         NodeStatus nodeStatus = request.get("nodeStatus", NodeStatus.class);
         try {
             ApplicationDiscovery.singleton.register(applicationInstance(nodeStatus));
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.failure(e, "注册application失败");
+            return UnitResponse.createUnknownError(e, "注册application失败");
         }
     }
 

@@ -32,7 +32,7 @@ public class HelloWorldHtmlUnit implements Unit {
     @Override
     public UnitResponse execute(UnitRequest msg) {
         LOG.info(msg.getArgMap());
-        return UnitResponse.success("<html><body><h1>hello world.</h1></body></html>")
+        return UnitResponse.createSuccess("<html><body><h1>hello world.</h1></body></html>")
                 .setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML));
     }
 }

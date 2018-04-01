@@ -27,7 +27,7 @@ public class GetHttpSessionMap extends ReceiveAndBroadcast {
 
     @Override
     protected UnitResponse execute0(UnitRequest msg) {
-        return UnitResponse.success(HttpSessionLocalCache.getSessionMap());
+        return UnitResponse.createSuccess(HttpSessionLocalCache.getSessionMap());
     }
 
     @Override

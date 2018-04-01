@@ -13,7 +13,6 @@ import info.xiancloud.core.util.Reflection;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * 自定义业务监控
@@ -33,7 +32,7 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
 
         String title = title();
         if (title == null || "".equals(title.trim()))
-            handler.callback(UnitResponse.success(responseMonitor));//todo why success with empty array? not failure or exception?
+            handler.callback(UnitResponse.createSuccess(responseMonitor));//todo why success with empty array? not failure or exception?
 
         Object monitor = execute0();
         if (monitor != null) {
@@ -43,7 +42,7 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
                 padding(responseMonitor, monitor);
         }
 
-        handler.callback(UnitResponse.success(responseMonitor));
+        handler.callback(UnitResponse.createSuccess(responseMonitor));
     }
 
     private void padding(JSONArray responseMonitor, Object monitor) {

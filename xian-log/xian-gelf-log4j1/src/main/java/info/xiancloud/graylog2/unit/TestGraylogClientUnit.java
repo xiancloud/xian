@@ -39,7 +39,7 @@ public class TestGraylogClientUnit implements Unit {
 
     //返回的是执行的ms数
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(test(msg.get("count", int.class), msg.get("tCount", int.class)));
+        return UnitResponse.createSuccess(test(msg.get("count", int.class), msg.get("tCount", int.class)));
     }
 
     public static long test(int count, int tCount) {

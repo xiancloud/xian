@@ -7,16 +7,10 @@ import info.xiancloud.core.distribution.exception.UnitUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.distribution.service_discovery.UnitInstance;
 import info.xiancloud.core.Unit;
-import info.xiancloud.core.distribution.LocalNodeManager;
-import info.xiancloud.core.distribution.exception.UnitOfflineException;
-import info.xiancloud.core.distribution.exception.UnitUndefinedException;
-import info.xiancloud.core.distribution.loadbalance.UnitRouter;
-import info.xiancloud.core.distribution.service_discovery.UnitInstance;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.sender.AbstractAsyncSender;
 import info.xiancloud.core.message.sender.local.RoutedLocalAsyncSender;
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.consistent_hash.Shard;
 
@@ -57,7 +51,7 @@ public class XhashSender extends AbstractAsyncSender {
             }
         } catch (UnitOfflineException | UnitUndefinedException e) {
             LOG.error("代码写错了吧？ 进入xhashSender的前提就是unit在线！", e);
-            callback.callback(UnitResponse.exception(e));
+            callback.callback(UnitResponse.createException(e));
         }
     }
 

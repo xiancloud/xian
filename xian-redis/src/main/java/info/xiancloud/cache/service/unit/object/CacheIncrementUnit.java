@@ -62,9 +62,9 @@ public class CacheIncrementUnit implements Unit {
                     ObjectCacheOperate.expire(jedis, key, timeout);
             }
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(increment);
+        return UnitResponse.createSuccess(increment);
     }
 
 }

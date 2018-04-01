@@ -17,7 +17,7 @@ public abstract class AbstractXianException extends Exception {
     }
 
     public UnitResponse toUnitResponse() {
-        return UnitResponse.error(getCode(), this, getLocalizedMessage());
+        return UnitResponse.createError(getCode(), this, getLocalizedMessage());
     }
 
     public abstract String getCode();

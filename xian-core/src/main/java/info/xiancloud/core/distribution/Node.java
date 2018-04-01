@@ -99,11 +99,11 @@ public class Node implements INode {
         try {
             if (!latch.await(Constant.UNIT_DEFAULT_TIME_OUT_IN_MILLI, TimeUnit.MILLISECONDS)) {
                 handler.setTimeout(true);
-                return UnitResponse.error(Group.CODE_TIME_OUT, null, "Response time out!")
+                return UnitResponse.createError(Group.CODE_TIME_OUT, null, "Response time out!")
                         .setContext(UnitResponse.Context.create().setSsid(ssid));
             }
         } catch (InterruptedException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
         return unitResponse;
     }

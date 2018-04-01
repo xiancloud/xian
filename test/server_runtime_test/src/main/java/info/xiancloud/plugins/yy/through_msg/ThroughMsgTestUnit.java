@@ -24,7 +24,7 @@ public class ThroughMsgTestUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(new JSONObject() {{
+        return UnitResponse.createSuccess(new JSONObject() {{
             put("$throughMsg", "what you see what you get.");
         }});
     }

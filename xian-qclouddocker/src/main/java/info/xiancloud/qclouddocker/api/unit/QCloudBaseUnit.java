@@ -61,7 +61,7 @@ public abstract class QCloudBaseUnit implements Unit {
             }
             request.setSSL(null, null);
             String result = request.executeLocal().string();
-            return UnitResponse.success(convert(result));
+            return UnitResponse.createSuccess(convert(result));
 
         } catch (ConnectException e) {
             LOG.error("调用腾讯云API连接超时", e);

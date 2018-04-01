@@ -52,9 +52,9 @@ public class CacheListGetByIndexUnit implements Unit {
             if (element != null && element.toString().equals("nil"))
                 element = null;
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(element);
+        return UnitResponse.createSuccess(element);
     }
 
 }

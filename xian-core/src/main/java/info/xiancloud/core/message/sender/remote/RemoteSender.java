@@ -5,12 +5,9 @@ import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.Group;
 import info.xiancloud.core.Unit;
-import info.xiancloud.core.distribution.LocalNodeManager;
-import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.sender.AbstractAsyncSender;
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.util.EnvUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +25,7 @@ public class RemoteSender extends AbstractAsyncSender {
 
     protected void asyncSend() throws Throwable {
         if (EnvUtil.isRemoteSenderDisabled()) {
-            callback.callback(UnitResponse.error(Group.CODE_REMOTE_SENDER_DISABLED, EnvUtil.getApplication(),
+            callback.callback(UnitResponse.createError(Group.CODE_REMOTE_SENDER_DISABLED, EnvUtil.getApplication(),
                     String.format("application '%s' 禁止远程消息发送!", EnvUtil.getApplication())));
         } else {
             sendToRemote(UnitRouter.singleton.loadBalancedInstance(Unit.fullName(unitRequest.getContext().getGroup(),

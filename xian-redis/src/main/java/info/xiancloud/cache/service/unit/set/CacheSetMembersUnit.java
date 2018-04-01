@@ -47,9 +47,9 @@ public class CacheSetMembersUnit implements Unit {
 
         try {
             Set<String> values = Redis.call(cacheConfigBean, jedis -> jedis.smembers(key));
-            return UnitResponse.success(values);
+            return UnitResponse.createSuccess(values);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

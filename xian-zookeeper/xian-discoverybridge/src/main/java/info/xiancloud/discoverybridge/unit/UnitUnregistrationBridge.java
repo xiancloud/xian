@@ -37,10 +37,10 @@ public class UnitUnregistrationBridge implements Unit {
         UnitInstance unitInstance = UnitRegistrationBridge.unitInstance(unitProxy, nodeStatus);
         try {
             UnitDiscovery.singleton.unregister(unitInstance);
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.failure(e, "unit un registration failure.");
+            return UnitResponse.createUnknownError(e, "unit un registration failure.");
         }
     }
 }

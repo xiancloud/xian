@@ -35,7 +35,7 @@ public class CosCheckFileExistsUnit implements Unit {
     @Override
     public UnitResponse execute(UnitRequest msg) {
         boolean exists = new CosFileReader().exists(msg.get("path", String.class));
-        return UnitResponse.success(exists);
+        return UnitResponse.createSuccess(exists);
     }
 
 }

@@ -66,9 +66,9 @@ public class CacheLuaUnit implements Unit {
                 response = jedis.eval(scripts);
             }
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(response);
+        return UnitResponse.createSuccess(response);
     }
 
 }

@@ -43,9 +43,9 @@ public class DashboardGetUnit implements Unit {
         try {
             String url = XianConfig.get("grafana_http_api_dashboards_db_url");
             String response = HttpUtil.get(url + (url.endsWith("/") ? "" : "/") + slug, headers);
-            return UnitResponse.success(response);
+            return UnitResponse.createSuccess(response);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

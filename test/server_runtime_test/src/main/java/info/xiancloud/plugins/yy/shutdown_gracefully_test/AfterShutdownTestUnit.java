@@ -34,7 +34,7 @@ public class AfterShutdownTestUnit implements Unit {
             Thread.sleep(10 * 1000);
         } catch (InterruptedException e) {
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
     @Override

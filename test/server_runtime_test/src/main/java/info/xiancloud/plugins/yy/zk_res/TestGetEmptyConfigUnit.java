@@ -30,7 +30,7 @@ public class TestGetEmptyConfigUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(XianConfig.get("whatever"));
+        return UnitResponse.createSuccess(XianConfig.get("whatever"));
     }
 
     @Override

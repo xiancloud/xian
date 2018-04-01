@@ -68,7 +68,7 @@ public class DefaultSequencer implements ISequencer {
             getSequentialData();
         } catch (LackParamException lackParam) {
             LOG.error(lackParam);
-            onFailure.callback(UnitResponse.lackOfParam(lackParam.getLacedParams(), lackParam.getMessage()));
+            onFailure.callback(UnitResponse.createMissingParam(lackParam.getLacedParams(), lackParam.getMessage()));
             return;
         }
         Set<String> sequential = sequentialData.keySet();

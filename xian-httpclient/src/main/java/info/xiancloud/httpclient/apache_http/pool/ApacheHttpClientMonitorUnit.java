@@ -40,7 +40,7 @@ public class ApacheHttpClientMonitorUnit extends AbstractDiyMonitorUnit {
     @Override
     public Object execute0() {
 
-        return UnitResponse.success(new JSONArray() {
+        return UnitResponse.createSuccess(new JSONArray() {
             {
                 add(new JSONObject() {
                     {

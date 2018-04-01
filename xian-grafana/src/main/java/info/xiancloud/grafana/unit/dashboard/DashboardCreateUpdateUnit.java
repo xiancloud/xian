@@ -44,11 +44,11 @@ public class DashboardCreateUpdateUnit implements Unit {
             JSONObject responseJosn = JSONObject.parseObject(response);
             if (responseJosn.containsKey("status")) {
                 if (responseJosn.getString("status").equals("success"))
-                    return UnitResponse.success(response);
+                    return UnitResponse.createSuccess(response);
             }
-            return UnitResponse.failure(response, null);
+            return UnitResponse.createUnknownError(response, null);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

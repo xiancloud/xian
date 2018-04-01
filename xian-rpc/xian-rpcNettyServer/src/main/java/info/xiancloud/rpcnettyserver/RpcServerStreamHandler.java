@@ -35,7 +35,7 @@ public class RpcServerStreamHandler extends SimpleChannelInboundHandler<JSONObje
                 //以下写出不会阻塞
                 Stream stream = StreamManager.singleton.add(streamFragmentBean);
                 if (streamFragmentBean.getHeader().isFirst()) {
-                    UnitResponse unitResponse = UnitResponse.success(stream);
+                    UnitResponse unitResponse = UnitResponse.createSuccess(stream);
                     ThreadPoolManager.execute(() -> handler.callback(unitResponse));
                 }
             } catch (Throwable e) {

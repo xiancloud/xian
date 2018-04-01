@@ -38,8 +38,8 @@ public class ReadXianConfigUnit implements Unit {
     public void execute(UnitRequest msg, Consumer<UnitResponse> consumer) {
         String value = XianConfig.get(msg.get("key"));
         if (StringUtil.isEmpty(value))
-            consumer.accept(UnitResponse.dataDoesNotExists(msg.getString("key"), "config not found."));
+            consumer.accept(UnitResponse.createDataDoesNotExists(msg.getString("key"), "config not found."));
         else
-            consumer.accept(UnitResponse.success(value));
+            consumer.accept(UnitResponse.createSuccess(value));
     }
 }

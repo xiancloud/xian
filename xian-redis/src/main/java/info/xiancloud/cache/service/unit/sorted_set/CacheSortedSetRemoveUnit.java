@@ -71,9 +71,9 @@ public class CacheSortedSetRemoveUnit implements Unit {
                     return -1L;
                 }
             });
-            return UnitResponse.success(result);
+            return UnitResponse.createSuccess(result);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

@@ -47,9 +47,9 @@ public class CacheSortedSetLengthUnit implements Unit {
 
         try {
             Long length = Redis.call(cacheConfigBean, jedis -> jedis.zcard(key));
-            return UnitResponse.success(length);
+            return UnitResponse.createSuccess(length);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

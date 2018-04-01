@@ -61,13 +61,13 @@ public class CacheSetUnit implements Unit {
             else
                 result = ObjectCacheOperate.set(jedis, key, value, "EX", ex, nxXx);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
 
         if ("OK".equals(result))
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         else
-            return UnitResponse.failure(result, result);
+            return UnitResponse.createUnknownError(result, result);
     }
 
 }

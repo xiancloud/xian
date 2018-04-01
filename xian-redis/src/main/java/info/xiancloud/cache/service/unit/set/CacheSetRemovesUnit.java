@@ -69,9 +69,9 @@ public class CacheSetRemovesUnit implements Unit {
                 result = jedis.srem(key, FormatUtil.formatValue(member));
             }
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(result);
+        return UnitResponse.createSuccess(result);
     }
 
 }

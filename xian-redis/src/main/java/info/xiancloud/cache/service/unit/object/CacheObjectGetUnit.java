@@ -47,9 +47,9 @@ public class CacheObjectGetUnit implements Unit {
 
             if (result != null && result.toString().equals("nil"))
                 result = null;
-            return UnitResponse.success(result);
+            return UnitResponse.createSuccess(result);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

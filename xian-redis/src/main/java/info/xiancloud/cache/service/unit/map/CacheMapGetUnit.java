@@ -50,9 +50,9 @@ public class CacheMapGetUnit implements Unit {
 
             if (element != null && element.equals("nil"))
                 element = null;
-            return UnitResponse.success(element);
+            return UnitResponse.createSuccess(element);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

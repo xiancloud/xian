@@ -46,9 +46,9 @@ public class CacheTypeUnit implements Unit {
 
         try {
             String type = Redis.call(cacheConfigBean, jedis -> jedis.type(key));
-            return UnitResponse.success(type);
+            return UnitResponse.createSuccess(type);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

@@ -46,7 +46,7 @@ public abstract class UpdateAction extends WhereAction implements IUnique, IDML 
             return new UniqueChecker(this).checkUnique();
         } catch (SQLException e) {
             LOG.error(e);
-            return UnitResponse.error(DaoGroup.CODE_SQL_ERROR, e, "SQL异常");
+            return UnitResponse.createError(DaoGroup.CODE_SQL_ERROR, e, "SQL异常");
         }
     }
 

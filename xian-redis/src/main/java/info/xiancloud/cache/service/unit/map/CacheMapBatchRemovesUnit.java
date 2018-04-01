@@ -57,10 +57,10 @@ public class CacheMapBatchRemovesUnit implements Unit {
                     }
                 }
             } catch (Exception e) {
-                return UnitResponse.exception(e);
+                return UnitResponse.createException(e);
             }
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
 }

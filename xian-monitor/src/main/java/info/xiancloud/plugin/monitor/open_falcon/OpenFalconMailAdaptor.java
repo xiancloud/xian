@@ -58,6 +58,6 @@ public class OpenFalconMailAdaptor implements Unit {
                         LOG.info("邮件发送结果：" + unitResponse);
                     }
                 });
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 }

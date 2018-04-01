@@ -43,14 +43,14 @@ public class ReplicateApplications implements Unit {
                 env = jobName.split("_")[jobName.split("_").length - 1];
         String application_replicas = msg.getString("applications");
         if (StringUtil.isEmpty(application_replicas)) {
-            return UnitResponse.failure(null, "Nothing changed.").setContext(UnitResponse.Context.create().setPretty(true));
+            return UnitResponse.createUnknownError(null, "Nothing changed.").setContext(UnitResponse.Context.create().setPretty(true));
         }
         try {
-            return UnitResponse.success(DeploymentUtil.replicate(application_replicas, env)).setContext(UnitResponse.Context.create().setPretty(true));
+            return UnitResponse.createSuccess(DeploymentUtil.replicate(application_replicas, env)).setContext(UnitResponse.Context.create().setPretty(true));
         } catch (DeploymentUtil.CloudApiFailedException e) {
-            return UnitResponse.exception(e, "调用容器API失败").setContext(UnitResponse.Context.create().setPretty(true));
+            return UnitResponse.createException(e, "调用容器API失败").setContext(UnitResponse.Context.create().setPretty(true));
         } catch (IllegalArgumentException e) {
-            return UnitResponse.exception(e).setContext(UnitResponse.Context.create().setPretty(true));
+            return UnitResponse.createException(e).setContext(UnitResponse.Context.create().setPretty(true));
         }
 
     }

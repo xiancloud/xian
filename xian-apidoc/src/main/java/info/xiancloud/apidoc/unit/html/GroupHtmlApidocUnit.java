@@ -43,6 +43,6 @@ public class GroupHtmlApidocUnit implements Unit {
     public UnitResponse execute(UnitRequest msg) {
         String md = Xian.call(GroupMdApidocUnit.class, msg.getArgMap()).throwExceptionIfNotSuccess().dataToStr();
         String html = MdToHtml.mdToHtml(md);
-        return UnitResponse.success(html).setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML));
+        return UnitResponse.createSuccess(html).setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML));
     }
 }

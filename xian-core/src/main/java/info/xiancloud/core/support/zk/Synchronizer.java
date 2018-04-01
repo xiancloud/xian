@@ -46,10 +46,10 @@ public class Synchronizer {
             if (unitResponse.succeeded()) {
                 try {
                     T result = blockingCallable.call();
-                    consumer.accept(UnitResponse.success(result));
+                    consumer.accept(UnitResponse.createSuccess(result));
                 } catch (Exception e) {
                     LOG.error(e);
-                    consumer.accept(UnitResponse.exception(e));
+                    consumer.accept(UnitResponse.createException(e));
                 } finally {
                     DistLocker.unlock(unitResponse.dataToType(Integer.class), unitResponse1 -> {
                     });

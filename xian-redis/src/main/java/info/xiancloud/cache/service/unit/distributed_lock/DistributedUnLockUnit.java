@@ -51,10 +51,10 @@ public class DistributedUnLockUnit implements Unit {
             result = DistributedReentrantLockProcess.unLock(cacheConfigBean, key, valueObj);
         } catch (Exception e) {
             DistributedReentrantLockProcess.unLockFailure();
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
         DistributedReentrantLockProcess.unLockSuccess();
-        return UnitResponse.success(result);
+        return UnitResponse.createSuccess(result);
     }
 
 }

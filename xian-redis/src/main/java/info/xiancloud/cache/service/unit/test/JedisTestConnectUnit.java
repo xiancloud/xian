@@ -92,7 +92,7 @@ public class JedisTestConnectUnit implements Unit {
 
         SyncXian.call("diyMonitor", "jedisLockMonitor", new JSONObject());
 
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
 }

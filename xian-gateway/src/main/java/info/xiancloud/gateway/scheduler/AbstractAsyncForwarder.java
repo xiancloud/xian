@@ -47,7 +47,7 @@ public abstract class AbstractAsyncForwarder implements IAsyncForwarder, IRespon
             ServerResponseBean responseBean = new ServerResponseBean();
             responseBean.setMsgId(msgId);
             responseBean.setHttpContentType(HttpContentType.APPLICATION_JSON);
-            responseBean.setResponseBody(UnitResponse.error(Group.CODE_BAD_REQUEST, null, badRequestException.getLocalizedMessage()).toVoJSONString());
+            responseBean.setResponseBody(UnitResponse.createError(Group.CODE_BAD_REQUEST, null, badRequestException.getLocalizedMessage()).toVoJSONString());
             IServerResponder.singleton.response(responseBean);
             return;
         }
@@ -67,11 +67,11 @@ public abstract class AbstractAsyncForwarder implements IAsyncForwarder, IRespon
                 if (unitResponse == null) {
                     Throwable emptyOutputException = new RuntimeException("UnitResponse is not allowed to be null.");
                     LOG.error(emptyOutputException);
-                    unitResponse = UnitResponse.exception(emptyOutputException);
+                    unitResponse = UnitResponse.createException(emptyOutputException);
                 } else if (StringUtil.isEmpty(unitResponse.getCode())) {
                     Throwable emptyOutputException = new RuntimeException("UnitResponse's code is not allowed to be empty: " + unitResponse);
                     LOG.error(emptyOutputException);
-                    unitResponse = UnitResponse.exception(emptyOutputException);
+                    unitResponse = UnitResponse.createException(emptyOutputException);
                 }
                 ServerResponseBean responseBean = new ServerResponseBean();
                 responseBean.setResponseBody(extractContext(unitResponse));

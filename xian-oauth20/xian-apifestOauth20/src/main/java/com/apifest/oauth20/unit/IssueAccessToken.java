@@ -32,7 +32,7 @@ public class IssueAccessToken implements Unit {
         return UnitMeta.create("分配token，token会在指定的时间内过期，过期后需要重新申请。")
                 .setPublic(true)
                 .setSecure(false)
-                .setSuccessfulUnitResponse(UnitResponse.success(new JSONObject() {{
+                .setSuccessfulUnitResponse(UnitResponse.createSuccess(new JSONObject() {{
                     put("valid", true);
                     put("expiresIn", "过期时间，数字类型，单位为s");
                     put("created", "token创建时间，时间戳，单位为ms");
@@ -61,7 +61,7 @@ public class IssueAccessToken implements Unit {
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, byteBuffer);
         try {
             AccessToken token = OAuthService.auth.issueAccessToken(request);
-            return UnitResponse.success(new JSONObject() {{
+            return UnitResponse.createSuccess(new JSONObject() {{
                 put("appId", msg.getString("appId"));
                 put("accessToken", token.getToken());
                 put("valid", token.isValid());
@@ -70,7 +70,7 @@ public class IssueAccessToken implements Unit {
                 put("scope", token.getScope());
             }});
         } catch (OAuthException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

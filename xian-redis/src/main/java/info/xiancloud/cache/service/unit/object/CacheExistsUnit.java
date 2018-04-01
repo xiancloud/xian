@@ -43,9 +43,9 @@ public class CacheExistsUnit implements Unit {
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
         try {
             boolean result = Redis.call(cacheConfigBean, jedis -> jedis.exists(key));
-            return UnitResponse.success(result);
+            return UnitResponse.createSuccess(result);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

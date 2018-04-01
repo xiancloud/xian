@@ -45,9 +45,9 @@ public class CacheKeysUnit implements Unit {
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
         try {
             Set<String> keys = Redis.call(cacheConfigBean, jedis -> jedis.keys(pattern));
-            return UnitResponse.success(keys);
+            return UnitResponse.createSuccess(keys);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

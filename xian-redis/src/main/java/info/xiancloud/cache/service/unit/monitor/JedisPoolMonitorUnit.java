@@ -38,7 +38,7 @@ public class JedisPoolMonitorUnit extends AbstractDiyMonitorUnit {
 
     @Override
     public Object execute0() {
-        return UnitResponse.success(RedisMonitor.monitorForPool());
+        return UnitResponse.createSuccess(RedisMonitor.monitorForPool());
     }
 
 }

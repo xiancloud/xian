@@ -47,7 +47,7 @@ public class JedisPoolAddUnit implements Unit {
         int dbIndex = msg.getArgMap().containsKey("dbIndex") ? msg.get("dbIndex", int.class) : Redis.DB_INDEX;
 
         Redis.initRedis(host, port, password, dbIndex);
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
 }

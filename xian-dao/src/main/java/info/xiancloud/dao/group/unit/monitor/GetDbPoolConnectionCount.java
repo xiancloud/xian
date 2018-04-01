@@ -61,7 +61,7 @@ public class GetDbPoolConnectionCount extends ReceiveAndBroadcast {
 //                    .setNodeId(LocalNodeManager.LOCAL_NODE_ID)
 //            );
         }};
-        return UnitResponse.success(monitorBeans);
+        return UnitResponse.createSuccess(monitorBeans);
     }
 
     @Override

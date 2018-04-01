@@ -29,7 +29,7 @@ public class TestUriParamUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(msg.argJson());
+        return UnitResponse.createSuccess(msg.argJson());
     }
 
     @Override

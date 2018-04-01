@@ -51,9 +51,9 @@ public class CacheListRemoveUnit implements Unit {
         try (Jedis jedis = Redis.useDataSource(cacheConfigBean).getResource()) {
             length = ListCacheOperate.remove(jedis, key, valueObj);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(length);
+        return UnitResponse.createSuccess(length);
     }
 
 }

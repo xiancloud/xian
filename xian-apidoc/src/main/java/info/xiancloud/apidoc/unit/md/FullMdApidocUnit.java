@@ -36,7 +36,7 @@ public class FullMdApidocUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(buildAll());
+        return UnitResponse.createSuccess(buildAll());
     }
 
 

@@ -23,7 +23,7 @@ public class TestLocalMsgReceiverUnit implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
     @Override

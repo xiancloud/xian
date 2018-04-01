@@ -62,9 +62,9 @@ public class CacheDecrementUnit implements Unit {
                     ObjectCacheOperate.expire(jedis, key, timeout);
             }
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success(decrement);
+        return UnitResponse.createSuccess(decrement);
     }
 
 }

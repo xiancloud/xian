@@ -50,11 +50,11 @@ public class ClearUndefinedUnitInZk implements Unit {
                 }
             }
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         } finally {
             ZkConnection.close();
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
     @Override

@@ -32,7 +32,7 @@ public class ThroughUnitTest implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success("what you see is what you get.");
+        return UnitResponse.createSuccess("what you see is what you get.");
     }
 
     @Override

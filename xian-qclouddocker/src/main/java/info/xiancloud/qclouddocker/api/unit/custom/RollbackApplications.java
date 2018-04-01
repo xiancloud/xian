@@ -65,7 +65,7 @@ public class RollbackApplications implements Unit {
                 updateService(historyBuildNumber, jobName, applicationWithOrWithoutRollbackVersion.split("=")[0].trim()/*applicationWithOrWithoutRollbackVersion*/);
             }
         }
-        return UnitResponse.success(new JSONObject() {{
+        return UnitResponse.createSuccess(new JSONObject() {{
             put("rollbackedApplications", applicationsToRollback);
         }});
     }

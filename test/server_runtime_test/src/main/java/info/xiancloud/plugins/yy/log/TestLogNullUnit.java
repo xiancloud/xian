@@ -28,7 +28,7 @@ public class TestLogNullUnit implements Unit {
         while (System.nanoTime() - start < 2 * 1000000L) {
             LOG.info(null);
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
     @Override

@@ -49,9 +49,9 @@ public class SimpleFtpClientUnit implements Unit {
             ftpFtpConnection.ftp.changeWorkingDirectory(EnvUtil.getEnv());
             ftpFtpConnection.ftp.enterLocalPassiveMode();
             ftpFtpConnection.ftp.storeFile(msg.get("remotePath"), bis);
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         } finally {
             try {
                 if (ftpFtpConnection != null && ftpFtpConnection.ftp != null) {

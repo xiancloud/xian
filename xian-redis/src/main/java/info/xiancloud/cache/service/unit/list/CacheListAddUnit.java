@@ -51,9 +51,9 @@ public class CacheListAddUnit implements Unit {
                 String value = FormatUtil.formatValue(valueObj);
                 return jedis.rpush(key, value);
             });
-            return UnitResponse.success(length);
+            return UnitResponse.createSuccess(length);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

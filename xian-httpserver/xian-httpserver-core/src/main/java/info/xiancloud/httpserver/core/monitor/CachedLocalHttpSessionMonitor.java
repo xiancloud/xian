@@ -38,6 +38,6 @@ public class CachedLocalHttpSessionMonitor implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.success(HttpSessionLocalCache.getSessionMap().size());
+        return UnitResponse.createSuccess(HttpSessionLocalCache.getSessionMap().size());
     }
 }

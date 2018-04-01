@@ -29,7 +29,7 @@ public class UnitUndefinedException extends AbstractXianException {
     }
 
     public UnitResponse toUnitResponse() {
-        return UnitResponse.error(Group.CODE_UNIT_UNDEFINED, null, getLocalizedMessage());
+        return UnitResponse.createError(Group.CODE_UNIT_UNDEFINED, null, getLocalizedMessage());
     }
 
     @Override

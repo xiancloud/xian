@@ -36,10 +36,10 @@ public class GroupRegistrationBridge implements Unit {
         NodeStatus nodeStatus = request.get("nodeStatus", NodeStatus.class);
         try {
             GroupDiscovery.singleton.register(groupInstance(groupProxy, nodeStatus));
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.failure(e, "failed to register group");
+            return UnitResponse.createUnknownError(e, "failed to register group");
         }
     }
 

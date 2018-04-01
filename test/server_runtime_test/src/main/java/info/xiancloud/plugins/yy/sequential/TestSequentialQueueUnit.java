@@ -38,10 +38,10 @@ public class TestSequentialQueueUnit implements Unit {
         }
         if (nano.get() > msg.get("nano", long.class)) {
             LOG.error(new Throwable());
-            return UnitResponse.failure(null, "保序算法有问题！");
+            return UnitResponse.createUnknownError(null, "保序算法有问题！");
         }
         nano.set(msg.get("nano", long.class));
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
     @Override

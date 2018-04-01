@@ -40,10 +40,10 @@ public class UnitRegistrationBridge implements Unit {
         UnitInstance unitInstance = unitInstance(unitProxy, nodeStatus);
         try {
             UnitDiscovery.singleton.register(unitInstance);
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.failure(null, "registration failed.");
+            return UnitResponse.createUnknownError(null, "registration failed.");
         }
     }
 

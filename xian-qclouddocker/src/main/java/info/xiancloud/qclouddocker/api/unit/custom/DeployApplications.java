@@ -68,14 +68,14 @@ public class DeployApplications implements Unit {
                 env = jobName.split("_")[jobName.split("_").length - 1];
         String application_replicas = msg.getString("applications");
         if (StringUtil.isEmpty(application_replicas)) {
-            return UnitResponse.failure(null, "Nothing changed.");
+            return UnitResponse.createUnknownError(null, "Nothing changed.");
         }
         try {
-            return UnitResponse.success(DeploymentUtil.replicate(application_replicas, env));
+            return UnitResponse.createSuccess(DeploymentUtil.replicate(application_replicas, env));
         } catch (DeploymentUtil.CloudApiFailedException e) {
-            return UnitResponse.exception(e, "调用容器API失败");
+            return UnitResponse.createException(e, "调用容器API失败");
         } catch (IllegalArgumentException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class DeployApplications implements Unit {
         for (String application : applicationsToCreate) {
             DeploymentUtil.createService(newImage, env, application, clusterId);
         }
-        return UnitResponse.success(new JSONObject() {{
+        return UnitResponse.createSuccess(new JSONObject() {{
             put("newImage", newImage);
             put("runningServices", envRunningServices);
             put("applicationsToDeploy", applicationsToDeploy);

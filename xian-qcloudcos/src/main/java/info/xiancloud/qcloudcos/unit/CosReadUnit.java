@@ -34,9 +34,9 @@ public class CosReadUnit implements Unit {
         CosFileReader reader = new CosFileReader();
         try {
             String content = reader.forPath(msg.get("path", String.class));
-            return UnitResponse.success(content);
+            return UnitResponse.createSuccess(content);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         } finally {
             reader.close();
         }

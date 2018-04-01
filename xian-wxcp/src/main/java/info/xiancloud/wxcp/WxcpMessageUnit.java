@@ -72,10 +72,10 @@ public class WxcpMessageUnit implements Unit {
             wxCpApi.messageSend(message);
         } catch (WxErrorException e) {
             LOG.error("企业微信发送消息出错", e);
-            return UnitResponse.failure(null, e.getError().toString());
+            return UnitResponse.createUnknownError(null, e.getError().toString());
 
         }
-        return UnitResponse.success(Group.CODE_SUCCESS);
+        return UnitResponse.createSuccess(Group.CODE_SUCCESS);
     }
 
     @Override

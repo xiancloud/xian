@@ -124,7 +124,7 @@ public class JedisTestDistributedLock implements Unit {
         SyncXian.call("diyMonitor", "jedisLockMonitor", new JSONObject() {{
         }});
 
-        return UnitResponse.success(log);
+        return UnitResponse.createSuccess(log);
     }
 
 }

@@ -34,9 +34,9 @@ public class ValidateAccessTokenUnit implements Unit {
     public UnitResponse execute(UnitRequest msg) {
         AccessToken token = OAuthService.auth.isValidToken(msg.get("accessToken", String.class));
         if (token != null) {
-            return UnitResponse.success(token);
+            return UnitResponse.createSuccess(token);
         } else {
-            return UnitResponse.failure(null, "token required.");
+            return UnitResponse.createUnknownError(null, "token required.");
         }
     }
 

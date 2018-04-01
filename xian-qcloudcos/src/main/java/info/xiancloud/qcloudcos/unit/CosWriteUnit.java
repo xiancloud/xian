@@ -32,10 +32,10 @@ public class CosWriteUnit implements Unit {
         CosFileWriter writer = new CosFileWriter();
         if (writer.forPath(msg.get("path", String.class), msg.get("data", String.class))) {
             writer.close();
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } else {
             writer.close();
-            return UnitResponse.failure(null, null);
+            return UnitResponse.createUnknownError(null, null);
         }
     }
 }

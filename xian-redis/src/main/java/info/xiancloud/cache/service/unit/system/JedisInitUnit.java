@@ -45,7 +45,7 @@ public class JedisInitUnit implements Unit {
         String password = msg.getArgMap().containsKey("password") ? msg.get("password", String.class) : "";
         int dbIndex = msg.getArgMap().containsKey("dbIndex") ? msg.get("dbIndex", int.class) : Redis.DB_INDEX;
         Redis.initRedis(url, password, dbIndex);
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
 }

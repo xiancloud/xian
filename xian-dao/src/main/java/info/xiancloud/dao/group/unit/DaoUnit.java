@@ -92,7 +92,7 @@ public abstract class DaoUnit implements Unit {
         } catch (Throwable t) {
             LOG.error(t);
             transaction.get().rollback();
-            return UnitResponse.error(DaoGroup.CODE_DB_ERROR, t, null);
+            return UnitResponse.createError(DaoGroup.CODE_DB_ERROR, t, null);
         } finally {
             destroy();
         }

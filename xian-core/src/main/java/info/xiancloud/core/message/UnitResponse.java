@@ -4,9 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import info.xiancloud.core.distribution.LocalNodeManager;
-import info.xiancloud.core.distribution.MessageType;
-import info.xiancloud.core.distribution.NodeStatus;
 import info.xiancloud.core.Constant;
 import info.xiancloud.core.Group;
 import info.xiancloud.core.Page;
@@ -33,9 +30,20 @@ import java.util.function.Function;
  *
  * @author happyyangyuan
  */
-final public class UnitResponse {
+final public class UnitResponse<D> {
+    /**
+     * the code of this unit response.
+     * code {@link Group#CODE_SUCCESS} represents a successful unit response, otherwise failure.
+     */
     private String code;
-    private Object data;
+    /**
+     * the data object.
+     */
+    private D data;
+    /**
+     * null if no exception. Do not use this exception property when code is {@link Group#CODE_SUCCESS}
+     */
+    private Throwable exception;
     /**
      * Error message. Do not use this errMsg when code is {@link Group#CODE_SUCCESS}
      */
@@ -46,8 +54,24 @@ final public class UnitResponse {
      */
     private Context context = Context.create();
 
-    public UnitResponse setContext(Context context) {
+    public UnitResponse<D> setContext(Context context) {
         this.context = context;
+        return this;
+    }
+
+    /**
+     * @return the exception object if this unit response represents a exception response. Null if no exception.
+     */
+    public Throwable getException() {
+        return exception;
+    }
+
+    /**
+     * @param exception the exception object.
+     * @return this unit response object.
+     */
+    public UnitResponse<D> setException(Throwable exception) {
+        this.exception = exception;
         return this;
     }
 
@@ -61,15 +85,15 @@ final public class UnitResponse {
     /**
      * create a succeeded response instance.
      */
-    public static UnitResponse success() {
-        return new UnitResponse().setCode(Group.CODE_SUCCESS);
+    public static <T> UnitResponse<T> createSuccess() {
+        return new UnitResponse<T>().setCode(Group.CODE_SUCCESS);
     }
 
     /**
      * create a succeeded response instance with specified data.
      */
-    public static UnitResponse success(Object data) {
-        return success().setData(data);
+    public static <T> UnitResponse<T> createSuccess(T data) {
+        return UnitResponse.<T>createSuccess().setData(data);
     }
 
     /**
@@ -78,8 +102,9 @@ final public class UnitResponse {
      *
      * @param e the exception object.
      */
-    public static UnitResponse exception(Throwable e) {
-        UnitResponse exceptionUnitResponse = UnitResponse.error(Group.CODE_EXCEPTION, e, null);
+    public static <T> UnitResponse<T> createException(Throwable e) {
+        UnitResponse<T> exceptionUnitResponse = UnitResponse.createError(Group.CODE_EXCEPTION, null, null);
+        exceptionUnitResponse.setException(e);
         exceptionUnitResponse.context.setRollback(true);
         return exceptionUnitResponse;
     }
@@ -88,46 +113,66 @@ final public class UnitResponse {
      * Please pass an exception object to this method, and it returns a newly created response object with error code {@link Group#CODE_EXCEPTION}
      * and the exception object as the data.
      *
+     * @param <T>    the generic type for the data.
      * @param e      the exception object.
      * @param errMsg the error message that you want to add.
      */
-    public static UnitResponse exception(Throwable e, String errMsg) {
-        return exception(e).setErrMsg(errMsg);
+    public static <T> UnitResponse<T> createException(Throwable e, String errMsg) {
+        return UnitResponse.<T>createException(e).setErrMsg(errMsg);
+    }
+
+    public static <T> UnitResponse<T> createException(String errCode, Throwable exception) {
+        return new UnitResponse<T>().setCode(errCode).setException(exception);
+    }
+
+    public static <T> UnitResponse<T> createException(String errCode, Throwable exception, String errMsg) {
+        return new UnitResponse<T>().setCode(errCode).setException(exception).setErrMsg(errMsg);
     }
 
     /**
+     * @param <D>    the generic type for the data.
      * @param data   The failure data. Leave it null if you have no data to set.
      *               Under some complicated unit situations, failed data must be included and returned.
      * @param errMsg failure reason or description.
      * @return an response object with failure data and failure message.
      */
-    public static UnitResponse failure(Object data, String errMsg) {
-        return error(Group.CODE_FAILURE, data, errMsg);
+    public static <D> UnitResponse<D> createUnknownError(D data, String errMsg) {
+        return createError(Group.CODE_UNKNOWN_ERROR, data, errMsg);
     }
 
-    public static UnitResponse error(String errCode, Object data, String errMsg) {
+    /**
+     * create a new error unit response instance.
+     *
+     * @param errCode the error code.
+     * @param data    the data
+     * @param errMsg  the error message.
+     * @param <D>     the generic type for the data
+     * @return the newly created unit response object.
+     */
+    public static <D> UnitResponse<D> createError(String errCode, D data, String errMsg) {
         if (Group.CODE_SUCCESS.equalsIgnoreCase(errCode)) {
             throw new IllegalArgumentException("Only non-success code is allowed here.");
         }
-        return new UnitResponse().setCode(errCode).setData(data).setErrMsg(errMsg);
+        return new UnitResponse<D>().setCode(errCode).setData(data).setErrMsg(errMsg);
     }
 
     /**
      * @param data   the value
      * @param errMsg error message.
-     * @return created repsonse instance.
+     * @return the newly created response instance.
      */
-    public static UnitResponse dataDoesNotExists(Object data, String errMsg) {
-        return error(Group.CODE_DATA_DOES_NOT_EXITS, data, errMsg);
+    public static <D> UnitResponse<D> createDataDoesNotExists(D data, String errMsg) {
+        return createError(Group.CODE_DATA_DOES_NOT_EXITS, data, errMsg);
     }
 
     /**
-     * @param code   {@link Group#CODE_SUCCESS SUCCESS}, {@link Group#CODE_FAILURE FAILURE} etc.
+     * @param <D>    the generic type of the data
+     * @param code   {@link Group#CODE_SUCCESS SUCCESS}, {@link Group#CODE_UNKNOWN_ERROR FAILURE} etc.
      * @param data   the data bean or json
      * @param errMsg the error message. Note that errMsg must be null when the {{@link #code}} is {@link Group#CODE_SUCCESS SUCCESS}
      */
-    public static UnitResponse create(String code, Object data, String errMsg) {
-        return new UnitResponse().setCode(code).setData(data).setErrMsg(errMsg);
+    public static <D> UnitResponse<D> create(String code, D data, String errMsg) {
+        return new UnitResponse<D>().setCode(code).setData(data).setErrMsg(errMsg);
     }
 
     /**
@@ -135,16 +180,22 @@ final public class UnitResponse {
      *
      * @param successful true to return an succeeded response object, false the opposite.
      */
-    public static UnitResponse create(boolean successful) {
+    public static <D> UnitResponse<D> create(boolean successful) {
         if (successful) {
-            return success();
+            return createSuccess();
         } else {
-            return failure(null, null);
+            return createUnknownError(null, null);
         }
     }
 
-    public static UnitResponse rollback() {
-        return rollback(null);
+    /**
+     * create a rollback marked unit response
+     *
+     * @param <D> the generic type of the data
+     * @return the newly created unit reponse instance.
+     */
+    public static <D> UnitResponse<D> createRollingBack() {
+        return createRollingBack(null);
     }
 
     /**
@@ -153,25 +204,27 @@ final public class UnitResponse {
      * @param errMsg the error message.
      * @return An response object which will indicate a transactional rolling back.
      */
-    public static UnitResponse rollback(String errMsg) {
-        return failure(null, errMsg).setContext(Context.create().setRollback(true));
+    public static <D> UnitResponse<D> createRollingBack(String errMsg) {
+        return UnitResponse.<D>createUnknownError(null, errMsg).setContext(Context.create().setRollback(true));
     }
 
     /**
-     * lackOfParam
+     * create a new unit response when missingParam
      *
+     * @param <D>                  the generic type of the data.
      * @param theMissingParameters theMissingParameters array, leave it null, if you dont know which parameter is missing.
-     * @return An response object describing the missed parameters.
+     * @return the newly created response object describing the missed parameters.
      */
-    public static UnitResponse lackOfParam(Object theMissingParameters, String errMsg) {
-        return UnitResponse.error(Group.CODE_LACK_OF_PARAMETER, theMissingParameters, errMsg);
+    public static <D> UnitResponse<D> createMissingParam(D theMissingParameters, String errMsg) {
+        return UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, theMissingParameters, errMsg);
     }
 
-    public static UnitResponse create(JSONObject json) {
+    @SuppressWarnings("unchecked")
+    public static <D> UnitResponse<D> create(JSONObject json) {
         return Reflection.toType(json, UnitResponse.class);
     }
 
-    public UnitResponse setCode(String code) {
+    public UnitResponse<D> setCode(String code) {
         this.code = code;
         return this;
     }
@@ -180,7 +233,7 @@ final public class UnitResponse {
         return code;
     }
 
-    public UnitResponse setData(Object data) {
+    public UnitResponse<D> setData(D data) {
         this.data = data;
         return this;
     }
@@ -188,23 +241,24 @@ final public class UnitResponse {
     /**
      * Get the typed object directly.
      *
-     * @param <T> the type you want.
      * @return The casted object.
      */
-    public <T> T getData() {
-        return (T) data;
+    public D getData() {
+        return data;
     }
 
     public String dataToStr() {
         return data == null ? null : data.toString();
     }
 
-    public Integer dataToInt() {
-        return data == null ? null : Integer.valueOf(dataToStr());
+    public Integer dataToInteger() {
+        String dataStr = dataToStr();
+        return dataStr == null ? null : Integer.valueOf(dataStr);
     }
 
     public Long dataToLong() {
-        return data == null ? null : Long.valueOf(dataToStr());
+        String dataStr = dataToStr();
+        return dataStr == null ? null : Long.valueOf(dataStr);
     }
 
     public Boolean dataToBoolean() {
@@ -216,46 +270,23 @@ final public class UnitResponse {
      * @throws NullPointerException if data is null
      */
     public boolean dataToBoolValue() {
-        return getData();
+        return Reflection.toType(data, boolean.class);
     }
 
     public Double dataToDouble() {
-        return data == null ? null : Double.valueOf(dataToStr());
+        return Reflection.toType(data, Double.class);
     }
 
     public BigDecimal dataToBigDecimal() {
-        return data == null ? null : BigDecimal.valueOf(dataToLong());
-    }
-
-    /**
-     * data转Map
-     */
-    public JSONObject dataToMap() {
-        return dataToJson();
+        return Reflection.toType(data, BigDecimal.class);
     }
 
     public JSONObject dataToJson() {
         return dataToType(JSONObject.class);
     }
 
-    /**
-     * list data第一条数据转Map
-     */
-    public Map firstToMap() {
-        return firstToJson();
-    }
-
     public JSONObject firstToJson() {
         return dataToJson();
-    }
-
-    /**
-     * data转List
-     *
-     * @deprecated 请使用dataToTypedList
-     */
-    public JSONArray dataToList() {
-        return dataToJsonArray();
     }
 
     public JSONArray dataToJsonArray() {
@@ -281,7 +312,7 @@ final public class UnitResponse {
     /**
      * 将unitResponse.data适配为map的列表，请放心大胆做转换
      */
-    public List<JSONObject> dataToListOfMap() {
+    public List<JSONObject> dataToListOfJsonObject() {
         return dataToTypedList(JSONObject.class);
     }
 
@@ -394,7 +425,7 @@ final public class UnitResponse {
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
-    public UnitResponse successCall(Function<UnitResponse, UnitResponse> successCall) {
+    public UnitResponse<D> successCall(Function<UnitResponse<D>, UnitResponse<D>> successCall) {
         if (successCall == null || !succeeded()) {
             return this;
         }
@@ -402,14 +433,14 @@ final public class UnitResponse {
             return successCall.apply(this);
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
-    public UnitResponse successCall(Callable<UnitResponse> successCall) {
+    public UnitResponse<D> successCall(Callable<UnitResponse<D>> successCall) {
         if (successCall == null || !succeeded()) {
             return this;
         }
@@ -417,14 +448,14 @@ final public class UnitResponse {
             return successCall.call();
         } catch (Throwable e) {
             LOG.error(e);
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
-    public void successCall(Consumer<UnitResponse> successCall) {
+    public void successCall(Consumer<UnitResponse<D>> successCall) {
         if (successCall != null && succeeded()) {
             try {
                 successCall.accept(this);
@@ -442,7 +473,7 @@ final public class UnitResponse {
         return errMsg;
     }
 
-    public UnitResponse setErrMsg(String errMsg) {
+    public UnitResponse<D> setErrMsg(String errMsg) {
         this.errMsg = errMsg;
         return this;
     }
@@ -479,7 +510,7 @@ final public class UnitResponse {
      *
      * @param from the source
      */
-    public static UnitResponse clone(UnitResponse from) {
+    public static <D> UnitResponse<D> clone(UnitResponse<D> from) {
         return from.clone();
     }
 
@@ -489,13 +520,13 @@ final public class UnitResponse {
      * @param from the source
      * @param to   the destiny
      */
-    public static void copy(UnitResponse from, UnitResponse to) {
+    public static <D> void copy(UnitResponse<D> from, UnitResponse<D> to) {
         //remember to modify this method when new properties are added.
         to.setCode(from.code).setData(from.data).setContext(from.context.clone()).setErrMsg(from.errMsg);
     }
 
     @Override
-    protected UnitResponse clone() {
+    protected UnitResponse<D> clone() {
         return CloneUtil.cloneBean(this, UnitResponse.class);
     }
 

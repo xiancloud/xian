@@ -8,28 +8,62 @@ package info.xiancloud.core;
  */
 public interface Group {
 
+    /**
+     * successful code
+     */
     String CODE_SUCCESS = "SUCCESS";
-    String CODE_FAILURE = "FAILURE";
+    /**
+     * unknown error code
+     */
+    String CODE_UNKNOWN_ERROR = "UNKNOWN_ERROR";
+    /**
+     * missing parameters
+     */
     String CODE_LACK_OF_PARAMETER = "LACK_OF_PARAMETER";
     /**
      * For internal use only, when exception is thrown while the unit execution, no response object will be returned,
      * then the framework helps to generate an response object with this error code and the exception data object.
      */
     String CODE_EXCEPTION = "EXCEPTION";
-
+    /**
+     * error code if you call a remote unit while the unit is disabled for remote rpc.
+     */
     String CODE_REMOTE_SENDER_DISABLED = "REMOTE_SENDER_DISABLED";
-    String CODE_OPERATE_ERROR = "OPERATE_ERROR";
+    /**
+     * data does not exists
+     */
     String CODE_DATA_DOES_NOT_EXITS = "DATA_DOES_NOT_EXITS";
-
+    /**
+     * unit is undefined.
+     */
     String CODE_UNIT_UNDEFINED = "UNIT_UNDEFINED";
+    /**
+     * application is undefined
+     */
     String CODE_APPLICATION_UNDEFINED = "APPLICATION_UNDEFINED";
+    /**
+     * group is undefined
+     */
     String CODE_GROUP_UNDEFINED = "GROUP_UNDEFINED";
-
+    /**
+     * group is offline
+     */
     String CODE_GROUP_OFFLINE = "GROUP_OFFLINE";
+    /**
+     * unit is offline
+     */
     String CODE_UNIT_OFFLINE = "UNIT_OFFLINE";
+    /**
+     * application is offline
+     */
     String CODE_APPLICATION_OFFLINE = "APPLICATION_OFFLINE";
-
+    /**
+     * time out
+     */
     String CODE_TIME_OUT = "TIME_OUT";
+    /**
+     * request is illegal
+     */
     String CODE_BAD_REQUEST = "BAD_REQUEST";
 
     /**

@@ -24,19 +24,19 @@ public class UniqueChecker {
     public UnitResponse checkUnique() throws SQLException {
         if (action instanceof UpdateAction) {
             LOG.debug("不再对updateAction执行唯一性约束检查");
-            return UnitResponse.success("ok");
+            return UnitResponse.createSuccess("ok");
         }
         Set<String> uniqueKeys = uniqueKeys();
         for (String col : action.getCols()) {
             for (String key : uniqueKeys) {
                 if (StringUtil.underlineToCamel(col).equals(StringUtil.underlineToCamel(key))) {//都转驼峰是为了容错
                     if (queryCount(col) > 0) {
-                        return UnitResponse.error(DaoGroup.CODE_REPETITION_NOT_ALLOWED, key, String.format("%s不允许重复", key));
+                        return UnitResponse.createError(DaoGroup.CODE_REPETITION_NOT_ALLOWED, key, String.format("%s不允许重复", key));
                     }
                 }
             }
         }
-        return UnitResponse.success("ok");
+        return UnitResponse.createSuccess("ok");
     }
 
     private String buildSelectCountSql(String col) {

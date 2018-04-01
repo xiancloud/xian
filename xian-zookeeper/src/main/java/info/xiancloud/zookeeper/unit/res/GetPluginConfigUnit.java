@@ -41,9 +41,9 @@ public class GetPluginConfigUnit implements Unit {
         String value = IResAware.singleton.get(pluginName, key);
         if (StringUtil.isEmpty(value)) {
             LOG.debug("配置尚未注册到zk，因此返回null");
-            return UnitResponse.failure(null, "配置尚未注册至zk，请读取本地配置代替.");
+            return UnitResponse.createUnknownError(null, "配置尚未注册至zk，请读取本地配置代替.");
         }
-        return UnitResponse.success(value);
+        return UnitResponse.createSuccess(value);
     }
 
     @Override

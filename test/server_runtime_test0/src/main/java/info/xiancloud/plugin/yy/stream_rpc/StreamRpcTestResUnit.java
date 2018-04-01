@@ -39,9 +39,9 @@ public class StreamRpcTestResUnit implements Unit {
         File file = new File(msg.getString("file"));
         try {
             InputStream inputStream = new FileInputStream(file);
-            return UnitResponse.success(inputStream);
+            return UnitResponse.createSuccess(inputStream);
         } catch (FileNotFoundException e) {
-            return UnitResponse.exception(e, "文件不存在");
+            return UnitResponse.createException(e, "文件不存在");
         }
     }
 

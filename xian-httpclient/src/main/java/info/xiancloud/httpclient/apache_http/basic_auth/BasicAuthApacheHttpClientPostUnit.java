@@ -61,11 +61,11 @@ public class BasicAuthApacheHttpClientPostUnit implements Unit {
             try {
                 resPayload = httpClient.post(body);
             } catch (ConnectTimeoutException e) {
-                return UnitResponse.error(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + url);
+                return UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + url);
             } catch (SocketTimeoutException e) {
-                return UnitResponse.error(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + url);
+                return UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + url);
             } catch (Throwable e) {
-                return UnitResponse.exception(e);
+                return UnitResponse.createException(e);
             }
             responseJSON.put("statusLine", new JSONObject() {{
                 put("statusCode", "todo");
@@ -74,7 +74,7 @@ public class BasicAuthApacheHttpClientPostUnit implements Unit {
             }});
             responseJSON.put("allHeaders", "todo");
             responseJSON.put("entity", resPayload);
-            return UnitResponse.success(responseJSON);
+            return UnitResponse.createSuccess(responseJSON);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

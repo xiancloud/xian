@@ -51,7 +51,7 @@ public class DeleteApplications implements Unit {
         for (String runningService : servicesToDelete) {
             DeploymentUtil.deleteService(clusterId, runningService, env);
         }
-        return UnitResponse.success(new JSONObject() {{
+        return UnitResponse.createSuccess(new JSONObject() {{
             put("servicesToDelete", servicesToDelete);
         }});
     }

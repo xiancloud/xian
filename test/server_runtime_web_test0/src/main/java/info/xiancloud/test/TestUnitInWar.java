@@ -25,6 +25,6 @@ public class TestUnitInWar implements Unit {
 
     @Override
     public UnitResponse execute(UnitRequest request) {
-        return UnitResponse.success("happy ending.");
+        return UnitResponse.createSuccess("happy ending.");
     }
 }

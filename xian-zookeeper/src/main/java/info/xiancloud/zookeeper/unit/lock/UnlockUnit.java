@@ -32,7 +32,7 @@ public class UnlockUnit implements Unit {
     @Override
     public UnitResponse execute(UnitRequest msg) {
         ZkDistributedLock.unlock(msg.get("innerId", int.class));
-        return UnitResponse.success("解锁成功:" + msg.get("innerId", int.class));
+        return UnitResponse.createSuccess("解锁成功:" + msg.get("innerId", int.class));
     }
 
     @Override

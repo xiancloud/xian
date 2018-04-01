@@ -55,11 +55,11 @@ public class CacheListSetUnit implements Unit {
             });
 
             if ("OK".equals(replyCode))
-                return UnitResponse.success();
+                return UnitResponse.createSuccess();
             else
-                return UnitResponse.failure(replyCode, replyCode);
+                return UnitResponse.createUnknownError(replyCode, replyCode);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

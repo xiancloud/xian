@@ -53,6 +53,6 @@ public class OpenFalconShortMsgAdaptor implements Unit {
                 }
             });
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 }

@@ -52,7 +52,7 @@ public class UnitMonitorSchedule implements Unit {
             entry.getValue().secondCall = 0;
             retArr.add(obj);
         }
-        return UnitResponse.success(retArr);
+        return UnitResponse.createSuccess(retArr);
     }
 
     @Override

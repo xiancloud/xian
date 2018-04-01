@@ -61,14 +61,14 @@ public class GetNodeInfoUnit implements Unit {
                 }
                 nodeInfoArray.add(nodeInfo);
             }
-            return UnitResponse.success(nodeInfoArray);
+            return UnitResponse.createSuccess(nodeInfoArray);
         } else try {
             JSONArray nodeInfoArray = new JSONArray();
             List<ApplicationInstance> clients = ApplicationRouter.singleton.allInstances(msg.get("application"));
             for (ApplicationInstance instance : clients) {
                 nodeInfoArray.add(nodeInfo(instance.getPayload()));
             }
-            return UnitResponse.success(nodeInfoArray);
+            return UnitResponse.createSuccess(nodeInfoArray);
         } catch (ApplicationOfflineException | ApplicationUndefinedException e) {
             return e.toUnitResponse();
         }

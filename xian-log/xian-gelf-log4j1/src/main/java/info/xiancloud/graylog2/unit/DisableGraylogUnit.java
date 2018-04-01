@@ -33,9 +33,9 @@ public class DisableGraylogUnit implements Unit {
     public UnitResponse execute(UnitRequest msg) {
         try {
             GelfLog4j1Init.destroy();
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (GelfLog4j1Init.AlreadyDestroyedException e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

@@ -55,12 +55,12 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
             if (!required.isEmpty()) {
                 String[] requiredParamNames = required.stream().map(Input.Obj::getName).toArray(String[]::new);
                 LackParamException lackParamException = new LackParamException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit(), requiredParamNames);
-                UnitResponse unitResponse = UnitResponse.error(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
+                UnitResponse unitResponse = UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
                 responseCallbck(unitResponse, start);
             } else {
                 unit.execute(unitRequest, unitResponse -> {
                     if (unitResponse == null) {
-                        unitResponse = UnitResponse.failure(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
+                        unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
                         LOG.error(unitResponse);
                     }
                     responseCallbck(unitResponse, start);

@@ -55,13 +55,13 @@ public class CacheMapPutUnit implements Unit {
             });
 
             if (result == 0)
-                return UnitResponse.success("存在, 覆盖");
+                return UnitResponse.createSuccess("存在, 覆盖");
             else if (result == 1)
-                return UnitResponse.success("新建, 设置");
+                return UnitResponse.createSuccess("新建, 设置");
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
 }

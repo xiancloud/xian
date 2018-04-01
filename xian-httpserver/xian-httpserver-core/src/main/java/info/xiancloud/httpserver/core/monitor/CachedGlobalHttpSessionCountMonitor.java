@@ -56,6 +56,6 @@ public class CachedGlobalHttpSessionCountMonitor extends AbstractDiyMonitorUnit 
             totalSessionCount = -1;
         }
         LOG.info("当前缓存的session总数量为:" + totalSessionCount);
-        return UnitResponse.success(totalSessionCount);
+        return UnitResponse.createSuccess(totalSessionCount);
     }
 }

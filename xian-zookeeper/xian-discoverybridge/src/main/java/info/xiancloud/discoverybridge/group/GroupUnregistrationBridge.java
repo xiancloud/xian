@@ -34,9 +34,9 @@ public class GroupUnregistrationBridge implements Unit {
         GroupInstance groupInstance = GroupRegistrationBridge.groupInstance(groupProxy, nodeStatus);
         try {
             GroupDiscovery.singleton.unregister(groupInstance);
-            return UnitResponse.success();
+            return UnitResponse.createSuccess();
         } catch (Exception e) {
-            return UnitResponse.failure(e, "group注销失败.");
+            return UnitResponse.createUnknownError(e, "group注销失败.");
         }
     }
 }

@@ -52,9 +52,9 @@ public class CacheSortedSetAddUnit implements Unit {
 
         try {
             Long result = Redis.call(cacheConfigBean, jedis -> jedis.zadd(key, score, FormatUtil.formatValue(member)));
-            return UnitResponse.success(result);
+            return UnitResponse.createSuccess(result);
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

@@ -40,9 +40,9 @@ public class TestXhashUnit implements Unit {
         initXOnlyOnce(inputX);
         if (!x.equals(inputX)) {
             LOG.error(new Throwable("验证不通过，xhash不按照预期运行，期望参数：" + x + "；实际参数：" + inputX));
-            return UnitResponse.failure(null, "验证不通过，xhash不按照预期运行，期望参数：" + x + "；实际参数：" + inputX);
+            return UnitResponse.createUnknownError(null, "验证不通过，xhash不按照预期运行，期望参数：" + x + "；实际参数：" + inputX);
         }
-        return UnitResponse.success(x);
+        return UnitResponse.createSuccess(x);
     }
 
     @Override

@@ -57,9 +57,9 @@ public class CacheObjectUnit implements Unit {
                 ObjectCacheOperate.set(jedis, key, value);
             }
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success();
+        return UnitResponse.createSuccess();
     }
 
 }

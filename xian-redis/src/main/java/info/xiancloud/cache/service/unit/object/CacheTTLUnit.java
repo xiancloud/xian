@@ -46,9 +46,9 @@ public class CacheTTLUnit implements Unit {
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
         try {
             long ttl = Redis.call(cacheConfigBean, jedis -> jedis.ttl(key));
-            return UnitResponse.success(ttl);
+            return UnitResponse.createSuccess(ttl);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 

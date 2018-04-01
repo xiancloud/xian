@@ -10,12 +10,6 @@ import info.xiancloud.core.util.ProxyBuilder;
 import info.xiancloud.core.util.thread.MsgIdHolder;
 import info.xiancloud.core.LocalUnitsManager;
 import info.xiancloud.core.Unit;
-import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.thread_pool.ThreadPoolManager;
-import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.ProxyBuilder;
-import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -83,7 +77,7 @@ public interface IUnitAop {
                         final UnitResponse finalMethodReturn;
 
                         if (unitReturn instanceof Throwable) {//有异常抛出,则需要回滚
-                            finalMethodReturn = UnitResponse.exception((Throwable) unitReturn);
+                            finalMethodReturn = UnitResponse.createException((Throwable) unitReturn);
                         } else {
                             finalMethodReturn = (UnitResponse) unitReturn;
                         }

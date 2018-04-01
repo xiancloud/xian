@@ -14,9 +14,9 @@ public class DDLChecker {
     public static UnitResponse check(DaoUnit daoUnit) {
         for (Action action : daoUnit.getLocalActions()) {
             if (action instanceof IDML) {
-                return UnitResponse.error(DaoGroup.CODE_DB_ERROR, null, "不允许同时执行DML语句和DDL语句");
+                return UnitResponse.createError(DaoGroup.CODE_DB_ERROR, null, "不允许同时执行DML语句和DDL语句");
             }
         }
-        return UnitResponse.success("OK");
+        return UnitResponse.createSuccess("OK");
     }
 }

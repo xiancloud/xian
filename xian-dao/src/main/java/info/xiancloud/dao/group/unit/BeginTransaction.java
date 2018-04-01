@@ -36,7 +36,7 @@ public final class BeginTransaction implements Unit {
     public UnitResponse execute(UnitRequest msg) {
         LOG.info(String.format("事务开始...transId=%s", MsgIdHolder.get()));
         AppTransaction.createTransaction(MsgIdHolder.get()).begin();
-        return UnitResponse.success("Begin Transaction OK! transId=  " + MsgIdHolder.get());
+        return UnitResponse.createSuccess("Begin Transaction OK! transId=  " + MsgIdHolder.get());
     }
 
     @Override

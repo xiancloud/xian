@@ -81,9 +81,9 @@ public class SendEmail implements Unit {
         try {
             new EmailSender(emailAddresses, map.get("subject").toString(), map.get("content").toString()).send();
         } catch (Throwable e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
-        return UnitResponse.success("邮件发送请求已发送...");
+        return UnitResponse.createSuccess("邮件发送请求已发送...");
     }
 
     private static Map<String, List<Long>> records = new ConcurrentHashMap<>();

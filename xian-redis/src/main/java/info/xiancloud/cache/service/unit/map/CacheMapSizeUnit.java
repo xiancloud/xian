@@ -44,9 +44,9 @@ public class CacheMapSizeUnit implements Unit {
 
         try {
             long size = Redis.call(cacheConfigBean, jedis -> jedis.hlen(key));
-            return UnitResponse.success(size);
+            return UnitResponse.createSuccess(size);
         } catch (Exception e) {
-            return UnitResponse.exception(e);
+            return UnitResponse.createException(e);
         }
     }
 
