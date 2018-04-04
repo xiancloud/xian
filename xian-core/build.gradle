@@ -5,4 +5,8 @@ dependencies {
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
     compile group: 'com.fathzer', name: 'javaluator', version: '3.0.1'
+    compile group: 'io.netty', name: 'netty-all', version: '4.1.9.Final'
+    compile group: 'com.google.guava', name: 'guava', version: '21.0'
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.38'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.12'
 }
