@@ -1,11 +1,10 @@
 package info.xiancloud.core.support.zk;
 
 import info.xiancloud.core.LocalUnitsManager;
-import info.xiancloud.core.NotifyHandler;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.Xian;
+import info.xiancloud.core.message.SingleRxXian;
+import io.reactivex.Single;
 
-import java.util.function.Consumer;
+import java.util.Objects;
 
 /**
  * LeaderElection
@@ -15,13 +14,10 @@ import java.util.function.Consumer;
 public class LeaderElection {
 
     //目前选举机制依赖zookeeper组件的存在
-    public static void isLeader(Consumer<UnitResponse> consumer) {
-        Xian.call("zookeeper", "isLeader", new NotifyHandler() {
-            @Override
-            protected void handle(UnitResponse unitResponse) {
-                consumer.accept(unitResponse);
-            }
-        });
+    public static Single<Boolean> isLeader() {
+        return SingleRxXian
+                .call("zookeeper", "isLeader")
+                .flatMap(unitResponse -> Single.just(Objects.requireNonNull(unitResponse.dataToBoolean())));
     }
 
     //目前选举机制依赖zookeeper组件的存在

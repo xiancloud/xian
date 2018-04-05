@@ -9,6 +9,7 @@ import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.core.util.thread.ThreadUtils;
 import info.xiancloud.qcloudcos.sdk.CosFileWriter;
+import io.reactivex.Single;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class BatchCosWrite implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public Single<UnitResponse> execute(UnitRequest msg) {
         Map<String, String> files = msg.get("files", Map.class);
         int threadCount;
         if (msg.getArgMap().containsKey("threadCount")) {

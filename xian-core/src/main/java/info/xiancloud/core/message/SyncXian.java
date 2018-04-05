@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
  * </p>
  *
  * @author happyyangyuan
+ * @deprecated blocking rpc has bad performance.
  */
 class SyncXian {
 

@@ -4,12 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.Bean;
 import info.xiancloud.core.Group;
-import info.xiancloud.core.NotifyHandler;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Reflection;
+import info.xiancloud.core.util.StringUtil;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,22 +28,22 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest msg, NotifyHandler handler) {
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
         JSONArray responseMonitor = new JSONArray();
 
         String title = title();
-        if (title == null || "".equals(title.trim()))
-            handler.callback(UnitResponse.createSuccess(responseMonitor));//todo why success with empty array? not failure or exception?
-
-        Object monitor = execute0();
-        if (monitor != null) {
-            if (monitor instanceof UnitResponse)
-                padding(responseMonitor, ((UnitResponse) monitor).getData());
-            else
-                padding(responseMonitor, monitor);
+        if (StringUtil.isEmpty(title)) {
+            LOG.debug("success with empty array, not failure or exception in order to ignore monitors without titles.");
+        } else {
+            Object monitor = execute0();
+            if (monitor != null) {
+                if (monitor instanceof UnitResponse)
+                    padding(responseMonitor, ((UnitResponse) monitor).getData());
+                else
+                    padding(responseMonitor, monitor);
+            }
         }
-
-        handler.callback(UnitResponse.createSuccess(responseMonitor));
+        handler.handle(UnitResponse.createSuccess(responseMonitor));
     }
 
     private void padding(JSONArray responseMonitor, Object monitor) {

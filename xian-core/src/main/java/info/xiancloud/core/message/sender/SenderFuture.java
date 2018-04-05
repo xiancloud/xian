@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * sender状态机
+ * stateful sender future.
  *
  * @author happyyangyuan
  */
@@ -19,13 +19,13 @@ public class SenderFuture implements Future<UnitResponse> {
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        LOG.debug("不支持cancel，谢谢");
+        LOG.debug("cancellation is not supported，thanks!");
         return false;
     }
 
     @Override
     public boolean isCancelled() {
-        LOG.debug("不支持cancel，谢谢");
+        LOG.debug("cancellation is not supported，thanks!");
         return false;
     }
 
@@ -35,8 +35,8 @@ public class SenderFuture implements Future<UnitResponse> {
     }
 
     /**
-     * 等待执行结果，永不超时
      * Note, this method will return right after finishing execution of the unit and before the remote handler is called.
+     * This method waits and never times out.
      *
      * @return the unit response
      */

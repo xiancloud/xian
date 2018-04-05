@@ -1,17 +1,12 @@
 package info.xiancloud.core;
 
 import info.xiancloud.core.init.shutdown.ShutdownHook;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.ProxyBuilder;
-import info.xiancloud.core.init.shutdown.ShutdownHook;
-import info.xiancloud.core.message.SyncXian;
-import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.ProxyBuilder;
+import io.reactivex.Single;
 
 import java.lang.reflect.Proxy;
 import java.util.*;
@@ -36,7 +31,7 @@ public abstract class BatchUnit implements ShutdownHook, Unit {
         return new Input().add(FLUSH, Boolean.class, "是否立即执行批量的操作（将缓存的内容，马上提交给DB层）", REQUIRED);
     }
 
-    public void preBatchExecute(UnitRequest msg) {
+    public void preBatchExecute(UnitRequest request) {
     }
 
     /**
@@ -44,8 +39,8 @@ public abstract class BatchUnit implements ShutdownHook, Unit {
      *
      * @param msg 具体的消息
      */
-    public UnitResponse execute(UnitRequest msg) {
-        UnitResponse result;
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        Single<UnitResponse> result;
         boolean flush = msg.get(FLUSH, Boolean.class, false);//是否马上提交
         msg.getArgMap().remove(FLUSH);
         //判断是否需要批量操作
@@ -59,17 +54,17 @@ public abstract class BatchUnit implements ShutdownHook, Unit {
                     recordCacheList.clear();
                 }
                 preBatchExecute(msg);
-                result = SyncXian.call(getBatchGroupName(), getBatchUnitName(), params);
+                result = SingleRxXian.call(getBatchGroupName(), getBatchUnitName(), params);
             } else {
                 result = doCache(msg);
             }
         } else {//没有批量需求，立即执行
-            result = SyncXian.call(getBatchGroupName(), getBatchUnitName(), msg.getArgMap());
+            result = SingleRxXian.call(getBatchGroupName(), getBatchUnitName(), msg.getArgMap());
         }
-        return result;
+        result.subscribe(handler::handle);
     }
 
-    protected abstract UnitResponse doCache(UnitRequest msg);
+    protected abstract Single<UnitResponse> doCache(UnitRequest request);
 
     /**
      * 执行shutdownHook
@@ -90,7 +85,7 @@ public abstract class BatchUnit implements ShutdownHook, Unit {
                 recordCache.put(VALUES, new ArrayList<>(batchUnit.recordCacheList));
                 recordCacheList.clear();
             }
-            SyncXian.call(getBatchGroupName(), getBatchUnitName(), recordCache);
+            SingleRxXian.call(getBatchGroupName(), getBatchUnitName(), recordCache).blockingGet();
         }
         return true;
     }

@@ -1,10 +1,9 @@
 package info.xiancloud.core.test.without_service_test;
 
-import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
-import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
 
 /**
  * This is verification unit to validate the unit scanner.
@@ -24,8 +23,7 @@ public class UnitWithoutGroup extends AbstractUnitWithoutGroup {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        return null;
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
     }
 
 }

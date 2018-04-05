@@ -12,6 +12,7 @@ import info.xiancloud.core.socket.ISocketGroup;
 import info.xiancloud.core.util.RetryUtil;
 import info.xiancloud.httpclient.HttpClientGroup;
 import info.xiancloud.httpclient.apache_http.IApacheHttpClient;
+import io.reactivex.Single;
 import org.apache.http.HttpResponse;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.util.EntityUtils;
@@ -21,9 +22,12 @@ import java.net.SocketTimeoutException;
 import java.util.Map;
 
 /**
+ * This is a synchronous http client
+ *
  * @author happyyangyuan
+ * @deprecated because it is synchronous
  */
-public class ApacheHttpClientGetUnit implements Unit {
+public class ApacheHttpClientGetUnit implements Unit<JSONObject> {
     @Override
     public String getName() {
         return "apacheHttpClientGet";
@@ -50,7 +54,7 @@ public class ApacheHttpClientGetUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public Single<UnitResponse<JSONObject>> execute(UnitRequest msg) {
         String url = msg.get("url", String.class);
         Map<String, String> headers = msg.get("headers");
         Integer readTimeoutInMillis = msg.get("readTimeoutInMillis", Integer.class);
@@ -63,11 +67,11 @@ public class ApacheHttpClientGetUnit implements Unit {
                         XianConfig.getIntValue("apache.httpclient.max.try", 3),
                         ConnectTimeoutException.class);
             } catch (ConnectTimeoutException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url);
+                return Single.just(UnitResponse.<JSONObject>createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + url).setException(e));
             } catch (SocketTimeoutException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, e, "Read timeout: " + url);
+                return Single.just(UnitResponse.<JSONObject>createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + url).setException(e));
             } catch (Throwable e) {
-                return UnitResponse.createException(e);
+                return Single.just(UnitResponse.createException(e));
             }
             responseJSON.put("statusLine", new JSONObject() {{
                 put("statusCode", httpResponse.getStatusLine().getStatusCode());
@@ -80,7 +84,7 @@ public class ApacheHttpClientGetUnit implements Unit {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return UnitResponse.createSuccess(responseJSON);
+            return Single.just(UnitResponse.createSuccess(responseJSON));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

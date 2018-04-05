@@ -667,6 +667,25 @@ public class Reflection {
     }
 
     /**
+     * Get all fields defined in the class including fields in all super classes recursively.
+     *
+     * @return the set of fields declared at all level of class hierachy
+     */
+    public static List<Field> getAllFields(Class clazz) {
+        return getAllFieldsRec(clazz, new ArrayList<>());
+    }
+
+    // recursive method.
+    private static List<Field> getAllFieldsRec(Class clazz, List<Field> fieldList) {
+        Class superClazz = clazz.getSuperclass();
+        if (superClazz != null) {
+            getAllFieldsRec(superClazz, fieldList);
+        }
+        fieldList.addAll(ArrayUtil.toList(clazz.getDeclaredFields(), Field.class));
+        return fieldList;
+    }
+
+    /**
      * 支持primitive类名的class.forName<br>
      * extension of {@link Class#forName(String)} with primitive class supported.
      *

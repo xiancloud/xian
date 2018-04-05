@@ -1,16 +1,13 @@
 package info.xiancloud.core.util;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.message.SyncXian;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.socket.ConnectTimeoutException;
-import info.xiancloud.core.socket.ISocketGroup;
 import info.xiancloud.core.Constant;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.socket.ConnectTimeoutException;
 import info.xiancloud.core.socket.ISocketGroup;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.reactivex.Single;
 
 import java.net.SocketTimeoutException;
 import java.util.List;
@@ -89,50 +86,47 @@ public class HttpUtil {
         return uriParameters;
     }
 
-    public static String post(String url, String body, Map<String, String> headers) throws ConnectTimeoutException, SocketTimeoutException {
-        UnitResponse out = SyncXian.call("httpClient", "apacheHttpClientPost", new JSONObject() {{
-            put("url", url);
-            put("body", body);
-            put("headers", headers);
-        }});
-        if (out.succeeded()) {
-            return out.dataToJson().getString("entity");
-        } else {
-            throwIOException(out, url);
-            //dead code below
-            return out.toJSONString();
-        }
+    public static Single<String> post(String url, String body, Map<String, String> headers) {
+        return SingleRxXian
+                .call("httpClient", "apacheHttpClientPost",
+                        new JSONObject()
+                                .fluentPut("url", url)
+                                .fluentPut("body", body)
+                                .fluentPut("headers", headers))
+                .flatMap(response -> {
+                    if (response.succeeded()) return Single.just(response.dataToJson().getString("entity"));
+                    else return Single.error(ioException(response, url));
+                });
     }
 
-    public static String get(String url, Map<String, String> headers) throws ConnectTimeoutException, SocketTimeoutException {
-        UnitResponse out = SyncXian.call("httpClient", "apacheHttpClientGet", new JSONObject() {{
-            put("url", url);
-            put("headers", headers);
-        }});
-        if (out.succeeded()) {
-            return out.dataToJson().getString("entity");
-        } else {
-            throwIOException(out, url);
-            return out.toJSONString();//dead code below
-        }
+    public static Single<String> get(String url, Map<String, String> headers) {
+        return SingleRxXian
+                .call("httpClient", "apacheHttpClientGet", new JSONObject() {{
+                    put("url", url);
+                    put("headers", headers);
+                }})
+                .flatMap(response -> {
+                    if (response.succeeded()) return Single.just(response.dataToJson().getString("entity"));
+                    else return Single.error(ioException(response, url));
+                });
     }
 
-    private static void throwIOException(UnitResponse out, String url) throws ConnectTimeoutException, SocketTimeoutException {
-        switch (out.getCode()) {
+    private static Throwable ioException(UnitResponse unitResponse, String url) {
+        switch (unitResponse.getCode()) {
             case ISocketGroup.CODE_CONNECT_TIMEOUT:
-                throw new ConnectTimeoutException("Connection timeout: " + url);
+                return new ConnectTimeoutException("Connection timeout: " + url);
             case ISocketGroup.CODE_SOCKET_TIMEOUT:
-                throw new SocketTimeoutException("read timed out: " + url);
+                return new SocketTimeoutException("read timed out: " + url);
             default:
-                throw new RuntimeException(String.format("request for url=%s failed, output=%s", url, out));
+                return new RuntimeException(String.format("request for url=%s failed, output=%s", url, unitResponse));
         }
     }
 
-    public static String postWithEmptyHeader(String url, String body) throws SocketTimeoutException, ConnectTimeoutException {
+    public static Single<String> postWithEmptyHeader(String url, String body) {
         return post(url, body, null);
     }
 
-    public static String httpGet(String url) throws SocketTimeoutException, ConnectTimeoutException {
+    public static Single<String> get(String url) {
         return get(url, null);
     }
 

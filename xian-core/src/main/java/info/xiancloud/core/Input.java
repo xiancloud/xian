@@ -4,15 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Reflection;
-import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.Reflection;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link Unit}'s input parameter desciptions，see {@link Unit#getInput()}
+ * {@link Unit}'s input parameter descriptions，see {@link Unit#getInput()}
  *
  * @author ads、happyyangyuan 2017-03-10 增加xhash、sequential属性
  */
@@ -21,7 +19,7 @@ public class Input {
 
     public static class Obj {
 
-        //默认构造器，UnitBean反序列化时需要使用到
+        //this default constructor is used for UnitBean deserialization, please do not delete!
         Obj() {
         }
 
@@ -116,6 +114,33 @@ public class Input {
      */
     public static Input create() {
         return new Input();
+    }
+
+    /**
+     * generate an input object from the bean.
+     *
+     * @param requestBean the request bean
+     * @param <Request>   the request bean type
+     * @return a newly created input definition.
+     */
+    public static <Request> Input create(Request requestBean) {
+        if (requestBean == null)
+            throw new IllegalArgumentException("request bean should not be null!");
+        Class requestClass = requestBean.getClass();
+        return create(requestClass);
+    }
+
+    /**
+     * @param beanClass the bean class
+     * @param <Request> the bean type
+     * @return the newly created input definition.
+     */
+    public static <Request> Input create(Class<? extends Request> beanClass) {
+        if (beanClass == null) throw new IllegalArgumentException("bean class should not be null");
+        List<Field> allFields = Reflection.getAllFields(beanClass);
+        for (Field field : allFields) {
+            //TODO 先想好完整思路，再实现
+        }
     }
 
     public Input add(String name, Class clazz, String description) {

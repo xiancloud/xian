@@ -144,28 +144,33 @@ final public class UnitRequest {
     }
 
     /**
-     * Convert this unit request's parameter into java bean.
+     * Convert this unit request's argument map into java bean.
      *
      * @param beanClass the bean type that you want to
      * @return the casted java bean object.
      */
-    public <T> T toBean(Class<T> beanClass) {
+    public <T> T getArgBean(Class<? extends T> beanClass) {
         return Reflection.toType(argMap, beanClass);
     }
 
+    /**
+     * create a new unit request instance.
+     *
+     * @return the newly created unit request instance.
+     */
     public static UnitRequest create() {
         return new UnitRequest();
     }
 
     /**
-     * create a new UnitRequest instance with the group and unit name.
+     * Create a new UnitRequest instance with the group and unit name.
      */
     public static UnitRequest create(String group, String unit) {
         return new UnitRequest().setContext(RequestContext.create().setGroup(group).setUnit(unit));
     }
 
     /**
-     * create a new UnitRequest instance by the Unit class.
+     * Create a new UnitRequest instance by the Unit class.
      */
     public static UnitRequest create(Class<? extends Unit> unitClass) {
         Unit unit = LocalUnitsManager.getUnitByUnitClass(unitClass);

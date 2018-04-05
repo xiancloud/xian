@@ -133,7 +133,11 @@ public class ArrayUtil {
     }
 
     /**
-     * 数组转list
+     * Convert the given array to list
+     *
+     * @param array the array
+     * @param clazz the type of the list's element
+     * @return a newly created array list
      */
     public static <T> List<T> toList(Object array, Class<T> clazz) {
         List<T> list = new ArrayList<>();
@@ -143,6 +147,15 @@ public class ArrayUtil {
         return list;
     }
 
+    /**
+     * convert list to an array.
+     *
+     * @param list   the given list
+     * @param tClass the element class
+     * @param <T>    the element type
+     * @return the newly created array containing all the elements in the list.
+     */
+    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(List list, Class<T> tClass) {
         Object arrayObject = Array.newInstance(tClass, list.size());
         for (int i = 0; i < list.size(); i++) {

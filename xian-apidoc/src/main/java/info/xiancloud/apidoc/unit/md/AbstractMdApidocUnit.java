@@ -29,9 +29,9 @@ public abstract class AbstractMdApidocUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest msg, NotifyHandler handler) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String doc = specifyBuild(msg.getString("docDescription"), msg.getString("docName"), getFilter(msg));
-        handler.callback(UnitResponse.createSuccess(doc));
+        handler.handle(UnitResponse.createSuccess(doc));
     }
 
     @Override

@@ -1,11 +1,10 @@
 package info.xiancloud.core.util.http;
 
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.conf.XianConfig;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.Xian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
+import io.reactivex.Single;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -15,19 +14,12 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
- * Warning, not fully tested.
- *
- * @author happyyangyuan
+ * @author yyq, happyyangyuan
+ * @deprecated Warning, not fully tested.
  */
 public class Request implements Serializable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = -7211840606342587472L;
 
     enum HttpMethod {
         POST, DELETE, GET, PUT, HEAD;
@@ -151,7 +143,7 @@ public class Request implements Serializable {
     /**
      * 异步调用unit执行
      */
-    public void execute(Consumer<UnitResponse> consumer) {
+    public Single<String> execute() {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -161,12 +153,8 @@ public class Request implements Serializable {
             String reqBase64 = new String(Base64.getEncoder().encode(bos.toByteArray()));
             Map<String, Object> map = new HashMap<>();
             map.put("req", reqBase64);
-            Xian.call("httpClient", "http", map, new NotifyHandler() {
-                @Override
-                protected void handle(UnitResponse out) {
-                    consumer.accept(out);
-                }
-            });
+            return SingleRxXian.call("httpClient", "http", map)
+                    .flatMap(response -> Single.just(response.dataToStr()));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }

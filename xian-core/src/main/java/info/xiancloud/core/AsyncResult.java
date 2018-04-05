@@ -200,7 +200,7 @@ public interface AsyncResult<T> {
      * @return the newly created asyncResult
      */
     static <E> AsyncResult<E> fromUnitResponse(UnitResponse unitResponse) {
-        return fromUnitResponse(unitResponse, unitResponse::getData);
+        return fromUnitResponse(unitResponse, null);
     }
 
     /**
@@ -210,22 +210,37 @@ public interface AsyncResult<T> {
      * @return the newly created async result.
      */
     static <E> AsyncResult<E> fromUnitResponse(UnitResponse unitResponse, Callable<E> converter) {
+        return fromUnitResponse(unitResponse, converter, null);
+    }
+
+    static <E> AsyncResult<E> fromUnitResponse(UnitResponse unitResponse, Callable<E> resultConverter, Callable<Throwable> exceptionConverter) {
         return new AsyncResult<E>() {
             @Override
             public E result() {
-                try {
-                    return converter.call();
-                } catch (Exception e) {
-                    LOG.error(e);
-                    throw new RuntimeException(e);// todo
-                }
+                if (unitResponse.succeeded())
+                    if (resultConverter != null)
+                        try {
+                            return resultConverter.call();
+                        } catch (Exception e) {
+                            LOG.error(e);
+                            throw new RuntimeException(e);
+                        }
+                    else
+                        return (E) unitResponse.getData();
+                return null;
             }
 
             @Override
             public Throwable cause() {
-                if (unitResponse.getData() != null && unitResponse.getData() instanceof Throwable)
-                    return unitResponse.getData();
-                else return null;
+                if (exceptionConverter != null) {
+                    try {
+                        return exceptionConverter.call();
+                    } catch (Exception e) {
+                        LOG.error(e);
+                        throw new RuntimeException(e);
+                    }
+                }
+                return unitResponse.getException();
             }
 
             @Override
@@ -255,7 +270,7 @@ public interface AsyncResult<T> {
                     return converter.call();
                 } catch (Exception e) {
                     LOG.error(e);
-                    throw new RuntimeException(e);//todo
+                    throw new RuntimeException(e);
                 }
             }
 

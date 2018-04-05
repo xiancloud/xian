@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * Sender class for Local unit call. We also make this process asynchronous. The mechanism is we submit the request to our business thread pool for execution,
- * and call the callback to sendback the response after execution finished.
+ * and call the callback to send back the response after execution finished.
  * No exception will be thrown to you due to this local request is submitted to business thread pool for execution.
  * You will get a unit response object with the exception object as its data property if exception occurs.
  * Note that: LocalSender must be used only when the receipt unit is local! Otherwise you will get a unit undefined exception.
@@ -49,21 +49,21 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
         Unit unit = LocalUnitsManager.getLocalUnit(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit());
         if (unit == null) {
             UnitResponse unitResponse = new UnitUndefinedException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()).toUnitResponse();
-            responseCallbck(unitResponse, start);
+            responseCallback(unitResponse, start);
         } else {
             Set<Input.Obj> required = getRequired(unit, unitRequest);
             if (!required.isEmpty()) {
                 String[] requiredParamNames = required.stream().map(Input.Obj::getName).toArray(String[]::new);
                 LackParamException lackParamException = new LackParamException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit(), requiredParamNames);
                 UnitResponse unitResponse = UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
-                responseCallbck(unitResponse, start);
+                responseCallback(unitResponse, start);
             } else {
                 unit.execute(unitRequest, unitResponse -> {
                     if (unitResponse == null) {
                         unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
                         LOG.error(unitResponse);
                     }
-                    responseCallbck(unitResponse, start);
+                    responseCallback(unitResponse, start);
                 });
             }
         }
@@ -81,7 +81,7 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
         return required;
     }
 
-    private void responseCallbck(UnitResponse unitResponse1, long start) {
+    private void responseCallback(UnitResponse unitResponse1, long start) {
         fillResponseContext(unitResponse1.getContext());
         long cost = (System.nanoTime() - start) / 1000000;
         JSONObject logJson = new JSONObject().
@@ -91,7 +91,7 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
                 fluentPut("unitRequest", originalMap).
                 fluentPut("unitResponse", unitResponse1).
                 fluentPut("type", "unit");
-        LOG.info(logJson.toJSONString());
+        LOG.info(logJson/*.toJSONString() maybe json object is better for performance? */);
         callback.callback(unitResponse1);
     }
 

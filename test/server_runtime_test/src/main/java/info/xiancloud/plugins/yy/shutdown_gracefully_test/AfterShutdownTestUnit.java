@@ -1,9 +1,6 @@
 package info.xiancloud.plugins.yy.shutdown_gracefully_test;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.test.TestGroup;
@@ -29,12 +26,12 @@ public class AfterShutdownTestUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
         try {
             Thread.sleep(10 * 1000);
         } catch (InterruptedException e) {
         }
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
     }
 
     @Override

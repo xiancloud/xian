@@ -7,8 +7,6 @@ import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.core.util.StringUtil;
 
-import java.util.function.Consumer;
-
 /**
  * Super interface for all service units.
  * All subclasses will be registered into the service discovery/registry center.
@@ -33,7 +31,7 @@ public interface Unit {
 
 
     /**
-     * 组件业务调用时的参数定义
+     * @return The definition of this unit's input parameters.
      */
     Input getInput();
 
@@ -44,6 +42,9 @@ public interface Unit {
         return StringUtil.firstCharToLowerCase(getClass().getSimpleName());
     }
 
+    /**
+     * @return the group this unit belongs to.
+     */
     Group getGroup();
 
     /**
@@ -57,13 +58,13 @@ public interface Unit {
      * asynchronous execution of this unit. do not block this method!
      *
      * @param request the request object.
-     * @param handler the unit response consumer, this handler must be executed asynchronously.
+     * @param handler a callback object, this callback is executed asynchronously. You can call it repeatedly to produce multiple events.
      */
-    void execute(UnitRequest request, Consumer<UnitResponse> handler);
+    /*Single<UnitResponse>>*/void execute(UnitRequest request, Handler<UnitResponse> handler);
 
     /**
      * 用于序列化unit定义；
-     * 我们应当默认不序列化unit所有属性，只序列化指定了的属性：base、inputObjs、errorCodes；
+     * 我们应当默认不序列化unit所有属性，只序列化指定了的属性："name", "group", "meta", "input", "version"；
      * 否则日后无论哪个业务unit只要有意外的getter定义就会被触发调用而出风险
      */
     default String toJSONString() {
