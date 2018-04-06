@@ -27,7 +27,7 @@ public class ReplicateApplications implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("修改实例副本数");
+        return UnitMeta.createWithDescription("修改实例副本数");
     }
 
     @Override

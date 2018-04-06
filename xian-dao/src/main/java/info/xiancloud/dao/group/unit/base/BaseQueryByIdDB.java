@@ -57,7 +57,7 @@ abstract public class BaseQueryByIdDB extends DaoUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("公共查询byId dao unit");
+        return UnitMeta.createWithDescription("公共查询byId dao unit");
     }
 
 }

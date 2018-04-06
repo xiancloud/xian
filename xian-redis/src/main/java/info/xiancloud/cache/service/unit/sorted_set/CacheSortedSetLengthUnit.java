@@ -2,10 +2,7 @@ package info.xiancloud.cache.service.unit.sorted_set;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -15,7 +12,7 @@ import info.xiancloud.core.support.cache.CacheConfigBean;
  * <p>
  * http://doc.redisfans.com/sorted_set/zcard.html
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheSortedSetLengthUnit implements Unit {
     @Override
@@ -30,7 +27,7 @@ public class CacheSortedSetLengthUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Sorted Set Length").setPublic(false);
+        return UnitMeta.createWithDescription("Sorted Set Length").setPublic(false);
     }
 
     @Override
@@ -41,15 +38,15 @@ public class CacheSortedSetLengthUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.get("key", String.class);
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
         try {
             Long length = Redis.call(cacheConfigBean, jedis -> jedis.zcard(key));
-            return UnitResponse.createSuccess(length);
+            handler.handle(UnitResponse.createSuccess(length));
         } catch (Throwable e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

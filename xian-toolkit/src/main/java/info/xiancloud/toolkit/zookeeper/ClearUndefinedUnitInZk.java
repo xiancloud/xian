@@ -22,7 +22,7 @@ public class ClearUndefinedUnitInZk implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("清除掉未定义的zk内的脏unit，同时也支持清理group脏节点")
+        return UnitMeta.createWithDescription("清除掉未定义的zk内的脏unit，同时也支持清理group脏节点")
                 .setPublic(false);
     }
 

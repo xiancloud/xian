@@ -2,10 +2,7 @@ package info.xiancloud.cache.service.unit.distributed_lock;
 
 import info.xiancloud.cache.redis.distributed_lock.DistributedReentrantLockProcess;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -41,20 +38,21 @@ public class DistributedUnLockUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         Object valueObj = msg.get("value", Object.class, "Distributed Lock");
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
-        long result = 0;
+        long result;
         try {
             result = DistributedReentrantLockProcess.unLock(cacheConfigBean, key, valueObj);
         } catch (Exception e) {
             DistributedReentrantLockProcess.unLockFailure();
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
         DistributedReentrantLockProcess.unLockSuccess();
-        return UnitResponse.createSuccess(result);
+        handler.handle(UnitResponse.createSuccess(result));
     }
 
 }

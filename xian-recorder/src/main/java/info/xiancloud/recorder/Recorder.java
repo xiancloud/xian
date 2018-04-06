@@ -1,13 +1,11 @@
 package info.xiancloud.recorder;
 
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.aop.IAllUnitsAop;
 import info.xiancloud.core.init.IStartService;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.Xian;
 import info.xiancloud.core.support.cache.api.CacheObjectUtil;
 import info.xiancloud.core.util.EnvUtil;
 import info.xiancloud.core.util.LOG;
@@ -21,6 +19,7 @@ import java.util.Map;
  * Warning, not fully tested.
  *
  * @author ads, happyyangyuan
+ * @deprecated this won't work for asynchronous xian
  */
 public class Recorder implements IStartService, IAllUnitsAop {
 
@@ -50,18 +49,22 @@ public class Recorder implements IStartService, IAllUnitsAop {
     private void handleRecode(Unit unit, UnitRequest msg, UnitResponse out, Object beforeReturn) {
         String msgId = MsgIdHolder.get();
         String cacheKey = "RecordMessageId_" + msgId;
-        if (!CacheObjectUtil.exists(cacheKey)) {
-            CacheObjectUtil.set(cacheKey, msgId, 60 * 15 * 1000);
-            SourceBody source = getSource(unit, msg);
-            String sourceBody = getSourceBody(msg);
-            Map<String, Object> map = new HashMap<>();
-            map.put("source", source.getSource());
-            map.put("sourceReqBody", sourceBody);
-            map.put("sourceClassPath", source.getPath());
-            map.put("msgId", msgId);
-            map.put("reqTime", String.valueOf(beforeReturn.toString()));
-            SyncXian.call("recorder", "actionRecord", map);
-        }
+        CacheObjectUtil
+                .exists(cacheKey)
+                .subscribe(existed -> {
+                    if (existed) {
+                        CacheObjectUtil.set(cacheKey, msgId, 60 * 15 * 1000);
+                        SourceBody source = getSource(unit, msg);
+                        String sourceBody = getSourceBody(msg);
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("source", source.getSource());
+                        map.put("sourceReqBody", sourceBody);
+                        map.put("sourceClassPath", source.getPath());
+                        map.put("msgId", msgId);
+                        map.put("reqTime", String.valueOf(beforeReturn.toString()));
+                        SingleRxXian.call("recorder", "actionRecord", map);
+                    }
+                });
     }
 
     private void handleRecordItem(Unit unit, UnitRequest request, UnitResponse response, Object beforeReturn) {
@@ -76,16 +79,13 @@ public class Recorder implements IStartService, IAllUnitsAop {
         map.put("requestTime", beforeReturn.toString());
         map.put("responseTime", String.valueOf(System.currentTimeMillis()));
         map.put("cost", String.valueOf(System.currentTimeMillis() - Long.parseLong(beforeReturn.toString())));
-        Xian.call("recorder", "actionItemRecord", map, new NotifyHandler() {
-            protected void handle(UnitResponse unitResponse) {
-                LOG.info(unitResponse.toJSONString());
-            }
-        });
+        SingleRxXian.call("recorder", "actionItemRecord", map)
+                .subscribe(unitResponse -> LOG.info(unitResponse.toJSONString()));
     }
 
     @Override
     public boolean startup() {
-        LOG.info("不开启录制功能");
+        LOG.info("Recorder won't start by default.");
         return true;
     }
 

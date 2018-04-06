@@ -22,7 +22,7 @@ public class CommitAndCloseTogetherUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("分布式事务提交").setPublic(false);
+        return UnitMeta.createWithDescription("分布式事务提交").setPublic(false);
     }
 
     @Override

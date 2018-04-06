@@ -28,7 +28,7 @@ public class CacheObjectGetUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("缓存获取").setPublic(false);
+        return UnitMeta.createWithDescription("缓存获取").setPublic(false);
     }
 
     @Override

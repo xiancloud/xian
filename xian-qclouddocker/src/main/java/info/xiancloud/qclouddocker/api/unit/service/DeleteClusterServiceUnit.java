@@ -19,7 +19,7 @@ public class DeleteClusterServiceUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("删除服务");
+        return UnitMeta.createWithDescription("删除服务");
     }
 
     @Override

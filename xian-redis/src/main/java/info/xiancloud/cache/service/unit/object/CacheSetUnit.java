@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.object;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.operate.ObjectCacheOperate;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -46,7 +43,7 @@ public class CacheSetUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         Object value = msg.getArgMap().get("value");
         int ex = msg.get("ex", int.class, -1);
@@ -61,13 +58,15 @@ public class CacheSetUnit implements Unit {
             else
                 result = ObjectCacheOperate.set(jedis, key, value, "EX", ex, nxXx);
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
 
-        if ("OK".equals(result))
-            return UnitResponse.createSuccess();
-        else
-            return UnitResponse.createUnknownError(result, result);
+        if ("OK".equals(result)) {
+            handler.handle(UnitResponse.createSuccess());
+        } else {
+            handler.handle(UnitResponse.createUnknownError(result, result));
+        }
     }
 
 }

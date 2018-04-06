@@ -1,11 +1,11 @@
 package info.xiancloud.core.distribution.unit;
 
+import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.exception.UnitOfflineException;
 import info.xiancloud.core.distribution.exception.UnitUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
-import info.xiancloud.core.*;
-import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.UnitRequest;
+import info.xiancloud.core.message.UnitResponse;
 
 /**
  * find out which node the group/unit is in
@@ -38,13 +38,13 @@ public class GetUnitNode implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String group = msg.getString("group");
         String unit = msg.getString("unit");
         try {
-            return UnitResponse.createSuccess(UnitRouter.singleton.allInstances(Unit.fullName(group, unit)));
+            handler.handle(UnitResponse.createSuccess(UnitRouter.singleton.allInstances(Unit.fullName(group, unit))));
         } catch (UnitOfflineException | UnitUndefinedException e) {
-            return UnitResponse.createUnknownError(null, e.getLocalizedMessage());
+            handler.handle(UnitResponse.createUnknownError(null, e.getLocalizedMessage()));
         }
     }
 }

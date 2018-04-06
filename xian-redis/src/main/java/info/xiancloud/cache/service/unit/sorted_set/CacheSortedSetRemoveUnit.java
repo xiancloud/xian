@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.sorted_set;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.util.FormatUtil;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -19,7 +16,7 @@ import java.util.Set;
  * <p>
  * http://doc.redisfans.com/sorted_set/zrem.html
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheSortedSetRemoveUnit implements Unit {
     @Override
@@ -34,7 +31,7 @@ public class CacheSortedSetRemoveUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Sorted Set Remove").setPublic(false);
+        return UnitMeta.createWithDescription("Sorted Set Remove").setPublic(false);
     }
 
     @Override
@@ -47,10 +44,10 @@ public class CacheSortedSetRemoveUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.get("key", String.class);
         Object member = msg.get("member", Object.class);
-        Set members = (Set) msg.getArgMap().get("members");
+        Set members = msg.get("members", Set.class);
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
         try {
@@ -71,9 +68,9 @@ public class CacheSortedSetRemoveUnit implements Unit {
                     return -1L;
                 }
             });
-            return UnitResponse.createSuccess(result);
+            handler.handle(UnitResponse.createSuccess(result));
         } catch (Throwable e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

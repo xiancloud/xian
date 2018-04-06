@@ -60,7 +60,7 @@ abstract public class BaseAddDB extends DaoUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("公共新增dao unit").setPublic(false);
+        return UnitMeta.createWithDescription("公共新增dao unit").setPublic(false);
     }
 
 }

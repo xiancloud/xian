@@ -18,7 +18,7 @@ public class PageQueryActionTestUnit extends DaoUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("PageQueryActionTest").setPublic(false);
+        return UnitMeta.createWithDescription("PageQueryActionTest").setPublic(false);
     }
 
     @Override

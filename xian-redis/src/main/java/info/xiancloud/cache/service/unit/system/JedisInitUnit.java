@@ -2,10 +2,7 @@ package info.xiancloud.cache.service.unit.system;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 
@@ -28,7 +25,7 @@ public class JedisInitUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Jedis 初始化").setPublic(false);
+        return UnitMeta.createWithDescription("Jedis 初始化").setPublic(false);
     }
 
     @Override
@@ -40,12 +37,12 @@ public class JedisInitUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String url = msg.get("url", String.class);
         String password = msg.getArgMap().containsKey("password") ? msg.get("password", String.class) : "";
         int dbIndex = msg.getArgMap().containsKey("dbIndex") ? msg.get("dbIndex", int.class) : Redis.DB_INDEX;
         Redis.initRedis(url, password, dbIndex);
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
     }
 
 }

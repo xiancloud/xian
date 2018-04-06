@@ -32,7 +32,7 @@ public class Reflection {
      * @return a list of subclass instances or empty array list if no subclass is found.
      */
     public static <T> List<T> getSubClassInstances(Class<T> tClass) {
-        List<T> instances = new ArrayList<T>() {
+        return new ArrayList<T>() {
             {
                 addAll(TraverseClasspath.getSubclassInstances(tClass));
             }
@@ -45,17 +45,15 @@ public class Reflection {
                 return stringBuilder.toString();
             }
         };
-        return instances;
     }
 
     /**
      * Scan and get classes under certain annotation, and initiate them.
      */
     public static <T> List<T> getWithAnnotatedClass(Class annotationClass, String packages) {
-        List instances = new ArrayList() {{
+        return (List) new ArrayList() {{
             addAll(TraverseClasspath.getWithAnnotatedClass(annotationClass, packages));
         }};
-        return instances;
     }
 
     /**
@@ -173,6 +171,7 @@ public class Reflection {
      * @param clazz the class your want to cast to.
      * @return The casted object.
      */
+    @SuppressWarnings("unchecked")
     private static <T> T cast(Object obj, Class<T> clazz) {
         if (obj == null)
             return null;
@@ -205,8 +204,10 @@ public class Reflection {
 
     /**
      * 将data适配为指定元素类型的list，请放心大胆做转换。<br>
-     * adapt the data object to the given typed list, it is same to make a cast even if the given data is not a list,
+     * Adapt the data object to the given typed list, it is safe to make a cast even if the given data is not a list,
      * or the element is not the given type.
+     *
+     * @return a newly created array list containing all the data
      */
     public static <T> List<T> toTypedList(Object data, Class<T> type) {
         List<T> listResult = new ArrayList<>();
@@ -228,6 +229,37 @@ public class Reflection {
         }
         listResult.add(Reflection.toType(data, type));
         return listResult;
+    }
+
+    /**
+     * Adapt the data object to the given typed hash set, it is safe to make a cast even if the given data is not a set,
+     * or the element is not the given type.
+     *
+     * @param data the guessed data object
+     * @param type the element type
+     * @param <T>  the generic type
+     * @return a newly created hash set contains all the data
+     */
+    public static <T> Set<T> toTypedSet(Object data, Class<T> type) {
+        Set<T> setResult = new HashSet<>();
+        if (data == null) {
+            return setResult;
+        }
+        if (data instanceof Collection) {
+            Collection collection = (Collection) data;
+            for (Object o : collection) {
+                setResult.add(Reflection.toType(o, type));
+            }
+            return setResult;
+        }
+        if (data.getClass().isArray()) {
+            for (Object o : ArrayUtil.toObjectArray(data)) {
+                setResult.add(Reflection.toType(o, type));
+            }
+            return setResult;
+        }
+        setResult.add(Reflection.toType(data, type));
+        return setResult;
     }
 
     /**
@@ -270,6 +302,7 @@ public class Reflection {
      * @param collectionType 目标类型，必须是集合类型;  the destination type, must be a collection type.
      * @throws IllegalArgumentException 参数不合法; illegal argument.
      */
+    @SuppressWarnings("unchecked")
     private static <T> T toCollectionType(Object data, Class<T> collectionType) {
         if (!Collection.class.isAssignableFrom(collectionType)) {
             throw new IllegalArgumentException("only collection type is allowed here, but your's is: " + collectionType);
@@ -320,6 +353,7 @@ public class Reflection {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T toArray(Object data, Class<T> arrayType) {
         if (!arrayType.isArray()) {
             throw new IllegalArgumentException("only array type is supported, your type is: " + arrayType);
@@ -372,6 +406,7 @@ public class Reflection {
      *
      * @param nonCollectionType 目标类型，不允许是集合类型
      */
+    @SuppressWarnings("unchecked")
     private static <T> T toNonCollectionType(Object data, Class<T> nonCollectionType) {
         if (Collection.class.isAssignableFrom(nonCollectionType)) {
             throw new RuntimeException("API使用错误，本方法不支持将目标对象转为非集合类型");
@@ -403,6 +438,7 @@ public class Reflection {
         throw castFailedException(data, nonCollectionType);
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T transferNonCollection(Object nonCollectionData, Class<T> nonCollectionType) {
         if (nonCollectionData == null) {
             return Defaults.defaultValue(nonCollectionType);

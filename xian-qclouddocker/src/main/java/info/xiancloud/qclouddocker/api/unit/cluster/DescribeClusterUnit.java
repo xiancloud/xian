@@ -26,7 +26,7 @@ public class DescribeClusterUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("查询集群列表");
+        return UnitMeta.createWithDescription("查询集群列表");
     }
 
     @Override

@@ -32,7 +32,7 @@ public class DeployApplications_v_2 implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("更新指定环境指定镜像下的指定服务；注意，" + NOT_SUPPORTED_TIP);
+        return UnitMeta.createWithDescription("更新指定环境指定镜像下的指定服务；注意，" + NOT_SUPPORTED_TIP);
     }
 
     @Override

@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.list;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.util.FormatUtil;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -42,7 +39,7 @@ public class CacheListSetUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.get("key", String.class);
         int index = msg.get("index", int.class, 0);
         Object valueObj = msg.get("valueObj");
@@ -54,12 +51,16 @@ public class CacheListSetUnit implements Unit {
                 return jedis.lset(key, index, value);
             });
 
-            if ("OK".equals(replyCode))
-                return UnitResponse.createSuccess();
-            else
-                return UnitResponse.createUnknownError(replyCode, replyCode);
+            if ("OK".equals(replyCode)) {
+                handler.handle(UnitResponse.createSuccess());
+                return;
+            } else {
+                handler.handle(UnitResponse.createUnknownError(replyCode, replyCode));
+                return;
+            }
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
     }
 

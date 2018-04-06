@@ -1,14 +1,9 @@
 package info.xiancloud.core.conf;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.StringUtil;
-
-import java.util.function.Consumer;
 
 /**
  * @author happyyangyuan
@@ -21,7 +16,7 @@ public class ReadXianConfigUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("Read xian config");
+        return UnitMeta.create().setDescription("Read xian config").setPublic(false);
     }
 
     @Override
@@ -35,11 +30,11 @@ public class ReadXianConfigUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest msg, Consumer<UnitResponse> consumer) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String value = XianConfig.get(msg.get("key"));
         if (StringUtil.isEmpty(value))
-            consumer.accept(UnitResponse.createDataDoesNotExists(msg.getString("key"), "config not found."));
+            handler.handle(UnitResponse.createDataDoesNotExists(msg.getString("key"), "config not found."));
         else
-            consumer.accept(UnitResponse.createSuccess(value));
+            handler.handle(UnitResponse.createSuccess(value));
     }
 }

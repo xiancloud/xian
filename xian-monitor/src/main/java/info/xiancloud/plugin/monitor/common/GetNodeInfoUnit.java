@@ -39,7 +39,7 @@ public class GetNodeInfoUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("获取所有节点详细信息");
+        return UnitMeta.createWithDescription("获取所有节点详细信息");
     }
 
     @Override

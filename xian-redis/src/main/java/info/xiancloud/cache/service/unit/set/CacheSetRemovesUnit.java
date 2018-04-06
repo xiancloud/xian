@@ -33,7 +33,7 @@ public class CacheSetRemovesUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Set SREM").setPublic(false);
+        return UnitMeta.createWithDescription("Set SREM").setPublic(false);
     }
 
     @Override

@@ -19,7 +19,7 @@ public class RollBackClusterServiceUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("回滚服务（用于回滚服务至升级前的配置,只能回滚至上一个配置）");
+        return UnitMeta.createWithDescription("回滚服务（用于回滚服务至升级前的配置,只能回滚至上一个配置）");
     }
 
     @Override

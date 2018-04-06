@@ -18,7 +18,7 @@ public class SelectActionTestUnit extends DaoUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("SelectActionTestUnit").setPublic(false);
+        return UnitMeta.createWithDescription("SelectActionTestUnit").setPublic(false);
     }
 
     @Override

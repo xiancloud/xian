@@ -19,7 +19,7 @@ public class DescribeServiceInstanceUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("查询服务实例列表");
+        return UnitMeta.createWithDescription("查询服务实例列表");
     }
 
     @Override

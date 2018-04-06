@@ -24,7 +24,7 @@ abstract public class BasePaginateDB extends DaoUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("公共查询 dao unit");
+        return UnitMeta.createWithDescription("公共查询 dao unit");
     }
 
 }

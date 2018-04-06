@@ -21,7 +21,7 @@ public class GetDbPoolConnectionCount extends ReceiveAndBroadcast {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Collect all db nodes' connection pool status.")
+        return UnitMeta.createWithDescription("Collect all db nodes' connection pool status.")
                 .setPublic(false);
     }
 

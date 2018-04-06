@@ -2,25 +2,28 @@ package info.xiancloud.core.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import info.xiancloud.core.LocalUnitsManager;
+import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.ProxyBuilder;
 import info.xiancloud.core.util.thread.MsgIdHolder;
-import info.xiancloud.core.LocalUnitsManager;
-import info.xiancloud.core.Unit;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 
 /**
- * unit拦截器
+ * unit interception
  *
  * @author happyyangyuan
+ * @deprecated this won't work for asynchronous xian
  */
 public interface IUnitAop {
+
+    String METHOD_EXECUTE = "execute";
 
     /**
      * @return 即将被代理的unit集合
@@ -48,7 +51,7 @@ public interface IUnitAop {
             Unit proxy = new ProxyBuilder<Unit/**/>(originUnit, true) {
                 @Override
                 public Object before(Method method, Object[] args) throws UnitResponseReplacement {
-                    if ("execute".equals(method.getName())) {
+                    if (METHOD_EXECUTE.equals(method.getName())) {
                         if (!asyncBefore()) {
                             return thiz.before(nakedUnit, (UnitRequest) args[0]/*, ssn*/);
                         } else {
@@ -73,7 +76,7 @@ public interface IUnitAop {
 
                 @Override
                 public void after(Method method, Object[] args, Object unitReturn, Object beforeReturn) throws UnitResponseReplacement {
-                    if ("execute".equals(method.getName()) /*&& !beforeReturn.toString().equals(AOP_FILTER_PLAG)*/) {
+                    if (METHOD_EXECUTE.equals(method.getName()) /*&& !beforeReturn.toString().equals(AOP_FILTER_PLAG)*/) {
                         final UnitResponse finalMethodReturn;
 
                         if (unitReturn instanceof Throwable) {//有异常抛出,则需要回滚

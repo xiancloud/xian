@@ -1,16 +1,12 @@
 package info.xiancloud.core.init.aop;
 
-import info.xiancloud.core.message.SyncXian;
-import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.Constant;
 import info.xiancloud.core.Group;
 import info.xiancloud.core.LocalUnitsManager;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.aop.IUnitAop;
 import info.xiancloud.core.init.IStartService;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
@@ -44,18 +40,18 @@ public class TransactionalUnitAop implements IUnitAop, IStartService {
     @Override
     public Object before(Unit unit, UnitRequest unitRequest) {
         //todo Please define a abstraction interface of transaction operations instead of calling the transaction operation unit.
-        return SyncXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "beginTrans", new HashMap<>());
+        return SingleRxXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "beginTrans", new HashMap<>());
     }
 
     @Override
-    public void after(Unit unit, UnitRequest unitRequest, UnitResponse unitResponse, Object beforeReturn/*, AOPSession ssn*/) {
+    public void after(Unit unit, UnitRequest unitRequest, UnitResponse unitResponse, Object beforeReturn) {
         if (((UnitResponse) beforeReturn).succeeded()) {
             if (unitResponse.getContext().isRollback() || unitResponse.getData() instanceof Throwable || Group.CODE_EXCEPTION.equals(unitResponse.getCode())) {
                 //todo Please to define a abstraction interface of rollbackTransaction instead of calling the rollbackTrans unit.
-                SyncXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "rollbackTrans");
+                SingleRxXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "rollbackTrans");
             } else {
                 //todo Please define a abstraction interface of transaction operations instead of calling the transaction operation unit.
-                SyncXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "commitTrans");
+                SingleRxXian.call(Constant.SYSTEM_DAO_GROUP_NAME, "commitTrans");
             }
         }
     }

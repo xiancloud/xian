@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.map;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.operate.MapCacheOperate;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -18,7 +15,7 @@ import java.util.Map;
 /**
  * Map Batch Remove
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheMapBatchRemovesUnit implements Unit {
     @Override
@@ -44,8 +41,8 @@ public class CacheMapBatchRemovesUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        Map<String, List<String>> batchRemoves = (Map<String, List<String>>) msg.getArgMap().get("batchRemoves");
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        Map<String, List<String>> batchRemoves = msg.get("batchRemoves");//todo this kind of casting is local-only
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
         if (batchRemoves != null && !batchRemoves.isEmpty()) {
@@ -57,10 +54,11 @@ public class CacheMapBatchRemovesUnit implements Unit {
                     }
                 }
             } catch (Exception e) {
-                return UnitResponse.createException(e);
+                handler.handle(UnitResponse.createException(e));
+                return;
             }
         }
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
     }
 
 }

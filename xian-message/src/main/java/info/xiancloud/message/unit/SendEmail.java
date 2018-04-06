@@ -34,7 +34,7 @@ public class SendEmail implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("发送邮件,默认同一个收件人每分钟最多收2封邮件");
+        return UnitMeta.createWithDescription("发送邮件,默认同一个收件人每分钟最多收2封邮件");
     }
 
     @Override

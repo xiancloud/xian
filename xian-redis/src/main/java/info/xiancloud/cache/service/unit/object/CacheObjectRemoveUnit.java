@@ -28,7 +28,7 @@ public class CacheObjectRemoveUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("缓存删除").setPublic(false);
+        return UnitMeta.createWithDescription("缓存删除").setPublic(false);
     }
 
     @Override

@@ -34,7 +34,7 @@ public class BasicAuthApacheHttpClientPostUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("httpBasicAuth post请求");
+        return UnitMeta.createWithDescription("httpBasicAuth post请求");
     }
 
     @Override

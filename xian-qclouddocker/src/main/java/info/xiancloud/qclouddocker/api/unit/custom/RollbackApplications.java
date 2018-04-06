@@ -32,7 +32,7 @@ public class RollbackApplications implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("将application回滚到指定的版本")
+        return UnitMeta.createWithDescription("将application回滚到指定的版本")
                 .setPublic(false);
     }
 

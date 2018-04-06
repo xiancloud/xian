@@ -4,17 +4,14 @@ import info.xiancloud.cache.CacheOperateManager;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.operate.ObjectCacheOperate;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
 import redis.clients.jedis.Jedis;
 
 /**
- * 自减
+ * numeric cache decrement
  *
  * @author John_zero
  */
@@ -44,7 +41,7 @@ public class CacheDecrementUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         Long value = msg.get("value", Long.class);
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
@@ -62,9 +59,10 @@ public class CacheDecrementUnit implements Unit {
                     ObjectCacheOperate.expire(jedis, key, timeout);
             }
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
-        return UnitResponse.createSuccess(decrement);
+        handler.handle(UnitResponse.createSuccess(decrement));
     }
 
 }

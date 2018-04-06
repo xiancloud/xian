@@ -19,7 +19,7 @@ public class ModifyServiceReplicasUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("修改服务实例副本数(用于修改服务的容器数量)");
+        return UnitMeta.createWithDescription("修改服务实例副本数(用于修改服务的容器数量)");
     }
 
     @Override

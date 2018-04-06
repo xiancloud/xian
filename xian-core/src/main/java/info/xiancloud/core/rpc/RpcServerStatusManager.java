@@ -3,14 +3,14 @@ package info.xiancloud.core.rpc;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.MessageType;
 import info.xiancloud.core.distribution.exception.ApplicationOfflineException;
 import info.xiancloud.core.distribution.loadbalance.ApplicationRouter;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.*;
 import info.xiancloud.core.mq.TransferQueueUtil;
+import info.xiancloud.core.util.LOG;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,10 +55,10 @@ public class RpcServerStatusManager implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         boolean enable = msg.get("enable", boolean.class);
         ENABLE_RPC.set(enable);
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
     }
 
     private static final class RpcServerStatus {

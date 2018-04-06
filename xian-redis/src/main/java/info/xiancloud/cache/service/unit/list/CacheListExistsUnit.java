@@ -2,15 +2,10 @@ package info.xiancloud.cache.service.unit.list;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
-
-import java.util.function.Consumer;
 
 /**
  * List Exists
@@ -31,7 +26,7 @@ public class CacheListExistsUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("List Exists").setPublic(false);
+        return UnitMeta.createWithDescription("List Exists").setPublic(false);
     }
 
     @Override
@@ -41,14 +36,14 @@ public class CacheListExistsUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest msg, Consumer<UnitResponse> consumer) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> consumer) {
         String key = msg.getArgMap().get("key").toString();
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
         try {
             boolean result = Redis.call(cacheConfigBean, jedis -> jedis.exists(key));
-            return UnitResponse.createSuccess(result);
+            consumer.handle(UnitResponse.createSuccess(result));
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            consumer.handle(UnitResponse.createException(e));
         }
     }
 

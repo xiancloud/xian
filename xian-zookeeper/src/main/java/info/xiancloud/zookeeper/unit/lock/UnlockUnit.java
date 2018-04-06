@@ -21,7 +21,7 @@ public class UnlockUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("基于zookeeper的分布式解锁动作，解锁与加锁必须一一对应");
+        return UnitMeta.createWithDescription("基于zookeeper的分布式解锁动作，解锁与加锁必须一一对应");
     }
 
     @Override

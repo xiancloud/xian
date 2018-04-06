@@ -20,7 +20,7 @@ public class TestSerializeUnit implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta
-                .create("测试unit序列化指定属性")
+                .createWithDescription("测试unit序列化指定属性")
                 .setPublic(false);
     }
 

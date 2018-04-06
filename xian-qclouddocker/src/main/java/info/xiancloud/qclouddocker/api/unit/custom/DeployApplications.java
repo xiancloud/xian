@@ -34,7 +34,7 @@ public class DeployApplications implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("更新指定环境指定镜像下的指定服务/更新实例数量；" +
+        return UnitMeta.createWithDescription("更新指定环境指定镜像下的指定服务/更新实例数量；" +
                 "@deprecated 1、deployApplications不应当支持设置副本数的功能\n" +
                 " * 2、本类不支持检查入参applications的合法性\n" +
                 " * 3、请使用{@link DeployApplications_v_2 }替代");

@@ -22,7 +22,7 @@ public class GetHttpSessionMap extends ReceiveAndBroadcast {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("获取业务网关内当前未处理的sessionMap内容");
+        return UnitMeta.createWithDescription("获取业务网关内当前未处理的sessionMap内容");
     }
 
     @Override

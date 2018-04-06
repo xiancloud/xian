@@ -24,7 +24,7 @@ public class OpenFalconShortMsgAdaptor implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("适配openFalcon的短信发送接口");
+        return UnitMeta.createWithDescription("适配openFalcon的短信发送接口");
     }
 
     /**

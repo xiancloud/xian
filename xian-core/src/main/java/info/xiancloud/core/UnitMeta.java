@@ -16,6 +16,9 @@ import java.util.Set;
 public final class UnitMeta {
 
     private String description;
+    /**
+     * todo rename to apidoc
+     */
     private boolean publik = true;//public是关键字，所以这里取名为publik，但是getter和setter命名还是isPublic()和setPublic()
     /**
      * whether or not to use transaction.
@@ -83,7 +86,7 @@ public final class UnitMeta {
      *
      * @param description the description.
      */
-    public static UnitMeta create(String description) {
+    public static UnitMeta createWithDescription(String description) {
         return create().setDescription(description);
     }
 

@@ -6,6 +6,7 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.core.util.StringUtil;
+import io.reactivex.Flowable;
 
 /**
  * Super interface for all service units.
@@ -55,12 +56,12 @@ public interface Unit {
     }
 
     /**
-     * asynchronous execution of this unit. do not block this method!
+     * Asynchronous execution of this unit. do not block this method!
      *
      * @param request the request object.
-     * @param handler a callback object, this callback is executed asynchronously. You can call it repeatedly to produce multiple events.
+     * @return a flowable observes on the unit response
      */
-    /*Single<UnitResponse>>*/void execute(UnitRequest request, Handler<UnitResponse> handler);
+    Flowable<UnitResponse> execute(UnitRequest request);
 
     /**
      * 用于序列化unit定义；

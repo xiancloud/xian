@@ -2,11 +2,8 @@ package info.xiancloud.cache.service.unit.test;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.*;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.lock.DistributedLockSynchronizer;
@@ -15,7 +12,6 @@ import info.xiancloud.core.util.LOG;
 
 import java.util.List;
 import java.util.LongSummaryStatistics;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
@@ -47,7 +43,7 @@ public class JedisTestDistributedLock implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         int number = msg.get("number", int.class, 10000);
 
         final CountDownLatch startCountDownLatch = new CountDownLatch(1);
@@ -71,18 +67,6 @@ public class JedisTestDistributedLock implements Unit {
                 DistributedLockSynchronizer.call("QPS_" + _i, 3, () -> {
                     return null;
                 }, 3);
-
-                // ZK Lock
-//                try
-//                {
-//                    Synchronizer.call("QPS_" + _i, () -> {
-//                        return null;
-//                    }, 3L);
-//                }
-//                catch (Exception e)
-//                {
-//                    LOG.error(e);
-//                }
 
                 finishCountDownLatch.countDown();
 
@@ -112,19 +96,18 @@ public class JedisTestDistributedLock implements Unit {
 
         LOG.info(log);
 
-        UnitResponse unitResponseObject = SyncXian.call("cache", "cacheKeys", new JSONObject() {{
-            put("pattern", "LOCK_QPS_*");
-        }});
-        if (unitResponseObject.succeeded() && unitResponseObject.getData() != null) {
-            Set<String> keys = unitResponseObject.getData();
-
-            LOG.info(String.format("分布锁剩余数量: %s", keys.size()));
-        }
-
-        SyncXian.call("diyMonitor", "jedisLockMonitor", new JSONObject() {{
-        }});
-
-        return UnitResponse.createSuccess(log);
+        SingleRxXian
+                .call("cache", "cacheKeys", new JSONObject() {{
+                    put("pattern", "LOCK_QPS_*");
+                }})
+                .subscribe(unitResponse -> {
+                    if (unitResponse.succeeded() && unitResponse.getData() != null) {
+                        List<String> keys = unitResponse.dataToTypedList(String.class);
+                        LOG.info(String.format("分布锁剩余数量: %s", keys.size()));
+                    }
+                    SingleRxXian.call("diyMonitor", "jedisLockMonitor")
+                            .toCompletable().subscribe(() -> handler.handle(UnitResponse.createSuccess(log)));
+                });
     }
 
 }

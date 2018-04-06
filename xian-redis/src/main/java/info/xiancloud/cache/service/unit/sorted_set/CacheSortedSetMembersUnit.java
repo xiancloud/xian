@@ -33,7 +33,7 @@ public class CacheSortedSetMembersUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Sorted Set Members").setPublic(false);
+        return UnitMeta.createWithDescription("Sorted Set Members").setPublic(false);
     }
 
     @Override

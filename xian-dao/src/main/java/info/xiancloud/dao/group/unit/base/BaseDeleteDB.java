@@ -69,7 +69,7 @@ abstract public class BaseDeleteDB extends DaoUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("公共批量删除Dao unit");
+        return UnitMeta.createWithDescription("公共批量删除Dao unit");
     }
 
 }

@@ -31,8 +31,8 @@ public class EchoUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest request, NotifyHandler handler) {
-        handler.callback(UnitResponse.createSuccess(request.getContext().getBody()));
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
+        handler.handle(UnitResponse.createSuccess(request.getContext().getBody()));
     }
 
 }

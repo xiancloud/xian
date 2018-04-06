@@ -28,7 +28,7 @@ public class DashboardCreateUpdateUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("创建, 更新");
+        return UnitMeta.createWithDescription("创建, 更新");
     }
 
     @Override

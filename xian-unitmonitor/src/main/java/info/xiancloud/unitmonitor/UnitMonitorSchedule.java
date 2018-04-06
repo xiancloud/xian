@@ -2,10 +2,7 @@ package info.xiancloud.unitmonitor;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -16,6 +13,7 @@ import java.util.Map.Entry;
 
 /**
  * @author yyq
+ * @deprecated this won't work on asynchronous xian
  */
 public class UnitMonitorSchedule implements Unit {
     @Override
@@ -25,7 +23,7 @@ public class UnitMonitorSchedule implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("获取unit调用次数").setPublic(false)
+        return UnitMeta.createWithDescription("获取unit调用次数").setPublic(false)
                 .setBroadcast(UnitMeta.Broadcast.create().setSuccessDataOnly(true).setAsync(false))
                 .setMonitorEnabled(false);
     }
@@ -37,7 +35,7 @@ public class UnitMonitorSchedule implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         JSONArray retArr = new JSONArray();
         for (Entry<String, CountLatchEntity> entry : UnitMonitorAop.countLatches.entrySet()) {
             JSONObject obj = new JSONObject();
@@ -52,7 +50,7 @@ public class UnitMonitorSchedule implements Unit {
             entry.getValue().secondCall = 0;
             retArr.add(obj);
         }
-        return UnitResponse.createSuccess(retArr);
+        handler.handle(UnitResponse.createSuccess(retArr));
     }
 
     @Override

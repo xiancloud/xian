@@ -20,7 +20,7 @@ public class TestBroadcastUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("测试广播型unit").setBroadcast(UnitMeta.Broadcast.create().setAsync(false));
+        return UnitMeta.createWithDescription("测试广播型unit").setBroadcast(UnitMeta.Broadcast.create().setAsync(false));
     }
 
     @Override

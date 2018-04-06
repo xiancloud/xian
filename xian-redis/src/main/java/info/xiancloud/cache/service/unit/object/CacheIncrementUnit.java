@@ -4,10 +4,7 @@ import info.xiancloud.cache.CacheOperateManager;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.operate.ObjectCacheOperate;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -16,7 +13,7 @@ import redis.clients.jedis.Jedis;
 /**
  * 自增
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheIncrementUnit implements Unit {
     @Override
@@ -31,7 +28,8 @@ public class CacheIncrementUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("自增").setPublic(false);
+        return UnitMeta.create().setDescription("自增").setPublic(false)
+                .setSuccessfulUnitResponse(UnitResponse.createSuccess("New value after increment."));
     }
 
     @Override
@@ -44,17 +42,17 @@ public class CacheIncrementUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         Long value = msg.get("value", Long.class);
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
-        long increment = 0;
+        long newValue = 0;
         try (Jedis jedis = Redis.useDataSource(cacheConfigBean).getResource()) {
             if (value != null)
-                increment = ObjectCacheOperate.incrBy(jedis, key, value);
+                newValue = ObjectCacheOperate.incrBy(jedis, key, value);
             else
-                increment = ObjectCacheOperate.incr(jedis, key);
+                newValue = ObjectCacheOperate.incr(jedis, key);
 
             if (msg.getArgMap().containsKey("timeout")) {
                 int timeout = CacheOperateManager.correctionTimeout(msg.get("timeout", int.class));
@@ -62,9 +60,9 @@ public class CacheIncrementUnit implements Unit {
                     ObjectCacheOperate.expire(jedis, key, timeout);
             }
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
-        return UnitResponse.createSuccess(increment);
+        handler.handle(UnitResponse.createSuccess(newValue));
     }
 
 }

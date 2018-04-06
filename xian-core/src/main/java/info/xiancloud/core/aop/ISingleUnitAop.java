@@ -8,6 +8,7 @@ import java.util.HashSet;
 
 /**
  * @author happyyangyuan
+ * @deprecated this won't work for asynchronous xian
  */
 public interface ISingleUnitAop extends IUnitAop {
 

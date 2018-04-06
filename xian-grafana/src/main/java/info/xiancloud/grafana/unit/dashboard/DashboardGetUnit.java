@@ -26,7 +26,7 @@ public class DashboardGetUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("获取单个 dashboard");
+        return UnitMeta.createWithDescription("获取单个 dashboard");
     }
 
     @Override

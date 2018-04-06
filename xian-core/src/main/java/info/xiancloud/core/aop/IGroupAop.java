@@ -11,6 +11,7 @@ import java.util.Set;
  * 指定sevice下的所有unit执行aop
  *
  * @author happyyangyuan
+ * @deprecated this won't work for asynchronous xian
  */
 public interface IGroupAop extends IUnitAop {
 

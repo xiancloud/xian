@@ -2,7 +2,7 @@ package info.xiancloud.core.support.cos;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.message.SingleRxXian;
-import info.xiancloud.core.message.UnitResponse;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import java.util.HashMap;
@@ -21,23 +21,24 @@ public class CloudFile {
      * @param data 文件内容
      * @return successful/unsuccessful unit response
      */
-    public static Single<UnitResponse<Void>> save(String path, String data) {
+    public static Completable save(String path, String data) {
         Map<String, Object> map = new HashMap<String, Object>() {{
             put("path", path);
             put("data", data);
         }};
-        return SingleRxXian.call("cosService", "cosWrite", map);
+        return SingleRxXian.call("cosService", "cosWrite", map).toCompletable();
     }
 
     /**
      * 分N线程并行上传云文件，线程数默认值是经过本地验证取最优的
      *
      * @param pathDataMap 批量数据,key为path，value为文件内容
+     * @return completable
      */
-    public static Single<UnitResponse<Void>> save(Map pathDataMap) {
+    public static Completable save(Map pathDataMap) {
         return SingleRxXian.call("cosService", "batchCosWrite", new JSONObject() {{
             put("files", pathDataMap);
-        }});
+        }}).toCompletable();
     }
 
     /**
@@ -45,12 +46,13 @@ public class CloudFile {
      *
      * @param pathDataMap 批量数据,key为path，value为文件内容
      * @param threadCount 并行数，如果你不知道该使用多大的线程数，请只使用具有默认值的{@linkplain #save(Map)}
+     * @return completable
      */
-    public static Single<UnitResponse<Void>> save(Map pathDataMap, int threadCount) {
+    public static Completable save(Map pathDataMap, int threadCount) {
         return SingleRxXian.call("cosService", "batchCosWrite", new JSONObject() {{
             put("files", pathDataMap);
             put("threadCount", threadCount);
-        }});
+        }}).toCompletable();
     }
 
     /**
@@ -71,6 +73,12 @@ public class CloudFile {
         });
     }
 
+    /**
+     * check whether the cos file exists
+     *
+     * @param path the cos path
+     * @return true if exits, false if not exits, error on exception.
+     */
     public static Single<Boolean> exists(String path) {
         return SingleRxXian.call("cosService", "cosCheckFileExists", new JSONObject() {{
             put("path", path);

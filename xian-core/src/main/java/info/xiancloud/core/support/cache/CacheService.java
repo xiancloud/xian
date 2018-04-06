@@ -1,13 +1,15 @@
 package info.xiancloud.core.support.cache;
 
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
+import info.xiancloud.core.message.UnitResponse;
+import io.reactivex.Single;
 
 import java.util.HashMap;
 
 /**
- * 缓存服务
+ * cache service
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public final class CacheService {
 
@@ -23,14 +25,14 @@ public final class CacheService {
      * @param url      url
      * @param password password
      * @param dbIndex  dbIndex
-     * @deprecated 不建议在redis插件外部初始化redis
+     * @deprecated 不建议在redis插件外部初始化redis, for test only
      */
-    public static void initCacheService(String url, String password, int dbIndex) {
-        SyncXian.call(CACHE_SERVICE, "jedisInit", new HashMap<String, Object>() {{
+    public static Single<Boolean> initCacheService(String url, String password, int dbIndex) {
+        return SingleRxXian.call(CACHE_SERVICE, "jedisInit", new HashMap<String, Object>() {{
             put("url", url);
             put("password", password);
             put("dbIndex", dbIndex);
-        }});
+        }}).map(UnitResponse::succeeded);
     }
 
 }

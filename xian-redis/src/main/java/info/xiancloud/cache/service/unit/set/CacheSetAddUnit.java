@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.set;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.util.FormatUtil;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -19,7 +16,7 @@ import java.util.Set;
  * <p>
  * http://doc.redisfans.com/set/sadd.html
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheSetAddUnit implements Unit {
     @Override
@@ -34,7 +31,7 @@ public class CacheSetAddUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Set Add").setPublic(false);
+        return UnitMeta.createWithDescription("Set Add").setPublic(false);
     }
 
     @Override
@@ -46,9 +43,9 @@ public class CacheSetAddUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.get("key", String.class);
-        Set members = (Set) msg.getArgMap().get("members");
+        Set members = msg.get("members", Set.class);
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
         try {
@@ -58,7 +55,7 @@ public class CacheSetAddUnit implements Unit {
                 result = Redis.call(cacheConfigBean, jedis -> {
                     String[] _members = new String[members.size()];
 
-                    Iterator<Object> iterator = members.iterator();
+                    Iterator iterator = members.iterator();
                     int i = 0;
                     while (iterator.hasNext()) {
                         _members[i] = FormatUtil.formatValue(iterator.next());
@@ -67,9 +64,9 @@ public class CacheSetAddUnit implements Unit {
                     return jedis.sadd(key, _members);
                 });
             }
-            return UnitResponse.createSuccess(result);
+            handler.handle(UnitResponse.createSuccess(result));
         } catch (Throwable e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

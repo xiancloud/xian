@@ -34,7 +34,7 @@ public class HttpUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("http请求");
+        return UnitMeta.createWithDescription("http请求");
     }
 
     @Override

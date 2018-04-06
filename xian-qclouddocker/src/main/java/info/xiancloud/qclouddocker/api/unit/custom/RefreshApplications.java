@@ -26,7 +26,7 @@ public class RefreshApplications implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("更新指定jenkinsJob下所有服务：删除废弃服务，更新已存服务，新建不存在的服务");
+        return UnitMeta.createWithDescription("更新指定jenkinsJob下所有服务：删除废弃服务，更新已存服务，新建不存在的服务");
     }
 
     @Override

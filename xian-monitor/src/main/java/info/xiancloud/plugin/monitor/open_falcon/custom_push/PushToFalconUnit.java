@@ -33,7 +33,7 @@ public class PushToFalconUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("向falcon推送数据，建议以异步方式调用此unit");
+        return UnitMeta.createWithDescription("向falcon推送数据，建议以异步方式调用此unit");
     }
 
     @Override

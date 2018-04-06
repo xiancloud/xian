@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.distribution.res.IResAware;
 import info.xiancloud.core.distribution.res.ResInit;
 import info.xiancloud.core.message.id.NodeIdBean;
-import info.xiancloud.core.support.zk.Synchronizer;
+import info.xiancloud.core.support.zk.ZkSynchronizer;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.zookeeper.ZkConnection;
 import info.xiancloud.zookeeper.ZkPathManager;
@@ -21,7 +21,7 @@ public class ZkResInit extends ResInit {
     @Override
     protected void register(String plugin, String version, Properties properties) {
         String pluginFullPath = getFullPath(plugin);
-        Synchronizer.runIfNotLocked(zkLockKey(pluginFullPath), () -> {
+        ZkSynchronizer.runIfNotLocked(zkLockKey(pluginFullPath), () -> {
             LOG.debug("相同的path可能同时被N个进程写到zk内，因此需要做分布式级别的并行控制");
             try {
                 //写版本号到节点的data内,方便后续做版本对比

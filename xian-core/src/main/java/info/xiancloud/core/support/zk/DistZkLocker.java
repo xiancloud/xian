@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * 分布式锁帮助类
  * <p>
- * 如果觉得此分布式锁入口工具类使用起来不太方便，可以使用相同功能的{@link Synchronizer 更简洁的方式}替代
+ * 如果觉得此分布式锁入口工具类使用起来不太方便，可以使用相同功能的{@link ZkSynchronizer 更简洁的方式}替代
  *
  * @author happyyangyuan
  * @deprecated distributed lock based on zookeeper is proved to be under bad performances. Use redis distributed lock instead.

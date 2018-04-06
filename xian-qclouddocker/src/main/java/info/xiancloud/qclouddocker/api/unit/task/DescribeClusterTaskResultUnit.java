@@ -19,7 +19,7 @@ public class DescribeClusterTaskResultUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("查询异步任务结果");
+        return UnitMeta.createWithDescription("查询异步任务结果");
     }
 
     @Override

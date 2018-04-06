@@ -23,7 +23,7 @@ public class CustomizedMdApidocUnit extends AbstractMdApidocUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("自定义的apidoc生成器").setDataOnly(true);
+        return UnitMeta.createWithDescription("自定义的apidoc生成器").setDataOnly(true);
     }
 
     @Override

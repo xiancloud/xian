@@ -19,7 +19,7 @@ public class PauseClusterServiceUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("暂停服务更新(用于暂停升级中的服务，当服务未在升级中，使用暂停功能也会停止容器的扩缩容，后续的更新服务操作也不会启动)");
+        return UnitMeta.createWithDescription("暂停服务更新(用于暂停升级中的服务，当服务未在升级中，使用暂停功能也会停止容器的扩缩容，后续的更新服务操作也不会启动)");
     }
 
     @Override

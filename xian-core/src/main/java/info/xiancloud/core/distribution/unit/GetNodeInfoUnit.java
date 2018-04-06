@@ -8,8 +8,6 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.StringUtil;
 
-import java.util.function.Consumer;
-
 /**
  * @author happyyangyuan
  */
@@ -30,14 +28,14 @@ public class GetNodeInfoUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest msg, Consumer<UnitResponse> consumer) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> consumer) {
         if (StringUtil.isEmpty(msg.get("application"))) {
             throw new RuntimeException("重构了服务注册，暂时不支持不指定application名称");
         }
         try {
-            consumer.accept(UnitResponse.createSuccess(ApplicationRouter.singleton.allInstances(msg.get("application", String.class))));
+            consumer.handle(UnitResponse.createSuccess(ApplicationRouter.singleton.allInstances(msg.get("application", String.class))));
         } catch (ApplicationOfflineException | ApplicationUndefinedException e) {
-            consumer.accept(UnitResponse.createUnknownError(null, "找不到application:" + msg.get("application", String.class)));
+            consumer.handle(UnitResponse.createUnknownError(null, "找不到application:" + msg.get("application", String.class)));
         }
     }
 

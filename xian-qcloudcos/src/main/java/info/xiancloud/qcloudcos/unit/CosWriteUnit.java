@@ -1,6 +1,7 @@
 package info.xiancloud.qcloudcos.unit;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -28,14 +29,14 @@ public class CosWriteUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         CosFileWriter writer = new CosFileWriter();
         if (writer.forPath(msg.get("path", String.class), msg.get("data", String.class))) {
             writer.close();
-            return UnitResponse.createSuccess();
+            handler.handle(UnitResponse.createSuccess());
         } else {
             writer.close();
-            return UnitResponse.createUnknownError(null, null);
+            handler.handle(UnitResponse.createUnknownError(null, null));
         }
     }
 }

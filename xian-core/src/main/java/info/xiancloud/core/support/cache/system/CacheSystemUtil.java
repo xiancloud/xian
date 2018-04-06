@@ -1,10 +1,10 @@
 package info.xiancloud.core.support.cache.system;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.message.SyncXian;
-import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.support.cache.CacheConfigBean;
 import info.xiancloud.core.support.cache.CacheService;
+import io.reactivex.Completable;
 
 /**
  * Cache system util class
@@ -19,14 +19,15 @@ public class CacheSystemUtil {
      *
      * @param cacheConfigBean the datasource configuration.
      */
-    public static void jedisPoolAdd(CacheConfigBean cacheConfigBean) {
-        UnitResponse unitResponseObject = SyncXian.call(CacheService.CACHE_SERVICE, "jedisPoolAdd", new JSONObject() {{
+    public static Completable jedisPoolAdd(CacheConfigBean cacheConfigBean) {
+        return SingleRxXian.call(CacheService.CACHE_SERVICE, "jedisPoolAdd", new JSONObject() {{
             put("host", cacheConfigBean.getHost());
             put("port", cacheConfigBean.getPort());
             put("password", cacheConfigBean.getPassword());
             put("dbIndex", cacheConfigBean.getDbIndex());
-        }});
-        unitResponseObject.throwExceptionIfNotSuccess();
+        }}).map(unitResponse -> {
+            unitResponse.throwExceptionIfNotSuccess();
+            return unitResponse.succeeded();
+        }).toCompletable();
     }
-
 }

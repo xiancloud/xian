@@ -18,7 +18,7 @@ public class TestRemoteMsgReceiverUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("接收者");
+        return UnitMeta.createWithDescription("接收者");
     }
 
     @Override

@@ -2,10 +2,7 @@ package info.xiancloud.cache.service.unit.map;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -13,7 +10,7 @@ import info.xiancloud.core.support.cache.CacheConfigBean;
 /**
  * Map Get
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheMapGetUnit implements Unit {
     @Override
@@ -28,7 +25,7 @@ public class CacheMapGetUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Map Get").setPublic(false);
+        return UnitMeta.createWithDescription("Map Get").setPublic(false);
     }
 
     @Override
@@ -40,7 +37,7 @@ public class CacheMapGetUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         String field = msg.getArgMap().get("field").toString();
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
@@ -48,11 +45,12 @@ public class CacheMapGetUnit implements Unit {
         try {
             String element = Redis.call(cacheConfigBean, (jedis) -> jedis.hget(key, field));
 
-            if (element != null && element.equals("nil"))
+            if (element != null && element.equals("nil")) {
                 element = null;
-            return UnitResponse.createSuccess(element);
+            }
+            handler.handle(UnitResponse.createSuccess(element));
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

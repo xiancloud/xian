@@ -19,7 +19,7 @@ public class DisableGraylogUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("disable all nodes to send log stream to the graylog server.")
+        return UnitMeta.createWithDescription("disable all nodes to send log stream to the graylog server.")
                 .setBroadcast()
                 .setPublic(false);
     }

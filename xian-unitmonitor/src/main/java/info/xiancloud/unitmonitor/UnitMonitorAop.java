@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * unit call frequency monitor
  *
  * @author yyq
+ * @deprecated this won't work for asynchronous xian
  */
 public class UnitMonitorAop implements IUnitAop, IStartService {
 
@@ -96,14 +97,14 @@ public class UnitMonitorAop implements IUnitAop, IStartService {
         // 调用频率数据推送
         /*
          * if ((currentTime - countLatchEntity.startTime) >= 60 * 1000) { Long
-		 * interval = (currentTime - countLatchEntity.startTime) / 1000;
-		 * LOG.info("吞吐量监控:" + unitName + " 在" + interval + "s内处理了" +
-		 * countLatchEntity.countLatch.get() + "个消息!!");
-		 * MonitorPusher.push(unitName + "Speed", 60, new JSONObject() { {
-		 * put("value", (float) countLatchEntity.countLatch.get() / interval);
-		 * put("nodeId", LocalNodeManager.LOCAL_NODE_ID); } }); countLatchEntity.startTime
-		 * = currentTime; countLatchEntity.countLatch.set(0); }
-		 */
+         * interval = (currentTime - countLatchEntity.startTime) / 1000;
+         * LOG.info("吞吐量监控:" + unitName + " 在" + interval + "s内处理了" +
+         * countLatchEntity.countLatch.get() + "个消息!!");
+         * MonitorPusher.push(unitName + "Speed", 60, new JSONObject() { {
+         * put("value", (float) countLatchEntity.countLatch.get() / interval);
+         * put("nodeId", LocalNodeManager.LOCAL_NODE_ID); } }); countLatchEntity.startTime
+         * = currentTime; countLatchEntity.countLatch.set(0); }
+         */
         return beforeReturn;
     }
 

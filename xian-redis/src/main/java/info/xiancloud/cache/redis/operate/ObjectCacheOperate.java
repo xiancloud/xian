@@ -46,8 +46,14 @@ public final class ObjectCacheOperate {
         return jedis.incr(key);
     }
 
-    public static long incrBy(Jedis jedis, String key, long value) {
-        return jedis.incrBy(key, value);
+    /**
+     * @param jedis the jedis connection.
+     * @param key   the key
+     * @param increment the increment
+     * @return according to jedis javadoc, the new value after increment is returned.
+     */
+    public static long incrBy(Jedis jedis, String key, long increment) {
+        return jedis.incrBy(key, increment);
     }
 
     public static long decr(Jedis jedis, String key) {

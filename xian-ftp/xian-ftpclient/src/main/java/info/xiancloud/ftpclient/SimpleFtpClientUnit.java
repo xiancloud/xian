@@ -1,9 +1,6 @@
 package info.xiancloud.ftpclient;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.EnvUtil;
@@ -24,7 +21,7 @@ public class SimpleFtpClientUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("A simple ftp client tool, login every time you use it and the connection is closed after your file uploading is done.")
+        return UnitMeta.createWithDescription("A simple ftp client tool, login every time you use it and the connection is closed after your file uploading is done.")
                 .setPublic(false);
     }
 
@@ -41,7 +38,7 @@ public class SimpleFtpClientUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         FtpConnection ftpFtpConnection = null;
         try {
             InputStream bis = new FileInputStream(msg.getString("localFilePath"));
@@ -49,9 +46,10 @@ public class SimpleFtpClientUnit implements Unit {
             ftpFtpConnection.ftp.changeWorkingDirectory(EnvUtil.getEnv());
             ftpFtpConnection.ftp.enterLocalPassiveMode();
             ftpFtpConnection.ftp.storeFile(msg.get("remotePath"), bis);
-            return UnitResponse.createSuccess();
+            //todo we need asynchronous ftp client instead.
+            handler.handle(UnitResponse.createSuccess());
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         } finally {
             try {
                 if (ftpFtpConnection != null && ftpFtpConnection.ftp != null) {

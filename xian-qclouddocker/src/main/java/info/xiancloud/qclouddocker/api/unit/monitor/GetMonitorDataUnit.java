@@ -20,7 +20,7 @@ public class GetMonitorDataUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("查询服务列表");
+        return UnitMeta.createWithDescription("查询服务列表");
     }
 
     @Override

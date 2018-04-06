@@ -30,7 +30,7 @@ import java.util.function.Function;
  *
  * @author happyyangyuan
  */
-final public class UnitResponse<D> {
+final public class UnitResponse {
     /**
      * the code of this unit response.
      * code {@link Group#CODE_SUCCESS} represents a successful unit response, otherwise failure.
@@ -39,7 +39,7 @@ final public class UnitResponse<D> {
     /**
      * the data object.
      */
-    private D data;
+    private Object data;
     /**
      * null if no exception. Do not use this exception property when code is {@link Group#CODE_SUCCESS}
      */
@@ -54,7 +54,7 @@ final public class UnitResponse<D> {
      */
     private Context context = Context.create();
 
-    public UnitResponse<D> setContext(Context context) {
+    public UnitResponse setContext(Context context) {
         this.context = context;
         return this;
     }
@@ -67,11 +67,15 @@ final public class UnitResponse<D> {
     }
 
     /**
+     * Set the exception of this unit response, note that this will set the rollback property in the context to true,
+     * which will lead to a transaction rolling back if transaction is enabled.
+     *
      * @param exception the exception object.
      * @return this unit response object.
      */
-    public UnitResponse<D> setException(Throwable exception) {
+    public UnitResponse setException(Throwable exception) {
         this.exception = exception;
+        getContext().setRollback(true);
         return this;
     }
 
@@ -85,15 +89,15 @@ final public class UnitResponse<D> {
     /**
      * create a succeeded response instance.
      */
-    public static <T> UnitResponse<T> createSuccess() {
-        return new UnitResponse<T>().setCode(Group.CODE_SUCCESS);
+    public static UnitResponse createSuccess() {
+        return new UnitResponse().setCode(Group.CODE_SUCCESS);
     }
 
     /**
      * create a succeeded response instance with specified data.
      */
-    public static <T> UnitResponse<T> createSuccess(T data) {
-        return UnitResponse.<T>createSuccess().setData(data);
+    public static UnitResponse createSuccess(Object data) {
+        return UnitResponse.createSuccess().setData(data);
     }
 
     /**
@@ -102,41 +106,45 @@ final public class UnitResponse<D> {
      *
      * @param e the exception object.
      */
-    public static <T> UnitResponse<T> createException(Throwable e) {
-        UnitResponse<T> exceptionUnitResponse = UnitResponse.createError(Group.CODE_EXCEPTION, null, null);
-        exceptionUnitResponse.setException(e);
-        exceptionUnitResponse.context.setRollback(true);
-        return exceptionUnitResponse;
+    public static UnitResponse createException(Throwable e) {
+        return UnitResponse
+                .createError(Group.CODE_EXCEPTION, null, null)
+                .setException(e);
     }
 
     /**
      * Please pass an exception object to this method, and it returns a newly created response object with error code {@link Group#CODE_EXCEPTION}
      * and the exception object as the data.
      *
-     * @param <T>    the generic type for the data.
      * @param e      the exception object.
      * @param errMsg the error message that you want to add.
      */
-    public static <T> UnitResponse<T> createException(Throwable e, String errMsg) {
-        return UnitResponse.<T>createException(e).setErrMsg(errMsg);
-    }
-
-    public static <T> UnitResponse<T> createException(String errCode, Throwable exception) {
-        return new UnitResponse<T>().setCode(errCode).setException(exception);
-    }
-
-    public static <T> UnitResponse<T> createException(String errCode, Throwable exception, String errMsg) {
-        return new UnitResponse<T>().setCode(errCode).setException(exception).setErrMsg(errMsg);
+    public static UnitResponse createException(Throwable e, String errMsg) {
+        return UnitResponse.createException(e).setErrMsg(errMsg);
     }
 
     /**
-     * @param <D>    the generic type for the data.
+     * Create an exception unit response object.
+     *
+     * @param errCode   the error code for the unit response.
+     * @param exception the exception object.
+     * @return the newly created unit response.
+     */
+    public static UnitResponse createException(String errCode, Throwable exception) {
+        return UnitResponse.createException(exception).setCode(errCode);
+    }
+
+    public static UnitResponse createException(String errCode, Throwable exception, String errMsg) {
+        return UnitResponse.createException(errCode, exception).setErrMsg(errMsg);
+    }
+
+    /**
      * @param data   The failure data. Leave it null if you have no data to set.
      *               Under some complicated unit situations, failed data must be included and returned.
      * @param errMsg failure reason or description.
      * @return an response object with failure data and failure message.
      */
-    public static <D> UnitResponse<D> createUnknownError(D data, String errMsg) {
+    public static UnitResponse createUnknownError(Object data, String errMsg) {
         return createError(Group.CODE_UNKNOWN_ERROR, data, errMsg);
     }
 
@@ -146,14 +154,13 @@ final public class UnitResponse<D> {
      * @param errCode the error code.
      * @param data    the data
      * @param errMsg  the error message.
-     * @param <D>     the generic type for the data
      * @return the newly created unit response object.
      */
-    public static <D> UnitResponse<D> createError(String errCode, D data, String errMsg) {
+    public static UnitResponse createError(String errCode, Object data, String errMsg) {
         if (Group.CODE_SUCCESS.equalsIgnoreCase(errCode)) {
             throw new IllegalArgumentException("Only non-success code is allowed here.");
         }
-        return new UnitResponse<D>().setCode(errCode).setData(data).setErrMsg(errMsg);
+        return new UnitResponse().setCode(errCode).setData(data).setErrMsg(errMsg);
     }
 
     /**
@@ -161,18 +168,17 @@ final public class UnitResponse<D> {
      * @param errMsg error message.
      * @return the newly created response instance.
      */
-    public static <D> UnitResponse<D> createDataDoesNotExists(D data, String errMsg) {
+    public static UnitResponse createDataDoesNotExists(Object data, String errMsg) {
         return createError(Group.CODE_DATA_DOES_NOT_EXITS, data, errMsg);
     }
 
     /**
-     * @param <D>    the generic type of the data
      * @param code   {@link Group#CODE_SUCCESS SUCCESS}, {@link Group#CODE_UNKNOWN_ERROR FAILURE} etc.
      * @param data   the data bean or json
      * @param errMsg the error message. Note that errMsg must be null when the {{@link #code}} is {@link Group#CODE_SUCCESS SUCCESS}
      */
-    public static <D> UnitResponse<D> create(String code, D data, String errMsg) {
-        return new UnitResponse<D>().setCode(code).setData(data).setErrMsg(errMsg);
+    public static UnitResponse create(String code, Object data, String errMsg) {
+        return new UnitResponse().setCode(code).setData(data).setErrMsg(errMsg);
     }
 
     /**
@@ -180,7 +186,7 @@ final public class UnitResponse<D> {
      *
      * @param successful true to return an succeeded response object, false the opposite.
      */
-    public static <D> UnitResponse<D> create(boolean successful) {
+    public static UnitResponse create(boolean successful) {
         if (successful) {
             return createSuccess();
         } else {
@@ -191,10 +197,9 @@ final public class UnitResponse<D> {
     /**
      * create a rollback marked unit response
      *
-     * @param <D> the generic type of the data
      * @return the newly created unit reponse instance.
      */
-    public static <D> UnitResponse<D> createRollingBack() {
+    public static UnitResponse createRollingBack() {
         return createRollingBack(null);
     }
 
@@ -204,27 +209,26 @@ final public class UnitResponse<D> {
      * @param errMsg the error message.
      * @return An response object which will indicate a transactional rolling back.
      */
-    public static <D> UnitResponse<D> createRollingBack(String errMsg) {
-        return UnitResponse.<D>createUnknownError(null, errMsg).setContext(Context.create().setRollback(true));
+    public static UnitResponse createRollingBack(String errMsg) {
+        return UnitResponse.createUnknownError(null, errMsg).setContext(Context.create().setRollback(true));
     }
 
     /**
      * create a new unit response when missingParam
      *
-     * @param <D>                  the generic type of the data.
      * @param theMissingParameters theMissingParameters array, leave it null, if you dont know which parameter is missing.
      * @return the newly created response object describing the missed parameters.
      */
-    public static <D> UnitResponse<D> createMissingParam(D theMissingParameters, String errMsg) {
+    public static UnitResponse createMissingParam(Object theMissingParameters, String errMsg) {
         return UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, theMissingParameters, errMsg);
     }
 
     @SuppressWarnings("unchecked")
-    public static <D> UnitResponse<D> create(JSONObject json) {
+    public static UnitResponse create(JSONObject json) {
         return Reflection.toType(json, UnitResponse.class);
     }
 
-    public UnitResponse<D> setCode(String code) {
+    public UnitResponse setCode(String code) {
         this.code = code;
         return this;
     }
@@ -233,7 +237,7 @@ final public class UnitResponse<D> {
         return code;
     }
 
-    public UnitResponse<D> setData(D data) {
+    public UnitResponse setData(Object data) {
         this.data = data;
         return this;
     }
@@ -243,7 +247,7 @@ final public class UnitResponse<D> {
      *
      * @return The casted object.
      */
-    public D getData() {
+    public Object getData() {
         return data;
     }
 
@@ -425,7 +429,7 @@ final public class UnitResponse<D> {
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
-    public UnitResponse<D> successCall(Function<UnitResponse<D>, UnitResponse<D>> successCall) {
+    public UnitResponse successCall(Function<UnitResponse, UnitResponse> successCall) {
         if (successCall == null || !succeeded()) {
             return this;
         }
@@ -440,7 +444,7 @@ final public class UnitResponse<D> {
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
-    public UnitResponse<D> successCall(Callable<UnitResponse<D>> successCall) {
+    public UnitResponse successCall(Callable<UnitResponse> successCall) {
         if (successCall == null || !succeeded()) {
             return this;
         }
@@ -455,7 +459,7 @@ final public class UnitResponse<D> {
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
-    public void successCall(Consumer<UnitResponse<D>> successCall) {
+    public void successCall(Consumer<UnitResponse> successCall) {
         if (successCall != null && succeeded()) {
             try {
                 successCall.accept(this);
@@ -473,7 +477,7 @@ final public class UnitResponse<D> {
         return errMsg;
     }
 
-    public UnitResponse<D> setErrMsg(String errMsg) {
+    public UnitResponse setErrMsg(String errMsg) {
         this.errMsg = errMsg;
         return this;
     }
@@ -510,7 +514,7 @@ final public class UnitResponse<D> {
      *
      * @param from the source
      */
-    public static <D> UnitResponse<D> clone(UnitResponse<D> from) {
+    public static UnitResponse clone(UnitResponse from) {
         return from.clone();
     }
 
@@ -520,13 +524,13 @@ final public class UnitResponse<D> {
      * @param from the source
      * @param to   the destiny
      */
-    public static <D> void copy(UnitResponse<D> from, UnitResponse<D> to) {
+    public static void copy(UnitResponse from, UnitResponse to) {
         //remember to modify this method when new properties are added.
         to.setCode(from.code).setData(from.data).setContext(from.context.clone()).setErrMsg(from.errMsg);
     }
 
     @Override
-    protected UnitResponse<D> clone() {
+    protected UnitResponse clone() {
         return CloneUtil.cloneBean(this, UnitResponse.class);
     }
 

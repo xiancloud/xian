@@ -137,10 +137,13 @@ public class Input {
      */
     public static <Request> Input create(Class<? extends Request> beanClass) {
         if (beanClass == null) throw new IllegalArgumentException("bean class should not be null");
+        Input input = Input.create();
         List<Field> allFields = Reflection.getAllFields(beanClass);
         for (Field field : allFields) {
-            //TODO 先想好完整思路，再实现
+            //TODO read from annotations.
+            input.add(field.getName(), field.getType(), null);
         }
+        return input;
     }
 
     public Input add(String name, Class clazz, String description) {

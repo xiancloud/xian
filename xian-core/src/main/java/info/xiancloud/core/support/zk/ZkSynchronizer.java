@@ -9,8 +9,9 @@ import java.util.concurrent.Callable;
  * 分布式并发安全的同步任务执行器
  *
  * @author happyyangyuan
+ * @deprecated zookeeper distributed lock is proofed to be under poor performance due to zookeeper is not good at being frequently written.
  */
-public class Synchronizer {
+public class ZkSynchronizer {
 
     /**
      * 分布式并发安全地执行指定的任务，阻塞直到任务执行完毕才返回，阻塞直到任务执行完毕才释放锁。

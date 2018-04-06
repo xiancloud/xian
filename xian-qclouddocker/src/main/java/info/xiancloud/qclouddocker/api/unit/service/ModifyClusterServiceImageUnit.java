@@ -26,7 +26,7 @@ public class ModifyClusterServiceImageUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create(" 更新服务镜像");
+        return UnitMeta.createWithDescription(" 更新服务镜像");
     }
 
     @Override

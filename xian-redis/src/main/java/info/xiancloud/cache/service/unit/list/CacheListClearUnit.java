@@ -2,10 +2,7 @@ package info.xiancloud.cache.service.unit.list;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -13,7 +10,7 @@ import info.xiancloud.core.support.cache.CacheConfigBean;
 /**
  * List Clear
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheListClearUnit implements Unit {
     @Override
@@ -39,15 +36,15 @@ public class CacheListClearUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.get("key");
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
         try {
             Redis.call(cacheConfigBean, (jedis) -> jedis.ltrim(key, 1, 0));
-            return UnitResponse.createSuccess();
+            handler.handle(UnitResponse.createSuccess());
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

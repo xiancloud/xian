@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.map;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.util.FormatUtil;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -18,7 +15,7 @@ import java.util.Map;
 /**
  * Map PutAll
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheMapPutAllUnit implements Unit {
     @Override
@@ -45,7 +42,8 @@ public class CacheMapPutAllUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    @SuppressWarnings("unchecked")
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         Map maps = msg.get("maps", Map.class);
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
@@ -60,9 +58,9 @@ public class CacheMapPutAllUnit implements Unit {
 
                 jedis.hmset(key, _maps);
             }
-            return UnitResponse.createSuccess();
+            handler.handle(UnitResponse.createSuccess());
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

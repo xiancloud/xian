@@ -27,7 +27,7 @@ public class CreateClusterServiceUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("创建服务");
+        return UnitMeta.createWithDescription("创建服务");
     }
 
     @Override

@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.object;
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -17,7 +14,7 @@ import redis.clients.jedis.ScanResult;
  * Scan
  * https://redis.io/commands/scan
  *
- * @author John_zero
+ * @author John_zero, happyyangyuanF
  */
 public class CacheScanUnit implements Unit {
     @Override
@@ -47,7 +44,7 @@ public class CacheScanUnit implements Unit {
     private static final int THRESHOLD_VALUE = 200;
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String pattern = msg.getArgMap().get("pattern").toString();
         int count = msg.get("count", Integer.class, THRESHOLD_VALUE);
         String cursor = msg.getArgMap().get("cursor").toString();
@@ -61,9 +58,9 @@ public class CacheScanUnit implements Unit {
                 _jsonObject.put("result", scans.getResult());
                 return _jsonObject;
             });
-            return UnitResponse.createSuccess(jsonObject);
+            handler.handle(UnitResponse.createSuccess(jsonObject));
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

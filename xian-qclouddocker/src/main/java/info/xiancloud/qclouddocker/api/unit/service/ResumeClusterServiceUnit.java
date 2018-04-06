@@ -19,7 +19,7 @@ public class ResumeClusterServiceUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("继续服务更新(用于继续被暂停中的服务更新)");
+        return UnitMeta.createWithDescription("继续服务更新(用于继续被暂停中的服务更新)");
     }
 
     @Override

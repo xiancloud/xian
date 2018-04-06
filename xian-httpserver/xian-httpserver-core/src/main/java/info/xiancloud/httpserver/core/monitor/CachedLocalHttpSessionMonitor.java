@@ -27,7 +27,7 @@ public class CachedLocalHttpSessionMonitor implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("监控本地业务网关缓存的session数量")
+        return UnitMeta.createWithDescription("监控本地业务网关缓存的session数量")
                 .setBroadcast(UnitMeta.Broadcast.create().setSuccessDataOnly(true).setAsync(true));
     }
 

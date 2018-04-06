@@ -22,7 +22,7 @@ public class ApacheHttpClientMonitorUnit extends AbstractDiyMonitorUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Http连接池状态监控")
+        return UnitMeta.createWithDescription("Http连接池状态监控")
                 .setBroadcast(UnitMeta.Broadcast.create().setAsync(false).setSuccessDataOnly(true))
                 .setPublic(false);
     }

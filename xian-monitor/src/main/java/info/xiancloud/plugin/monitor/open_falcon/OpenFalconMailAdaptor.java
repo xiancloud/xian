@@ -27,7 +27,7 @@ public class OpenFalconMailAdaptor implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("适配openFalcon邮件发送接口");
+        return UnitMeta.createWithDescription("适配openFalcon邮件发送接口");
     }
 
     /**

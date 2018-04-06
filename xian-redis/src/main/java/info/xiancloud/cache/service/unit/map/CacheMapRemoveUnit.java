@@ -2,10 +2,7 @@ package info.xiancloud.cache.service.unit.map;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -13,7 +10,7 @@ import info.xiancloud.core.support.cache.CacheConfigBean;
 /**
  * Map Remove
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheMapRemoveUnit implements Unit {
     @Override
@@ -40,7 +37,7 @@ public class CacheMapRemoveUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         String field = msg.getArgMap().get("field").toString();
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
@@ -49,9 +46,10 @@ public class CacheMapRemoveUnit implements Unit {
         try {
             length = Redis.call(cacheConfigBean, jedis -> jedis.hdel(key, field));
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
-        return UnitResponse.createSuccess(length);
+        handler.handle(UnitResponse.createSuccess(length));
     }
 
 }

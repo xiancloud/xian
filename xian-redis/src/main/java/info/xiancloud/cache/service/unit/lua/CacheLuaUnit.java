@@ -2,10 +2,7 @@ package info.xiancloud.cache.service.unit.lua;
 
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -20,7 +17,7 @@ import java.util.List;
  * http://redisbook.readthedocs.io/en/latest/feature/scripting.html
  * https://redis.io/commands/eval
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheLuaUnit implements Unit {
     @Override
@@ -49,14 +46,14 @@ public class CacheLuaUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String scripts = msg.get("scripts", String.class);
         Integer keyCount = msg.get("keyCount", Integer.class);
-        List<String> keys = msg.getArgMap().containsKey("keys") ? (List<String>) msg.getArgMap().get("keys") : null;
-        List<String> params = msg.getArgMap().containsKey("params") ? (List<String>) msg.getArgMap().get("params") : null;
+        List<String> keys = msg.get("keys");
+        List<String> params = msg.get("params");
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
 
-        Object response = null;
+        Object response;
         try (Jedis jedis = Redis.useDataSource(cacheConfigBean).getResource()) {
             if (keyCount != null && params != null) {
                 response = jedis.eval(scripts, keyCount, params.toArray(new String[params.size()]));
@@ -66,9 +63,10 @@ public class CacheLuaUnit implements Unit {
                 response = jedis.eval(scripts);
             }
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
-        return UnitResponse.createSuccess(response);
+        handler.handle(UnitResponse.createSuccess(response));
     }
 
 }

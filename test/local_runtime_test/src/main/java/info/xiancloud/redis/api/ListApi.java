@@ -40,7 +40,7 @@ public class ListApi {
 
     @Test
     public void addHead() {
-        boolean addHead = CacheListUtil.addHead("LIST_API", "addHead_0");
+        boolean addHead = CacheListUtil.addFirst("LIST_API", "addHead_0");
         Assert.assertTrue(addHead);
     }
 

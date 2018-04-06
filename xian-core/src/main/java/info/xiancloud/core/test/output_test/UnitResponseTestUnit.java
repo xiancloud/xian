@@ -1,6 +1,7 @@
 package info.xiancloud.core.test.output_test;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -9,7 +10,6 @@ import info.xiancloud.core.test.TestGroup;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @author happyyangyuan
@@ -36,10 +36,10 @@ public class UnitResponseTestUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest request, Consumer<UnitResponse> consumer) {
+    public void execute(UnitRequest request, Handler<UnitResponse> consumer) {
         Map<String, String> map = new HashMap<>();
         map.put("这是测试key0", "这是测试值0");
         map.put("这是测试key1", "这是测试值1");
-        consumer.accept(UnitResponse.createSuccess(map));
+        consumer.handle(UnitResponse.createSuccess(map));
     }
 }

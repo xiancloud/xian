@@ -31,7 +31,7 @@ public class CacheSortedSetAddUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("Sorted Set Add").setPublic(false);
+        return UnitMeta.createWithDescription("Sorted Set Add").setPublic(false);
     }
 
     @Override

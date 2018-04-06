@@ -80,7 +80,7 @@ abstract public class BaseUpdateByIdDB extends DaoUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("公共修改ById dao unit");
+        return UnitMeta.createWithDescription("公共修改ById dao unit");
     }
 
 }

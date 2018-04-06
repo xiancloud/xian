@@ -3,10 +3,7 @@ package info.xiancloud.cache.service.unit.list;
 import info.xiancloud.cache.redis.Redis;
 import info.xiancloud.cache.redis.util.FormatUtil;
 import info.xiancloud.cache.service.CacheGroup;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.cache.CacheConfigBean;
@@ -14,7 +11,7 @@ import info.xiancloud.core.support.cache.CacheConfigBean;
 /**
  * List Add Head
  *
- * @author John_zero
+ * @author John_zero, happyyangyuan
  */
 public class CacheListAddHeadUnit implements Unit {
     @Override
@@ -29,7 +26,7 @@ public class CacheListAddHeadUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("List Add Head").setPublic(false);
+        return UnitMeta.createWithDescription("List Add Head").setPublic(false);
     }
 
     @Override
@@ -41,7 +38,7 @@ public class CacheListAddHeadUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.getArgMap().get("key").toString();
         Object valueObj = msg.getArgMap().get("valueObj");
         CacheConfigBean cacheConfigBean = msg.get("cacheConfig", CacheConfigBean.class);
@@ -51,9 +48,9 @@ public class CacheListAddHeadUnit implements Unit {
                 String value = FormatUtil.formatValue(valueObj);
                 return jedis.lpush(key, value);
             });
-            return UnitResponse.createSuccess(length);
+            handler.handle(UnitResponse.createSuccess(length));
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
         }
     }
 

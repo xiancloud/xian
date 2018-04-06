@@ -20,7 +20,7 @@ public class DescribeServiceEventUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("获取服务事件列表（用于查询服务最近一小时的事件列表）");
+        return UnitMeta.createWithDescription("获取服务事件列表（用于查询服务最近一小时的事件列表）");
     }
 
     @Override

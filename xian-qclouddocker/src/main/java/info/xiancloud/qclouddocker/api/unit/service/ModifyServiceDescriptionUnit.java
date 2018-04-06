@@ -19,7 +19,7 @@ public class ModifyServiceDescriptionUnit extends QCloudBaseUnit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("修改服务描述");
+        return UnitMeta.createWithDescription("修改服务描述");
     }
 
     @Override

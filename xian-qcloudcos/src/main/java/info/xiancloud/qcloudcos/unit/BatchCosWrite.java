@@ -1,6 +1,7 @@
 package info.xiancloud.qcloudcos.unit;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -9,7 +10,6 @@ import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.core.util.thread.ThreadUtils;
 import info.xiancloud.qcloudcos.sdk.CosFileWriter;
-import io.reactivex.Single;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +42,9 @@ public class BatchCosWrite implements Unit {
                 .add("threadCount", int.class, "并行的线程数，建议设置在20以内，如果不传，默认为10");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Single<UnitResponse> execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         Map<String, String> files = msg.get("files", Map.class);
         int threadCount;
         if (msg.getArgMap().containsKey("threadCount")) {
@@ -53,11 +54,11 @@ public class BatchCosWrite implements Unit {
         }
         int perThread = new Double(Math.ceil(files.size() / (double) threadCount)).intValue();
         if (perThread > MAX_PER_THREAD) {
-            return UnitResponse.createUnknownError(null, "待处理文件数过多，请减小数量,fileSize=" + files.size() + "; 最大允许" + threadCount * MAX_PER_THREAD);
+            handler.handle(UnitResponse.createUnknownError(null, "待处理文件数过多，请减小数量,fileSize=" + files.size() + "; 最大允许" + threadCount * MAX_PER_THREAD));
+            return;
         }
         CountDownLatch latch = new CountDownLatch(threadCount);
-        List<String> paths = new ArrayList<>();
-        paths.addAll(files.keySet());
+        List<String> paths = new ArrayList<>(files.keySet());
         for (int i = 0; i < threadCount; i++) {
             final Pair<Integer, Integer> startEnd = getStartEnd(i, files.size(), perThread);
             ThreadPoolManager.execute(() -> {
@@ -80,7 +81,7 @@ public class BatchCosWrite implements Unit {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
     }
 
     private Pair<Integer, Integer> getStartEnd(int i, int size, int perThread) {

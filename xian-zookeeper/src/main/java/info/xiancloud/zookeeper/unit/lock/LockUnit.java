@@ -25,7 +25,7 @@ public class LockUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("加锁");
+        return UnitMeta.createWithDescription("加锁");
     }
 
     @Override

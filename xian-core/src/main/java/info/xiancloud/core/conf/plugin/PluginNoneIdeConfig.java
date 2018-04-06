@@ -1,12 +1,12 @@
 package info.xiancloud.core.conf.plugin;
 
+import info.xiancloud.core.*;
+import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.distribution.res.IResAware;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.core.util.file.PluginFileUtil;
-import info.xiancloud.core.*;
-import info.xiancloud.core.conf.XianConfig;
 
 /**
  * Configuration reader for none ide environment.
@@ -31,8 +31,8 @@ public class PluginNoneIdeConfig extends PluginConfig implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.createSuccess(XianConfig.get(msg.getString("key")));
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        handler.handle(UnitResponse.createSuccess(XianConfig.get(msg.getString("key"))));
     }
 
     @Override

@@ -24,7 +24,7 @@ class Xian /*extends SyncXian*/ {
      * @param map                 parameters
      * @param handler             call back handler
      */
-    public static <T> void call(Unit destinationUnitBean, Map<String, Object> map, Handler<UnitResponse<T>> handler) {
+    public static void call(Unit destinationUnitBean, Map<String, Object> map, Handler<UnitResponse> handler) {
         call(destinationUnitBean.getGroup().getName(), destinationUnitBean.getName(), map, handler);
     }
 
@@ -33,34 +33,34 @@ class Xian /*extends SyncXian*/ {
      * @param bean                parameter bean
      * @param handler             call back handler
      */
-    public static <T> void call(Unit destinationUnitBean, Bean bean, Handler<UnitResponse<T>> handler) {
+    public static void call(Unit destinationUnitBean, Bean bean, Handler<UnitResponse> handler) {
         call(destinationUnitBean.getGroup().getName(), destinationUnitBean.getName(), bean, handler);
     }
 
-    public static <T> void call(String group, String unit, Map<String, Object> map, Handler<UnitResponse<T>> handler) {
+    public static void call(String group, String unit, Map<String, Object> map, Handler<UnitResponse> handler) {
         UnitRequest request = UnitRequest.create(group, unit).setArgMap(map);
         call(request, handler);
     }
 
-    public static <T> void call(String group, String unit, Bean bean, Handler<UnitResponse<T>> handler) {
+    public static void call(String group, String unit, Bean bean, Handler<UnitResponse> handler) {
         call(group, unit, bean.toMap(), handler);
     }
 
-    public static <T> void call(Class<? extends Unit> unitClass, Map<String, Object> map, Handler<UnitResponse<T>> handler) {
+    public static void call(Class<? extends Unit> unitClass, Map<String, Object> map, Handler<UnitResponse> handler) {
         call(LocalUnitsManager.getGroupByUnitClass(unitClass).getName(),
                 LocalUnitsManager.getUnitByUnitClass(unitClass).getName(),
                 map,
                 handler);
     }
 
-    public static <T> void call(Class<? extends Unit> unitClass, Bean bean, Handler<UnitResponse<T>> handler) {
+    public static void call(Class<? extends Unit> unitClass, Bean bean, Handler<UnitResponse> handler) {
         call(unitClass, bean.toMap(), handler);
     }
 
     /**
      * Tell the DAO layer to query data from the read-only database.
      */
-    public static <T> void readonly(String daoGroup, String daoUnit, Map<String, Object> map, Handler<UnitResponse<T>> handler) {
+    public static void readonly(String daoGroup, String daoUnit, Map<String, Object> map, Handler<UnitResponse> handler) {
         UnitRequest request = UnitRequest.create(daoGroup, daoUnit).setArgMap(map);
         request.getContext().setReadyOnly(true);
         call(request, handler);
@@ -69,25 +69,25 @@ class Xian /*extends SyncXian*/ {
     /**
      * Tell the DAO layer to query data from the read-only database.
      */
-    public static <T> void readonly(String daoGroup, String daoUnit, Bean bean, Handler<UnitResponse<T>> handler) {
+    public static void readonly(String daoGroup, String daoUnit, Bean bean, Handler<UnitResponse> handler) {
         readonly(daoGroup, daoUnit, bean.toMap(), handler);
     }
 
     /**
      * call the specified unit without parameters
      */
-    public static <T> void call(String group, String unit, Handler<UnitResponse<T>> handler) {
+    public static void call(String group, String unit, Handler<UnitResponse> handler) {
         Xian.call(group, unit, new HashMap<>(), handler);
     }
 
     /**
      * call the specified unit without parameters
      */
-    public static <T> void call(Class<? extends Unit> unitClass, Handler<UnitResponse<T>> handler) {
+    public static void call(Class<? extends Unit> unitClass, Handler<UnitResponse> handler) {
         call(unitClass, new HashMap<>(), handler);
     }
 
-    public static <T> void call(UnitRequest request, Handler<UnitResponse<T>> handler) {
+    public static void call(UnitRequest request, Handler<UnitResponse> handler) {
         String group = request.getContext().getGroup(),
                 unit = request.getContext().getUnit();
         String concretedUnitName = getConverter(group).getConcreteUnit(group, unit, request.getArgMap());

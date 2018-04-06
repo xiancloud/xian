@@ -1,17 +1,14 @@
 package info.xiancloud.core.distribution.unit;
 
+import info.xiancloud.core.*;
+import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.distribution.exception.UnitOfflineException;
 import info.xiancloud.core.distribution.exception.UnitUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.distribution.service_discovery.UnitInstance;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
-import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.message.RequestContext;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 
@@ -22,9 +19,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 接收请求并将其广播出去的unit，特别的，它可以将所有接收方的响应聚合返回给调用者
- * 此方法目前不支持传'application'以外的参数，请直接实现Unit接口，设置{@link UnitMeta#setBroadcast()}替代方案
  *
  * @author happyyangyuan
+ * @deprecated 此方法目前不支持传'application'以外的参数，请直接实现Unit接口，设置{@link UnitMeta#setBroadcast()}替代方案
  */
 public abstract class ReceiveAndBroadcast implements Unit {
     private static final String ALL = "all";
@@ -36,9 +33,10 @@ public abstract class ReceiveAndBroadcast implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         if (msg.getContext().isRouted()) {
-            return execute0(msg);
+            handler.handle(execute0(msg));
+            return;
         } else {
             List<UnitInstance> list = new ArrayList<>();
             String application = msg.get("application", String.class);
@@ -79,13 +77,16 @@ public abstract class ReceiveAndBroadcast implements Unit {
                         });
             }
             if (async()) {
-                return UnitResponse.createSuccess();
+                handler.handle(UnitResponse.createSuccess());
+                return;
             } else {
                 try {
                     latch.await(timeoutInMilli(), TimeUnit.MILLISECONDS);
-                    return UnitResponse.createSuccess(piledUpOutput);
+                    handler.handle(UnitResponse.createSuccess(piledUpOutput));
+                    return;
                 } catch (InterruptedException e) {
-                    return UnitResponse.createException(e);
+                    handler.handle(UnitResponse.createException(e));
+                    return;
                 }
             }
         }

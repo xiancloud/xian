@@ -27,7 +27,7 @@ public class HostEngineToColonyUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create("添加已存在云主机到集群");
+        return UnitMeta.createWithDescription("添加已存在云主机到集群");
     }
 
     @Override
