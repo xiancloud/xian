@@ -5,12 +5,11 @@ import info.xiancloud.core.distribution.exception.GroupOfflineException;
 import info.xiancloud.core.distribution.exception.GroupUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.GroupRouter;
 import info.xiancloud.core.distribution.service_discovery.GroupInstance;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.falcon.DiyMonitorGroup;
 import info.xiancloud.core.util.LOG;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class FactorCollector {
             throw new RuntimeException(e);
         }
         for (String diyMonitorUnitName : diyMonitorUnitNames) {
-            UnitResponse o = SyncXian.call(diyMonitorServiceName, diyMonitorUnitName, new HashMap());
+            UnitResponse o = SingleRxXian.call(diyMonitorServiceName, diyMonitorUnitName).blockingGet();
             if (o.succeeded()) {
                 try {
                     LOG.debug("data可以是单纯的数字，也可以是json/jsonArray");

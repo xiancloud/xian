@@ -1,14 +1,17 @@
 package info.xiancloud.mq.backed;
 
 import com.alibaba.fastjson.JSONObject;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.conf.XianConfig;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.mq.TransferQueueUtil;
 import info.xiancloud.core.util.EnvUtil;
 import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.thread.ListenableCountDownLatch;
+import io.reactivex.Single;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -16,6 +19,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * mqtt queue piling count monitoring
@@ -37,29 +41,32 @@ public class MqttQueuePiledUpMonitor {
         return null;
     }
 
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         JSONObject params = new JSONObject();
         params.put("title", "堆积情况");
         params.put("value", -1);
-        try {
-            int totalLen = 0;
-            List<String> mgmtCloudClients = new ArrayList<>();
-            mgmtCloudClients.add(TransferQueueUtil.getTransferQueue("xian_management_cloud"));
-            for (String clientId : mgmtCloudClients) {
-                int len = getLen(clientId);
-                LOG.info(String.format("[堆积统计] %s 已经堆积了: %s 条 消息.", clientId, len));
-                totalLen += len;
-            }
-            params.put("value", totalLen);
-            return UnitResponse.createSuccess(params);
-        } catch (Throwable e) {
-            return UnitResponse.createException(e);
+        List<String> mgmtCloudClients = new ArrayList<>();
+        mgmtCloudClients.add(TransferQueueUtil.getTransferQueue("xian_management_cloud"));
+        AtomicInteger totalLen = new AtomicInteger(0);
+        ListenableCountDownLatch countDownLatch = new ListenableCountDownLatch(mgmtCloudClients.size());
+        for (String clientId : mgmtCloudClients) {
+            getLen(clientId)
+                    .subscribe(len -> {
+                        LOG.info(String.format("[堆积统计] %s 已经堆积了: %s 条 消息.", clientId, len));
+                        totalLen.addAndGet(len);
+                        params.put("value", totalLen.get());
+                        countDownLatch.countDown();
+                    });
         }
+        countDownLatch.addListener(counter -> {
+            if (counter == 0)
+                handler.handle(UnitResponse.createSuccess(params));
+        });
     }
 
     private String getRabbitMqApiUrl(String queueName) {
         String tcpUrl, apiUrl;
-        if (EnvUtil.isQcloudLan()) {
+        if (EnvUtil.isLan()) {
             tcpUrl = XianConfig.getStringArray("rabbitmqLanServerUrls")[0];
         } else {
             tcpUrl = XianConfig.getStringArray("rabbitmqInternetServerUrls")[0];
@@ -76,16 +83,18 @@ public class MqttQueuePiledUpMonitor {
         return apiUrl;
     }
 
-    private JSONObject getQueueJSONObject(String clientId) {
+    private Single<JSONObject> getQueueJSONObject(String clientId) {
         String queueName = getQueueName(clientId);
         String url = getRabbitMqApiUrl(queueName);
-        String res = SyncXian.call("httpClient", "basicAuthApacheHttpClientGet", new JSONObject() {{
+        return SingleRxXian.call("httpClient", "basicAuthApacheHttpClientGet", new JSONObject() {{
             put("url", url);
             put("userName", XianConfig.get("rabbitmqUserName"));
             put("password", XianConfig.get("rabbitmqPwd"));
-        }}).dataToJson().getString("entity");
-        LOG.info(String.format("[RabbitMQ]  队列%s信息:%s", queueName, res));
-        return JSONObject.parseObject(res);
+        }}).map(unitResponse -> {
+            String res = unitResponse.dataToJson().getString("entity");
+            LOG.info(String.format("[RabbitMQ]  队列%s信息:%s", queueName, res));
+            return JSONObject.parseObject(res);
+        });
     }
 
     /**
@@ -95,9 +104,9 @@ public class MqttQueuePiledUpMonitor {
         return "mqtt-subscription-" + clientId + "qos1";
     }
 
-    private int getLen(String clientId) {
-        JSONObject queueJSONObject = getQueueJSONObject(clientId);
-        return queueJSONObject.getJSONObject("backing_queue_status").getInteger("len");
+    private Single<Integer> getLen(String clientId) {
+        return getQueueJSONObject(clientId)
+                .map(queueJSONObject -> queueJSONObject.getJSONObject("backing_queue_status").getInteger("len"));
     }
 
 }

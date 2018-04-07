@@ -58,13 +58,17 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
                 UnitResponse unitResponse = UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
                 responseCallback(unitResponse, start);
             } else {
-                unit.execute(unitRequest, unitResponse -> {
-                    if (unitResponse == null) {
-                        unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
-                        LOG.error(unitResponse);
-                    }
-                    responseCallback(unitResponse, start);
-                });
+                try {
+                    unit.execute(unitRequest, unitResponse -> {
+                        if (unitResponse == null) {
+                            unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
+                            LOG.error(unitResponse);
+                        }
+                        responseCallback(unitResponse, start);
+                    });
+                } catch (Throwable e) {
+                    responseCallback(UnitResponse.createException(e), start);
+                }
             }
         }
     }

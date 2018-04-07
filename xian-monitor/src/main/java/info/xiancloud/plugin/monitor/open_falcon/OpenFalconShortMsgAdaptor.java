@@ -2,10 +2,11 @@ package info.xiancloud.plugin.monitor.open_falcon;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.*;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.Xian;
 import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.thread.ListenableCountDownLatch;
 import info.xiancloud.plugin.monitor.common.MonitorGroup;
 
 /**
@@ -41,18 +42,22 @@ public class OpenFalconShortMsgAdaptor implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String[] mobiles = msg.argJson().getString("tos").split(",");
+        ListenableCountDownLatch countDownLatch = new ListenableCountDownLatch(mobiles.length);
         for (String mobile : mobiles) {
-            Xian.call("message", "sendShortMsg", new JSONObject() {{
+            SingleRxXian.call("message", "sendShortMsg", new JSONObject() {{
                 put("text", msg.get("content", String.class));
                 put("mobile", mobile);
-            }}, new NotifyHandler() {
-                protected void handle(UnitResponse unitResponse) {
-                    LOG.info("发送给" + mobile + "的短信发送结果:" + unitResponse);
-                }
+            }}).subscribe(unitResponse -> {
+                LOG.info("发送给" + mobile + "的短信发送结果:" + unitResponse);
+                countDownLatch.countDown();
             });
         }
-        return UnitResponse.createSuccess();
+        countDownLatch.addListener(counter -> {
+            if (counter == 0) {
+                handler.handle(UnitResponse.createSuccess());
+            }
+        });
     }
 }

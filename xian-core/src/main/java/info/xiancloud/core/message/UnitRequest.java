@@ -8,6 +8,7 @@ import info.xiancloud.core.util.Reflection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Unit's parameter wrapper class, a map is contained in this class.
@@ -141,6 +142,28 @@ final public class UnitRequest {
     @SuppressWarnings("unchecked")
     public <T> List<T> getList(String key) {
         return Reflection.toType(get(key), List.class);
+    }
+
+    /**
+     * @param key          the argument name
+     * @param elementClass the element class
+     * @param <T>          the generic type
+     * @return a newly created hash set which contains all the elements for the given key.
+     */
+    public <T> Set<T> getSet(String key, Class<T> elementClass) {
+        return Reflection.toTypedSet(get(key), elementClass);
+    }
+
+    /**
+     * Get the set. Note you must be sure with the generic type, or a class cast exception will be thrown.
+     *
+     * @param key the argument name
+     * @param <T> the generic type
+     * @return the set representing the argument.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Set<T> getSet(String key) {
+        return Reflection.toType(get(key), Set.class);
     }
 
     /**

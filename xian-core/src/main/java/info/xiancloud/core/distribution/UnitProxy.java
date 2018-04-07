@@ -26,7 +26,7 @@ public class UnitProxy extends UnitBean {
     }
 
     @Override
-    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) throws Exception {
         unit.execute(request, handler);
     }
 

@@ -2,7 +2,7 @@ package info.xiancloud.plugin.monitor.grafana;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.EnvUtil;
 import info.xiancloud.core.util.LOG;
@@ -10,6 +10,9 @@ import info.xiancloud.plugin.monitor.open_falcon.custom_push.model.OpenFalconBea
 
 import java.util.*;
 
+/**
+ * grafana service in blocking way
+ */
 public class GrafanaService {
 
     private static final String[] LETTER = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -32,6 +35,11 @@ public class GrafanaService {
         return refId;
     }
 
+    /**
+     * this is a blocking method. Take care to use it.
+     *
+     * @param falconBeans falcon bean array
+     */
     public static void grafana(JSONArray falconBeans) {
         long startNanoTime = System.nanoTime();
 
@@ -71,9 +79,8 @@ public class GrafanaService {
 
         for (Map.Entry<String, Map<String, List<OpenFalconBean>>> group_dashboard : groups.entrySet()) {
             String slug = group_dashboard.getKey();
-            UnitResponse unitResponseObject = SyncXian.call("grafanaService", "dashboardGet", new HashMap() {{
-                put("slug", slug);
-            }});
+            UnitResponse unitResponseObject = SingleRxXian.call("grafanaService", "dashboardGet", new JSONObject().fluentPut("slug", slug))
+                    .blockingGet();
             JSONObject dashboard = null;
             if (unitResponseObject.succeeded() && unitResponseObject.dataToJson() != null)
                 dashboard = unitResponseObject.dataToJson();
@@ -274,7 +281,7 @@ public class GrafanaService {
         for (Map.Entry<String, JSONObject> entry : dashboards.entrySet()) {
 //            LOG.info("Grafana Dashboard 数据: " + entry.getValue().toJSONString());
 
-            UnitResponse _unitResponseObject = SyncXian.call("grafanaService", "dashboardCreateUpdate", entry.getValue());
+            UnitResponse _unitResponseObject = SingleRxXian.call("grafanaService", "dashboardCreateUpdate", entry.getValue()).blockingGet();
             LOG.info("grafanan create/update: " + _unitResponseObject);
         }
 

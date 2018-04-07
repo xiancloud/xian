@@ -1,7 +1,7 @@
 package info.xiancloud.mq.backed;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.NotifyHandler;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.distribution.MessageType;
@@ -13,9 +13,9 @@ import info.xiancloud.core.distribution.service_discovery.UnitDiscovery;
 import info.xiancloud.core.init.IStartService;
 import info.xiancloud.core.init.shutdown.ShutdownHook;
 import info.xiancloud.core.message.IdManager;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.Xian;
 import info.xiancloud.core.mq.IMqConsumerClient;
 import info.xiancloud.core.mq.TransferQueueUtil;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
@@ -132,16 +132,14 @@ public class TransferManager implements IStartService, ShutdownHook {
                 }});
                 Thread.sleep(10 * 1000);
             }
-            NotifyHandler callback = new NotifyHandler() {
-                protected void handle(UnitResponse output) {
-                    LOG.info("中转器收到回调:" + output + ";准备转发回调结果至原始发送端...");
-                    LocalNodeManager.sendBack(output);
-                    //todo 建议在这里做队列ack，既可以实现推送速度控制，也可以保证消息成功处理才从队列删除消息
-                }
+            Handler<UnitResponse> callback = response -> {
+                LOG.info("中转器收到回调:" + response + ";准备转发回调结果至原始发送端...");
+                LocalNodeManager.sendBack(response);
+                //todo 建议在这里做队列ack，既可以实现推送速度控制，也可以保证消息成功处理才从队列删除消息
             };
             LOG.debug("发送给unit的消息必须使用Xian发送，它支持unit多样性发送方式，必须标记为transferredAlready否则会出现循环消息");
             request.getContext().setTransferredAlready(true);
-            Xian.call(request, callback);
+            SingleRxXian.call(request).subscribe(callback::handle);
             return true;
         } catch (Throwable t) {
             LOG.error(t);
