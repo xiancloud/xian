@@ -11,6 +11,7 @@ import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Reflection;
 import info.xiancloud.core.util.StringUtil;
+import io.reactivex.Single;
 
 import java.util.Collection;
 import java.util.Map;
@@ -33,17 +34,19 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
 
         String title = title();
         if (StringUtil.isEmpty(title)) {
-            LOG.debug("success with empty array, not failure or exception in order to ignore monitors without titles.");
+            LOG.debug("Success with empty array, not failure or exception in order to ignore monitors without titles.");
+            handler.handle(UnitResponse.createSuccess(responseMonitor));
         } else {
-            Object monitor = execute0();
-            if (monitor != null) {
-                if (monitor instanceof UnitResponse)
-                    padding(responseMonitor, ((UnitResponse) monitor).getData());
-                else
-                    padding(responseMonitor, monitor);
-            }
+            execute0().subscribe(monitor -> {
+                if (monitor != null) {
+                    if (monitor instanceof UnitResponse)
+                        padding(responseMonitor, ((UnitResponse) monitor).getData());
+                    else
+                        padding(responseMonitor, monitor);
+                }
+                handler.handle(UnitResponse.createSuccess(responseMonitor));
+            });
         }
-        handler.handle(UnitResponse.createSuccess(responseMonitor));
     }
 
     private void padding(JSONArray responseMonitor, Object monitor) {
@@ -88,6 +91,6 @@ public abstract class AbstractDiyMonitorUnit implements Unit {
     /**
      * @return value array/ json/ bean/ value anything.
      */
-    public abstract Object execute0();
+    public abstract Single<Object> execute0();
 
 }

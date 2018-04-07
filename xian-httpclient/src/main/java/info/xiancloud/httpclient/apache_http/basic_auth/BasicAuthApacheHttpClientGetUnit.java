@@ -1,10 +1,7 @@
 package info.xiancloud.httpclient.apache_http.basic_auth;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.socket.ISocketGroup;
@@ -50,7 +47,7 @@ public class BasicAuthApacheHttpClientGetUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String url = msg.get("url", String.class);
         String userName = msg.get("userName", String.class);
         String password = msg.get("password", String.class);
@@ -61,11 +58,14 @@ public class BasicAuthApacheHttpClientGetUnit implements Unit {
             try {
                 httpResponse = httpClient.getHttpResponse();
             } catch (ConnectTimeoutException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + url);
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + url));
+                return;
             } catch (SocketTimeoutException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + url);
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + url));
+                return;
             } catch (Throwable e) {
-                return UnitResponse.createException(e);
+                handler.handle(UnitResponse.createException(e));
+                return;
             }
             responseJSON.put("statusLine", new JSONObject() {{
                 put("statusCode", httpResponse.getStatusLine().getStatusCode());
@@ -78,7 +78,8 @@ public class BasicAuthApacheHttpClientGetUnit implements Unit {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return UnitResponse.createSuccess(responseJSON);
+            handler.handle(UnitResponse.createSuccess(responseJSON));
+            return;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

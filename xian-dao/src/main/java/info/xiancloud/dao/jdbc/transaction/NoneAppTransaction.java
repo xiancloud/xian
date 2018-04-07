@@ -9,7 +9,7 @@ import info.xiancloud.dao.jdbc.pool.PoolFactory;
  * @author happyyangyuan
  * @deprecated 原本是可以使用它解决db接口内部调用另一些服务接口/db接口时默认使用一个事务的场景的,现在看来也用不上,因为我们在db接口内根本不会调用任何其他unit接口
  */
-public class NoneAppTransaction extends JoinableTransaction {
+public class NoneAppTransaction extends ReentrantTransaction {
 
     private static ThreadLocal<NoneAppTransaction> threadConnection = new InheritableThreadLocal<>();
 

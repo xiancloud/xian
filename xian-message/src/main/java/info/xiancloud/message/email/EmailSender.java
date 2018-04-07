@@ -70,7 +70,11 @@ public class EmailSender {
         this.subject = subject;
     }
 
-    public void send() {
+    /**
+     * blocking sending emails.
+     * TODO Make this asynchronous in the future.
+     */
+    public void blockingSend() {
         Properties prop = new Properties();
         prop.setProperty("mail.transport.protocol", protocol);
         prop.setProperty("mail.smtp.host", host);

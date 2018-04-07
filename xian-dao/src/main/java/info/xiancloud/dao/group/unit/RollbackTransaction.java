@@ -1,9 +1,6 @@
 package info.xiancloud.dao.group.unit;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.thread.MsgIdHolder;
@@ -33,13 +30,15 @@ public final class RollbackTransaction implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         if (AppTransaction.getExistedAppTrans(MsgIdHolder.get()) == null) {
-            return UnitResponse.createError(DaoGroup.CODE_OPERATE_ERROR, MsgIdHolder.get(), String.format("id=%s的事务不存在!", MsgIdHolder.get()));
+            handler.handle(UnitResponse.createError(DaoGroup.CODE_UNKNOWN_ERROR, MsgIdHolder.get(), String.format("id=%s的事务不存在!", MsgIdHolder.get())));
+            return;
         }
         AppTransaction.getExistedAppTrans(MsgIdHolder.get()).rollback();
         AppTransaction.getExistedAppTrans(MsgIdHolder.get()).close();//关闭数据库连接
-        return UnitResponse.createSuccess("Rollback transaction OK! transId=   " + MsgIdHolder.get());
+        handler.handle(UnitResponse.createSuccess("Rollback transaction OK! transId=   " + MsgIdHolder.get()));
+        return;
     }
 
     @Override

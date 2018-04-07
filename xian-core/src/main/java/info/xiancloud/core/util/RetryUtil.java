@@ -1,7 +1,6 @@
 package info.xiancloud.core.util;
 
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
-import info.xiancloud.core.thread_pool.ThreadPoolManager;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -88,14 +87,16 @@ public class RetryUtil {
     /**
      * 重试直到无异常抛出或者超过最大重试次数；
      * 原样抛出原异常
+     *
+     * @deprecated Do not support asynchronous task
      */
-    public static <Return> Return retryUntilNoException(Callable<Return> callable, int maxTry, Class<? extends Throwable> exceptionClass) throws Throwable {
+    public static <Return> Return retryUntilNoException(Callable<Return> callable, int maxTry, Class<? extends Throwable> exceptionClass) throws Exception {
         String errMsg = "连续重试失败" + maxTry + "次。";
-        Throwable t = null;
+        Exception t = null;
         while (maxTry > 0) {
             try {
                 return callable.call();
-            } catch (Throwable throwable) {
+            } catch (Exception throwable) {
                 if (exceptionClass.isAssignableFrom(throwable.getClass())) {
                     //只对指定的异常重试，其他异常直接抛出去
                     maxTry--;
@@ -112,13 +113,14 @@ public class RetryUtil {
 
 
     /**
-     * @param callable
+     * @param callable     the callable
      * @param intervalTime 递增执行的间隔时间
-     * @param maxTry
+     * @param maxTry       the max try
      * @param delayTime    延时执行
-     * @param <R>
-     * @return
-     * @throws Exception
+     * @param <R>          R
+     * @return R
+     * @throws Exception exception
+     * @deprecated Do not support asynchronous task
      */
     public static <R> R retry(Callable<R> callable, int intervalTime, int maxTry, int delayTime) throws Exception {
 

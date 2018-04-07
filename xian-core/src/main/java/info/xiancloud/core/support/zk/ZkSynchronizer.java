@@ -31,7 +31,7 @@ public class ZkSynchronizer {
      *
      * @param lockId the business id.
      * @param job    the job to run.
-     * @return true if lock has bean gained, and the job has bean run, otherwise false.
+     * @return true if lock has bean gained, and the job has been run, otherwise false.
      */
     public static Single<Boolean> runIfNotLocked(String lockId, Runnable job) {
         return run(lockId, job, 0);

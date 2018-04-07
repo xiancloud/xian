@@ -2,25 +2,26 @@ package info.xiancloud.zookeeper.cache;
 
 import com.google.common.cache.*;
 import info.xiancloud.core.init.shutdown.ShutdownHook;
+import info.xiancloud.core.support.zk.DistZkLocker;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.zookeeper.ZkConnection;
 import info.xiancloud.zookeeper.ZkPathManager;
+import io.reactivex.Single;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.zookeeper.KeeperException;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * nodeCache基础工具类.
  * 适用场景：
  * 1、简单的字符串key-value数据，读多写少的场景。
  * 2、允许写入延迟
- * todo 加入到xian-core内管理
  *
  * @author happyyangyuan
+ * @deprecated Not tested
  */
 public class ZkKeyValueCacheUtil implements ShutdownHook {
 
@@ -70,20 +71,21 @@ public class ZkKeyValueCacheUtil implements ShutdownHook {
     /**
      * 设置分布式缓存的值，不建议高频次地对同一个key进行设置操作。
      * 只适合读频繁但写入少的场景
+     * todo Not tested
      *
      * @throws CacheLockedException 如果其他人正在写入该值，则禁止你写入.
      */
-    public static void set(String subPath, String data) throws CacheLockedException {
+    public static void blockingSet(String subPath, String data) throws CacheLockedException {
         if (data == null) {
             data = "";
         }
         String fullPath = getFullPath(subPath);
-        DistLocker locker;//遇到锁则直接超时不执行
-        try {
-            locker = DistLocker.lock(ZkKeyValueCacheUtil.class.getName() + "-lock:" + fullPath.replace("/", "_"), 0);
-        } catch (TimeoutException rejected) {
-            throw new CacheLockedException(subPath);
-        }
+        Integer innerLockId = DistZkLocker
+                .lock(ZkKeyValueCacheUtil.class.getName() + "-lock:" + fullPath.replace("/", "_"), 0)
+                .onErrorResumeNext(timeoutException -> {
+                    //遇到锁则直接超时不执行
+                    return Single.error(new CacheLockedException(subPath));
+                }).blockingGet();
         try {
             try {
                 ZkConnection.client.setData().forPath(fullPath, data.getBytes());
@@ -94,7 +96,7 @@ public class ZkKeyValueCacheUtil implements ShutdownHook {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {
-            locker.unlock();
+            DistZkLocker.unlock(innerLockId);
         }
     }
 

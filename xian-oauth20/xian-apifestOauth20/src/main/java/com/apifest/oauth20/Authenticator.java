@@ -147,7 +147,7 @@ public class Authenticator {
     /**
      * 支持json和form两种表单形式
      */
-    public AccessToken issueAccessToken(FullHttpRequest req) throws OAuthException {
+    public AccessToken blockingIssueAccessToken(FullHttpRequest req) throws OAuthException {
         TokenRequest tokenRequest = TokenRequest.create(req);
         tokenRequest.validate();
         // check valid client_id, client_secret and status of the client app should be active

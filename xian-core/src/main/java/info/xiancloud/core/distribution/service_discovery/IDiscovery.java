@@ -90,6 +90,7 @@ public interface IDiscovery<Instance, Definition> extends Initable, Destroyable 
 
     /**
      * register a specified service instance.
+     * Unfortunately here I can only give synchronous zk client implementations.
      *
      * @param instance service instance to register
      */

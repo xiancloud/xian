@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author happyyangyuan
  */
-public class ServerRequestBean extends Bean {
+public class ServerRequestBean implements Bean {
     private String uri;
     private String body;
     private String ip;

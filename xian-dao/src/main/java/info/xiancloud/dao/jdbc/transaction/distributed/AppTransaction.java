@@ -8,7 +8,7 @@ import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.transaction.TransactionalCache;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.dao.jdbc.pool.PoolFactory;
-import info.xiancloud.dao.jdbc.transaction.JoinableTransaction;
+import info.xiancloud.dao.jdbc.transaction.ReentrantTransaction;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author happyyangyuan
  */
-public class AppTransaction extends JoinableTransaction implements IDistributedTransaction, Serializable {
+public class AppTransaction extends ReentrantTransaction implements IDistributedTransaction, Serializable {
 
     private final Date createDate = new Date();
     private final static Map<Object, AppTransaction> localTransMap = new ConcurrentHashMap<>();

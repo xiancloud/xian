@@ -2,12 +2,10 @@ package info.xiancloud.message.unit;
 
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.message.MessageGroup;
 import info.xiancloud.message.email.EmailSender;
 
@@ -65,7 +63,7 @@ public class SendEmail implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         Map map = msg.getArgMap();
         List<String> emailAddresses = new ArrayList<>();
         for (Object mailAddr : (List) map.get("recipients")) {
@@ -78,12 +76,8 @@ public class SendEmail implements Unit {
             records.get(addr).add(System.currentTimeMillis());
             emailAddresses.add(addr);
         }
-        try {
-            new EmailSender(emailAddresses, map.get("subject").toString(), map.get("content").toString()).send();
-        } catch (Throwable e) {
-            return UnitResponse.createException(e);
-        }
-        return UnitResponse.createSuccess("邮件发送请求已发送...");
+        new EmailSender(emailAddresses, map.get("subject").toString(), map.get("content").toString()).blockingSend();
+        handler.handle(UnitResponse.createSuccess("邮件发送请求已发送..."));
     }
 
     private static Map<String, List<Long>> records = new ConcurrentHashMap<>();
@@ -106,7 +100,7 @@ public class SendEmail implements Unit {
         return count > getLimit(map);
     }
 
-    public static void main(String... args) {
+    public static void test(String... args) {
         SendEmail.records.put("happyyangyuan@163.com", new ArrayList<Long>() {{
 //            add(System.currentTimeMillis());
 //            add(System.currentTimeMillis());
@@ -123,6 +117,6 @@ public class SendEmail implements Unit {
             );
             put("limit", 3);
             put("scope", 1000 * 30);
-        }}));
+        }}), LOG::info);
     }
 }

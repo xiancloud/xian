@@ -1,9 +1,6 @@
 package info.xiancloud.grafana.unit.dashboard;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -13,6 +10,9 @@ import info.xiancloud.grafana.utils.GrafanaUtil;
 
 import java.util.Map;
 
+/**
+ * get grafana dashboard
+ */
 public class DashboardGetUnit implements Unit {
     @Override
     public String getName() {
@@ -35,18 +35,15 @@ public class DashboardGetUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String slug = msg.get("slug", String.class);
 
         Map<String, String> headers = GrafanaUtil.gainHttpHeaders();
 
-        try {
-            String url = XianConfig.get("grafana_http_api_dashboards_db_url");
-            String response = HttpUtil.get(url + (url.endsWith("/") ? "" : "/") + slug, headers);
-            return UnitResponse.createSuccess(response);
-        } catch (Exception e) {
-            return UnitResponse.createException(e);
-        }
+        String url = XianConfig.get("grafana_http_api_dashboards_db_url");
+        HttpUtil
+                .get(url + (url.endsWith("/") ? "" : "/") + slug, headers)
+                .subscribe(response -> handler.handle(UnitResponse.createSuccess(response)));
     }
 
 }

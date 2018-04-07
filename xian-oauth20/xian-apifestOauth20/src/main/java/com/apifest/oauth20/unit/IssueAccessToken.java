@@ -2,13 +2,11 @@ package com.apifest.oauth20.unit;
 
 import com.alibaba.fastjson.JSONObject;
 import com.apifest.oauth20.bean.OAuthException;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.authen.AccessToken;
+import info.xiancloud.core.util.LOG;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
@@ -49,28 +47,31 @@ public class IssueAccessToken implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         JSONObject json = new JSONObject() {{
             put("client_id", msg.getString("appId"));
             put("client_secret", msg.getString("appSecret"));
             put("grant_type", "client_credentials");
         }};
         String body = json.toJSONString(),
-                uri = msg.getString("$url");
+                uri = msg.getContext().getUri();
         ByteBuf byteBuffer = Unpooled.wrappedBuffer(body.getBytes());
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri, byteBuffer);
         try {
-            AccessToken token = OAuthService.auth.issueAccessToken(request);
-            return UnitResponse.createSuccess(new JSONObject() {{
+            AccessToken token = OAuthService.auth.blockingIssueAccessToken(request);
+            handler.handle(UnitResponse.createSuccess(new JSONObject() {{
                 put("appId", msg.getString("appId"));
                 put("accessToken", token.getToken());
                 put("valid", token.isValid());
                 put("expiresIn", token.getExpiresIn());
                 put("created", token.getCreated());
                 put("scope", token.getScope());
-            }});
+            }}));
+            return;
         } catch (OAuthException e) {
-            return UnitResponse.createException(e);
+            LOG.error(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
     }
 

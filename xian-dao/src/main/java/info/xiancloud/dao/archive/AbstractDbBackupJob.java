@@ -2,7 +2,7 @@ package info.xiancloud.dao.archive;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.Unit;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.support.cache.api.CacheObjectUtil;
 import info.xiancloud.core.support.quartz.AbstractJobBean;
 import info.xiancloud.core.support.quartz.SchedulingMetaInfo;
@@ -18,23 +18,24 @@ import java.util.GregorianCalendar;
  *
  * @author happyyangyuan
  */
+@SuppressWarnings("all")
 public abstract class AbstractDbBackupJob extends AbstractJobBean {
 
     @Override
-    protected void doExecute(JobExecutionContext jobExecutionContext) {
+    protected void blockingExecute(JobExecutionContext jobExecutionContext) {
         if (StringUtil.isEmpty(lockName())) {
-            invokeDbBackupUnit();
+            blockingInvokeDbBackupUnit();
         } else
             try {
-                CacheObjectUtil.set(lockName(), "locked", 60 * 60);
-                invokeDbBackupUnit();
+                CacheObjectUtil.set(lockName(), "locked", 60 * 60).blockingGet();
+                blockingInvokeDbBackupUnit();
             } finally {
                 CacheObjectUtil.remove(lockName());
             }
     }
 
-    private void invokeDbBackupUnit() {
-        SyncXian.call(dbBackupUnit(), new JSONObject() {{
+    private void blockingInvokeDbBackupUnit() {
+        SingleRxXian.call(dbBackupUnit(), new JSONObject() {{
             Calendar yesterday = new GregorianCalendar();
             yesterday.add(Calendar.DATE, 0 - daysAgo());
             yesterday.set(Calendar.HOUR_OF_DAY, 0);
@@ -42,7 +43,7 @@ public abstract class AbstractDbBackupJob extends AbstractJobBean {
             yesterday.set(Calendar.SECOND, 0);
             yesterday.set(Calendar.MILLISECOND, 0);
             put("backupDateTime", yesterday);
-        }}, Long.MAX_VALUE);
+        }}).blockingGet();
     }
 
     /**

@@ -3,10 +3,8 @@ package info.xiancloud.core.message.sender;
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.distribution.exception.AbstractXianException;
-import info.xiancloud.core.distribution.exception.AbstractXianException;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.util.LOG;
 
 /**
@@ -15,9 +13,9 @@ import info.xiancloud.core.util.LOG;
  * @author happyyangyuan
  */
 public class ExceptionHandlerSender extends AbstractAsyncSender {
-    private Throwable exception;
+    private Exception exception;
 
-    ExceptionHandlerSender(UnitRequest request, NotifyHandler handler, Throwable exception) {
+    ExceptionHandlerSender(UnitRequest request, NotifyHandler handler, Exception exception) {
         super(request, handler);
         this.exception = exception;
         callback.addAfter(new NotifyHandler.Action() {
@@ -34,7 +32,7 @@ public class ExceptionHandlerSender extends AbstractAsyncSender {
     }
 
     @Override
-    protected void asyncSend() throws Throwable {
+    protected void asyncSend() throws Exception {
         if (exception == null) {
             throw new IllegalArgumentException("既然是exceptionHandler，至少你传入一个exception对象过来啊，别传null啊!");
         }

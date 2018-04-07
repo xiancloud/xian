@@ -1,6 +1,7 @@
 package info.xiancloud.discoverybridge.application;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.distribution.NodeStatus;
@@ -27,14 +28,17 @@ public class ApplicationRegistrationBridge implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest request) {
+    @SuppressWarnings("all")
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
         NodeStatus nodeStatus = request.get("nodeStatus", NodeStatus.class);
         try {
-            ApplicationDiscovery.singleton.register(applicationInstance(nodeStatus));
-            return UnitResponse.createSuccess();
+            ApplicationDiscovery.singleton.register(applicationInstance(nodeStatus));//Warning for blocking method.
+            handler.handle(UnitResponse.createSuccess());
+            return;
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.createUnknownError(e, "注册application失败");
+            handler.handle(UnitResponse.createUnknownError(e, "注册application失败"));
+            return;
         }
     }
 

@@ -1,6 +1,7 @@
 package info.xiancloud.discoverybridge.unit;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.distribution.NodeStatus;
@@ -22,7 +23,7 @@ public class UnitUnregistrationBridge implements Unit {
     public Input getInput() {
         return Input.create()
                 .add("unit", Unit.class, "待注册的unit", REQUIRED)
-                .add("nodeStatus", NodeStatus.class, "节点装填", REQUIRED);
+                .add("nodeStatus", NodeStatus.class, "节点状态", REQUIRED);
     }
 
     @Override
@@ -31,16 +32,19 @@ public class UnitUnregistrationBridge implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    @SuppressWarnings("all")
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         UnitProxy unitProxy = msg.get("unit", UnitProxy.class);
         NodeStatus nodeStatus = msg.get("nodeStatus", NodeStatus.class);
         UnitInstance unitInstance = UnitRegistrationBridge.unitInstance(unitProxy, nodeStatus);
         try {
-            UnitDiscovery.singleton.unregister(unitInstance);
-            return UnitResponse.createSuccess();
+            UnitDiscovery.singleton.unregister(unitInstance);//Warning for blocking method.
+            handler.handle(UnitResponse.createSuccess());
+            return;
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.createUnknownError(e, "unit un registration failure.");
+            handler.handle(UnitResponse.createUnknownError(e, "unit un registration failure."));
+            return;
         }
     }
 }

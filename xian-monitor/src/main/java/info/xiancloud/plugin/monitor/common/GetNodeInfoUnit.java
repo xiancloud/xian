@@ -2,10 +2,7 @@ package info.xiancloud.plugin.monitor.common;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.NodeStatus;
 import info.xiancloud.core.distribution.exception.ApplicationOfflineException;
 import info.xiancloud.core.distribution.exception.ApplicationUndefinedException;
@@ -48,7 +45,7 @@ public class GetNodeInfoUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         if (StringUtil.isEmpty(msg.get("application"))) {
             JSONArray nodeInfoArray = new JSONArray();
             for (String application : ApplicationDiscovery.singleton.queryForNames()) {
@@ -61,16 +58,18 @@ public class GetNodeInfoUnit implements Unit {
                 }
                 nodeInfoArray.add(nodeInfo);
             }
-            return UnitResponse.createSuccess(nodeInfoArray);
+            handler.handle(UnitResponse.createSuccess(nodeInfoArray));
+            return;
         } else try {
             JSONArray nodeInfoArray = new JSONArray();
             List<ApplicationInstance> clients = ApplicationRouter.singleton.allInstances(msg.get("application"));
             for (ApplicationInstance instance : clients) {
                 nodeInfoArray.add(nodeInfo(instance.getPayload()));
             }
-            return UnitResponse.createSuccess(nodeInfoArray);
+            handler.handle(UnitResponse.createSuccess(nodeInfoArray));
+            return;
         } catch (ApplicationOfflineException | ApplicationUndefinedException e) {
-            return e.toUnitResponse();
+            handler.handle(e.toUnitResponse());
         }
     }
 

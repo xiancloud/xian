@@ -112,6 +112,7 @@ public final class CacheListUtil {
      * @param value           value
      * @return true on success, false on failure.
      */
+    @SuppressWarnings("all")
     public static Single<Boolean> addFirst(CacheConfigBean cacheConfigBean, String cacheKey, Object value) {
         return SingleRxXian.call(CacheService.CACHE_SERVICE, "cacheListAddHead", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
@@ -228,12 +229,9 @@ public final class CacheListUtil {
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
             put("valueObj", value);
-        }}).flatMap(unitResponse -> {
-            if (unitResponse.succeeded()) {
-                long result = Objects.requireNonNull(unitResponse.dataToLong());
-                return Single.just(result);
-            } else
-                return Single.error(unitResponse.getException());
+        }}).map(unitResponse -> {
+            unitResponse.throwExceptionIfNotSuccess();
+            return unitResponse.dataToLong();
         });
     }
 
@@ -258,11 +256,7 @@ public final class CacheListUtil {
         return SingleRxXian.call(CacheService.CACHE_SERVICE, "cacheListClear", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
-        }}).flatMap(unitResponse -> {
-            if (unitResponse.succeeded())
-                return Single.never();
-            else return Single.error(unitResponse.getException());
-        }).toCompletable();
+        }}).toCompletable();
     }
 
     /**
@@ -290,10 +284,12 @@ public final class CacheListUtil {
         return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, 0, -1);
     }
 
+    @SuppressWarnings("all")
     public static Single<List<String>> getAll(CacheConfigBean cacheConfigBean, String cacheKey) {
         return getRange(cacheConfigBean, cacheKey, 0, -1);
     }
 
+    @SuppressWarnings("all")
     public static Single<List<String>> getRange(String cacheKey, int startIndex, int endIndex) {
         return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, startIndex, endIndex);
     }
@@ -301,6 +297,7 @@ public final class CacheListUtil {
     /**
      * @return 返回list，如果key不存在，那么返回null，如果key为空列表，那么返回size=0的ArrayList
      */
+    @SuppressWarnings("all")
     public static <T> Single<List<T>> getAll(String cacheKey, Class<T> clazz) {
         return SingleRxXian.call(CacheService.CACHE_SERVICE, "cacheListGetAll", new JSONObject() {{
             put("key", cacheKey);
@@ -310,6 +307,7 @@ public final class CacheListUtil {
     /**
      * 指定获取范围 (返回的类型是raw string，所以不推荐使用)
      */
+    @SuppressWarnings("all")
     public static Single<List<String>> getRange(CacheConfigBean cacheConfigBean, String cacheKey, int startIndex, int endIndex) {
         return SingleRxXian.call(CacheService.CACHE_SERVICE, "cacheListRange", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
@@ -328,10 +326,12 @@ public final class CacheListUtil {
         return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, 0, -1, clazz);
     }
 
+    @SuppressWarnings("all")
     public static <T> Single<List<T>> getRange(CacheConfigBean cacheConfigBean, String cacheKey, Class<T> clazz) {
         return getRange(cacheConfigBean, cacheKey, 0, -1, clazz);
     }
 
+    @SuppressWarnings("all")
     public static <T> Single<List<T>> getRange(String cacheKey, int startIndex, int endIndex, Class<T> clazz) {
         return getRange(CacheService.CACHE_CONFIG_BEAN, cacheKey, startIndex, endIndex, clazz);
     }
@@ -339,6 +339,7 @@ public final class CacheListUtil {
     /**
      * 指定获取范围
      */
+    @SuppressWarnings("all")
     public static <T> Single<List<T>> getRange(CacheConfigBean cacheConfigBean, String cacheKey, int startIndex, int endIndex, Class<T> clazz) {
         return getRange(cacheConfigBean, cacheKey, startIndex, endIndex)
                 .map(strings -> Reflection.toTypedList(strings, clazz));

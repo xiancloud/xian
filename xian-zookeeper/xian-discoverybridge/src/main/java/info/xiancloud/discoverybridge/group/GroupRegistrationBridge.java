@@ -1,6 +1,7 @@
 package info.xiancloud.discoverybridge.group;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.distribution.GroupProxy;
@@ -21,8 +22,8 @@ public class GroupRegistrationBridge implements Unit {
     @Override
     public Input getInput() {
         return Input.create()
-                .add("group", Group.class, "", REQUIRED)
-                .add("nodeStatus", NodeStatus.class, "", REQUIRED);
+                .add("group", Group.class, "group object", REQUIRED)
+                .add("nodeStatus", NodeStatus.class, "节点状态", REQUIRED);
     }
 
     @Override
@@ -31,15 +32,18 @@ public class GroupRegistrationBridge implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest request) {
+    @SuppressWarnings("all")
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
         GroupProxy groupProxy = request.get("group", GroupProxy.class);
         NodeStatus nodeStatus = request.get("nodeStatus", NodeStatus.class);
         try {
-            GroupDiscovery.singleton.register(groupInstance(groupProxy, nodeStatus));
-            return UnitResponse.createSuccess();
+            GroupDiscovery.singleton.register(groupInstance(groupProxy, nodeStatus));//Warning for blocking method.
+            handler.handle(UnitResponse.createSuccess());
+            return;
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.createUnknownError(e, "failed to register group");
+            handler.handle(UnitResponse.createUnknownError(e, "failed to register group"));
+            return;
         }
     }
 

@@ -194,7 +194,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
         if (contentType != null && (contentType.contains(HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED)
                 || contentType.contains(HttpHeaderValues.APPLICATION_JSON))) {
             try {
-                AccessToken accessToken = auth.issueAccessToken(request);
+                AccessToken accessToken = auth.blockingIssueAccessToken(request);
                 if (accessToken != null) {
                     String jsonString = JSON.toJSONString(accessToken);
                     LOG.debug("access token:" + jsonString);

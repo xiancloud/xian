@@ -1,13 +1,10 @@
 package info.xiancloud.zookeeper.unit.lock;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.zookeeper.unit.ZookeeperGroup;
 import info.xiancloud.zookeeper.lock.ZkDistributedLock;
+import info.xiancloud.zookeeper.unit.ZookeeperGroup;
 
 /**
  * @author happyyangyuan
@@ -30,9 +27,9 @@ public class UnlockUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         ZkDistributedLock.unlock(msg.get("innerId", int.class));
-        return UnitResponse.createSuccess("解锁成功:" + msg.get("innerId", int.class));
+        handler.handle(UnitResponse.createSuccess("解锁成功:" + msg.get("innerId", int.class)));
     }
 
     @Override

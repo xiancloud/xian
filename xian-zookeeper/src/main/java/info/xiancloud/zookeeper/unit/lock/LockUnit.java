@@ -1,21 +1,16 @@
 package info.xiancloud.zookeeper.unit.lock;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.zookeeper.lock.ZkDistributedLock;
 import info.xiancloud.zookeeper.unit.ZookeeperGroup;
 
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
 /**
  * @author happyyangyuan
- * @deprecated zookeeper distributed lock is under poor perfance.
+ * @deprecated zookeeper distributed lock is proofed to be poor performance.
  */
 public class LockUnit implements Unit {
     @Override
@@ -36,15 +31,13 @@ public class LockUnit implements Unit {
     }
 
     @Override
-    public void execute(UnitRequest msg, Consumer<UnitResponse> handler) {
-        ThreadPoolManager.execute(() -> {
-            try {
-                int innerId = ZkDistributedLock.lock(msg.get("lockId", String.class), msg.get("timeoutInMilli", long.class));
-                handler.accept(UnitResponse.createSuccess(innerId));
-            } catch (TimeoutException e) {
-                handler.accept(UnitResponse.create(Group.CODE_TIME_OUT, msg.get("lockId"), "获取锁超时:" + msg.get("lockId", String.class)));
-            }
-        });
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        try {
+            int innerId = ZkDistributedLock.lock(msg.get("lockId", String.class), msg.get("timeoutInMilli", long.class));
+            handler.handle(UnitResponse.createSuccess(innerId));
+        } catch (TimeoutException e) {
+            handler.handle(UnitResponse.create(Group.CODE_TIME_OUT, msg.get("lockId"), "获取锁超时:" + msg.get("lockId", String.class)));
+        }
     }
 
     @Override

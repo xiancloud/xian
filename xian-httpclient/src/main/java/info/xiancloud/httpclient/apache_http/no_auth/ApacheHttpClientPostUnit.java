@@ -1,10 +1,7 @@
 package info.xiancloud.httpclient.apache_http.no_auth;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -48,7 +45,7 @@ public class ApacheHttpClientPostUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String url = msg.get("url", String.class);
         Map<String, String> headers = msg.get("headers");
         Integer readTimeoutInMillis = msg.get("readTimeoutInMillis", Integer.class);
@@ -61,11 +58,14 @@ public class ApacheHttpClientPostUnit implements Unit {
                         XianConfig.getIntValue("apache.httpclient.max.try", 3),
                         ConnectTimeoutException.class);//这里对连接超时做重试，总共只尝试三次
             } catch (ConnectTimeoutException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url);
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url));
+                return;
             } catch (SocketTimeoutException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, e, "Read timeout: " + url);
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, e, "Read timeout: " + url));
+                return;
             } catch (Throwable e) {
-                return UnitResponse.createException(e);
+                handler.handle(UnitResponse.createException(e));
+                return;
             }
             responseJSON.put("statusLine", new JSONObject() {{
                 put("statusCode", "todo");
@@ -74,7 +74,8 @@ public class ApacheHttpClientPostUnit implements Unit {
             }});
             responseJSON.put("allHeaders", "todo");
             responseJSON.put("entity", responsePayload);
-            return UnitResponse.createSuccess(responseJSON);
+            handler.handle(UnitResponse.createSuccess(responseJSON));
+            return;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

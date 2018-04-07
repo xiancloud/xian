@@ -207,7 +207,10 @@ public final class UnitMeta {
     public static final class Broadcast {
         private boolean successDataOnly = false;
         /**
-         * if true the broadcast sender returns immediately, otherwise blocks until all unit returned, note that the receiver unit performs concurrently rather than one by one.
+         * if true the broadcast sender returns immediately, otherwise blocks until all unit returned,
+         * note that the receiver unit performs concurrently rather than one by one.
+         *
+         * @deprecated In synchronous xian, this async property is not needed anymore.
          */
         private boolean async = true;
         private long timeoutInMilli = 5000;
@@ -221,10 +224,16 @@ public final class UnitMeta {
             return this;
         }
 
+        /**
+         * @deprecated In synchronous xian, this async property is not needed anymore.
+         */
         public boolean isAsync() {
             return async;
         }
 
+        /**
+         * @deprecated In synchronous xian, this async property is not needed anymore.
+         */
         public Broadcast setAsync(boolean async) {
             this.async = async;
             return this;

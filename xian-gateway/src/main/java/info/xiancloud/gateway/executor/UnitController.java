@@ -1,7 +1,7 @@
 package info.xiancloud.gateway.executor;
 
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.Xian;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.gateway.handle.TransactionalNotifyHandler;
 
@@ -21,7 +21,7 @@ public class UnitController extends BaseController {
     @Override
     protected void atomicAsyncRun() {
         LOG.debug("以下消息发送/接收/处理的异常统一抛出到父类BaseExecutor内处理");
-        Xian.call(controllerRequest, handler);
+        SingleRxXian.call(controllerRequest).subscribe(unitResponse -> handler.callback(unitResponse));
     }
 
 }

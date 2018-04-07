@@ -7,7 +7,7 @@ import info.xiancloud.core.Bean;
  *
  * @author happyyangyuan
  */
-public class ServerResponseBean extends Bean {
+public class ServerResponseBean implements Bean {
 
     private String msgId;
     private String responseBody;

@@ -1,20 +1,18 @@
 package info.xiancloud.message.short_msg.yunpian;
 
 import info.xiancloud.core.conf.XianConfig;
-import info.xiancloud.core.socket.ConnectTimeoutException;
 import info.xiancloud.core.util.HttpUtil;
+import info.xiancloud.core.util.LOG;
+import io.reactivex.Single;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 短信http接口的java代码调用示例
- * 基于Apache HttpClient 4.3
  *
  * @author songchao
+ * @author happyyangyuan
  * @since 2015-04-03
  */
 
@@ -35,7 +33,7 @@ public class JavaSmsApi {
     //编码格式。发送编码格式统一用UTF-8
     private static String ENCODING = "UTF-8";
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void test(String[] args) {
 
         //修改为您的apikey.apikey可在官网（http://www.yunpian.com)登录后用户中心首页看到
         String apikey = XianConfig.get("xian_yunpian_apikey");
@@ -74,7 +72,7 @@ public class JavaSmsApi {
      * @return json格式字符串
      */
 
-    public static String getUserInfo(String apikey) throws IOException, URISyntaxException {
+    public static Single<String> getUserInfo(String apikey) {
         Map<String, String> params = new HashMap<>();
         params.put("apikey", apikey);
         return post(URI_GET_USER_INFO, params);
@@ -87,10 +85,9 @@ public class JavaSmsApi {
      * @param text   　短信内容
      * @param mobile 　接受的手机号
      * @return json格式字符串
-     * @throws IOException
      */
 
-    public static String sendSms(String apikey, String text, String mobile) throws IOException {
+    public static Single<String> sendSms(String apikey, String text, String mobile) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("apikey", apikey);
         params.put("text", text);
@@ -106,11 +103,10 @@ public class JavaSmsApi {
      * @param tpl_value 　模板变量值
      * @param mobile    　接受的手机号
      * @return json格式字符串
-     * @throws IOException
      */
 
-    public static String tplSendSms(String apikey, long tpl_id, String tpl_value, String mobile) throws IOException {
-        Map<String, String> params = new HashMap<String, String>();
+    public static Single<String> tplSendSms(String apikey, long tpl_id, String tpl_value, String mobile) {
+        Map<String, String> params = new HashMap<>();
         params.put("apikey", apikey);
         params.put("tpl_id", String.valueOf(tpl_id));
         params.put("tpl_value", tpl_value);
@@ -124,11 +120,11 @@ public class JavaSmsApi {
      * @param apikey apikey
      * @param mobile 接收的手机号
      * @param code   验证码
-     * @return
+     * @return the http result
      */
 
-    public static String sendVoice(String apikey, String mobile, String code) {
-        Map<String, String> params = new HashMap<String, String>();
+    public static Single<String> sendVoice(String apikey, String mobile, String code) {
+        Map<String, String> params = new HashMap<>();
         params.put("apikey", apikey);
         params.put("mobile", mobile);
         params.put("code", code);
@@ -140,15 +136,11 @@ public class JavaSmsApi {
      * @param paramsMap parameter map
      * @return 响应
      */
-    public static String post(String url, Map<String, String> paramsMap) {
+    public static Single<String> post(String url, Map<String, String> paramsMap) {
         String applicationXwwwformUrlEncodedString = HttpUtil.xwwwformEncode(paramsMap);
-        try {
-            return HttpUtil.post(url, applicationXwwwformUrlEncodedString, new HashMap<String, String>() {{
-                put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-                put("Accept", "application/json;charset=utf-8");
-            }});
-        } catch (ConnectTimeoutException | SocketTimeoutException e) {
-            throw new RuntimeException(e);
-        }
+        return HttpUtil.post(url, applicationXwwwformUrlEncodedString, new HashMap<String, String>() {{
+            put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+            put("Accept", "application/json;charset=utf-8");
+        }}).doOnError(LOG::error);
     }
 }

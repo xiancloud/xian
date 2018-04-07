@@ -46,10 +46,10 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
             } else {
                 asyncSend();
             }
-        } catch (Throwable throwable) {
+        } catch (Throwable exception) {
             //just in case.
-            LOG.error(throwable);
-            callback.callback(UnitResponse.createException(throwable));
+            LOG.error(exception);
+            callback.callback(UnitResponse.createException(exception));
         } finally {
             if (newTransIdGenerated) {
                 //退出时清空msgId:生没带来,死不带走
@@ -65,8 +65,8 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
      * 执行异步发送动作，并且必须在执行完毕后进行callback操作 <br>
      * Execute some thing in asynchronous way, subclass implementations must invoke the callback.
      *
-     * @throws Throwable dead code, no exception is thrown. But just in case.
+     * @throws Exception dead code, no exception is thrown. But just in case.
      */
-    protected abstract void asyncSend() throws Throwable;
+    protected abstract void asyncSend() throws Exception;
 
 }

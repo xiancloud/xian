@@ -23,7 +23,7 @@ public class RemoteSender extends AbstractAsyncSender {
         super(request, callback);
     }
 
-    protected void asyncSend() throws Throwable {
+    protected void asyncSend() throws Exception {
         if (EnvUtil.isRemoteSenderDisabled()) {
             callback.callback(UnitResponse.createError(Group.CODE_REMOTE_SENDER_DISABLED, EnvUtil.getApplication(),
                     String.format("application '%s' 禁止远程消息发送!", EnvUtil.getApplication())));

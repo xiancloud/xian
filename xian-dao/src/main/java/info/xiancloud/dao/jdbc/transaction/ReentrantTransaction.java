@@ -6,20 +6,20 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * 类似spring的申明式事务，可以加入已有事务中
+ * 可重入的数据库事务
  *
  * @author happyyangyuan
  */
-public abstract class JoinableTransaction extends Transaction {
+public abstract class ReentrantTransaction extends Transaction {
     protected Integer count;
 
-    protected JoinableTransaction(Connection connection, Object transactionId) {
+    protected ReentrantTransaction(Connection connection, Object transactionId) {
         super(connection, transactionId);
         count = 0;
     }
 
     @Override
-    public JoinableTransaction begin() {
+    public ReentrantTransaction begin() {
         if (count == 0) {
             try {
                 doBegin();
@@ -36,7 +36,7 @@ public abstract class JoinableTransaction extends Transaction {
         return count;
     }
 
-    public JoinableTransaction rollback() {
+    public ReentrantTransaction rollback() {
         LOG.debug("JoinableTransaction------   正在执行回滚操作");
         try {
             doRollback(); /*connection.rollback();*/
@@ -54,7 +54,7 @@ public abstract class JoinableTransaction extends Transaction {
 
     protected abstract void clear();
 
-    public JoinableTransaction commit() {
+    public ReentrantTransaction commit() {
         count--;
         if (count == 0) {
             try {

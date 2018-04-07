@@ -11,7 +11,7 @@ import info.xiancloud.gateway.handle.TransactionalNotifyHandler;
 import java.util.Map;
 
 /**
- * base controller for the uri
+ * base asynchronous controller for the uri
  *
  * @author happyyangyuan
  */
@@ -26,19 +26,20 @@ public abstract class BaseController implements Runnable {
 
     @Override
     public void run() {
-        try {
-            if (!ValidateAccessToken.validate(controllerRequest)) {
-                handler.callback(UnitResponse.createError(Group.CODE_BAD_REQUEST, null, "请求不合法！"));
-            } else {
-                if (handler.isTransactional()) {
-                    TransactionalCache.beginDistributedTrans();
-                }
-                atomicAsyncRun();
-            }
-        } catch (Throwable t) {
-            LOG.error(t);
-            handler.callback(UnitResponse.createException(t));
-        }
+        ValidateAccessToken.validate(controllerRequest)
+                .subscribe(passed -> {
+                    if (!passed) {
+                        handler.callback(UnitResponse.createError(Group.CODE_BAD_REQUEST, null, "请求不合法！"));
+                    } else {
+                        if (handler.isTransactional()) {
+                            TransactionalCache.beginDistributedTrans();
+                        }
+                        atomicAsyncRun();
+                    }
+                }, t -> {
+                    LOG.error(t);
+                    handler.callback(UnitResponse.createException(t));
+                });
     }
 
     /**

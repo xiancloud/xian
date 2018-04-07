@@ -40,10 +40,10 @@ final public class UnitResponse {
      * the data object.
      */
     private Object data;
-    /**
+    /*
      * null if no exception. Do not use this exception property when code is {@link Group#CODE_SUCCESS}
-     */
     private Throwable exception;
+    */
     /**
      * Error message. Do not use this errMsg when code is {@link Group#CODE_SUCCESS}
      */
@@ -59,25 +59,24 @@ final public class UnitResponse {
         return this;
     }
 
-    /**
+    /*
      * @return the exception object if this unit response represents a exception response. Null if no exception.
-     */
     public Throwable getException() {
         return exception;
     }
 
-    /**
      * Set the exception of this unit response, note that this will set the rollback property in the context to true,
      * which will lead to a transaction rolling back if transaction is enabled.
      *
      * @param exception the exception object.
      * @return this unit response object.
-     */
+
     public UnitResponse setException(Throwable exception) {
         this.exception = exception;
         getContext().setRollback(true);
         return this;
     }
+    */
 
     private UnitResponse() {
     }
@@ -108,8 +107,7 @@ final public class UnitResponse {
      */
     public static UnitResponse createException(Throwable e) {
         return UnitResponse
-                .createError(Group.CODE_EXCEPTION, null, null)
-                .setException(e);
+                .createError(Group.CODE_EXCEPTION, e, null);
     }
 
     /**
@@ -134,13 +132,22 @@ final public class UnitResponse {
         return UnitResponse.createException(exception).setCode(errCode);
     }
 
+    /**
+     * Create a exception unit response.
+     * This method is the same as {@link #createError(String, Object, String)}
+     *
+     * @param errCode   error code
+     * @param exception exception
+     * @param errMsg    error message
+     * @return a newly created unit response representing the exception.
+     */
     public static UnitResponse createException(String errCode, Throwable exception, String errMsg) {
         return UnitResponse.createException(errCode, exception).setErrMsg(errMsg);
     }
 
     /**
      * @param data   The failure data. Leave it null if you have no data to set.
-     *               Under some complicated unit situations, failed data must be included and returned.
+     *               Under some complicated business situations, failed data must be included and returned.
      * @param errMsg failure reason or description.
      * @return an response object with failure data and failure message.
      */
@@ -152,7 +159,7 @@ final public class UnitResponse {
      * create a new error unit response instance.
      *
      * @param errCode the error code.
-     * @param data    the data
+     * @param data    the data, anything you want, can be an exception object too
      * @param errMsg  the error message.
      * @return the newly created unit response object.
      */
@@ -199,6 +206,7 @@ final public class UnitResponse {
      *
      * @return the newly created unit reponse instance.
      */
+    @SuppressWarnings("unused")
     public static UnitResponse createRollingBack() {
         return createRollingBack(null);
     }
@@ -209,6 +217,7 @@ final public class UnitResponse {
      * @param errMsg the error message.
      * @return An response object which will indicate a transactional rolling back.
      */
+    @SuppressWarnings("all")
     public static UnitResponse createRollingBack(String errMsg) {
         return UnitResponse.createUnknownError(null, errMsg).setContext(Context.create().setRollback(true));
     }
@@ -223,7 +232,7 @@ final public class UnitResponse {
         return UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, theMissingParameters, errMsg);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     public static UnitResponse create(JSONObject json) {
         return Reflection.toType(json, UnitResponse.class);
     }
@@ -247,12 +256,22 @@ final public class UnitResponse {
      *
      * @return The casted object.
      */
-    public Object getData() {
-        return data;
+    @SuppressWarnings("unchecked")
+    public <T> T getData() {
+        return (T) data;
     }
 
     public String dataToStr() {
         return data == null ? null : data.toString();
+    }
+
+    /**
+     * Cast the data into exception
+     *
+     * @return the casted exception
+     */
+    public Exception dataToException() {
+        return Reflection.toType(data, Exception.class);
     }
 
     public Integer dataToInteger() {
@@ -273,14 +292,17 @@ final public class UnitResponse {
      * @return a bool value true/false
      * @throws NullPointerException if data is null
      */
+    @SuppressWarnings("unused")
     public boolean dataToBoolValue() {
         return Reflection.toType(data, boolean.class);
     }
 
+    @SuppressWarnings("unused")
     public Double dataToDouble() {
         return Reflection.toType(data, Double.class);
     }
 
+    @SuppressWarnings("unused")
     public BigDecimal dataToBigDecimal() {
         return Reflection.toType(data, BigDecimal.class);
     }
@@ -289,10 +311,12 @@ final public class UnitResponse {
         return dataToType(JSONObject.class);
     }
 
+    @SuppressWarnings("unused")
     public JSONObject firstToJson() {
         return dataToJson();
     }
 
+    @SuppressWarnings("unused")
     public JSONArray dataToJsonArray() {
         return dataToType(JSONArray.class);
     }
@@ -300,6 +324,7 @@ final public class UnitResponse {
     /**
      * data to Page
      */
+    @SuppressWarnings("unused")
     public Page dataToPage() {
         if (data instanceof String) {
             return Page.create(data.toString());
@@ -316,6 +341,7 @@ final public class UnitResponse {
     /**
      * 将unitResponse.data适配为map的列表，请放心大胆做转换
      */
+    @SuppressWarnings("unused")
     public List<JSONObject> dataToListOfJsonObject() {
         return dataToTypedList(JSONObject.class);
     }
@@ -382,6 +408,7 @@ final public class UnitResponse {
      *
      * @return JSONObject with the sensitive properties(context property) hidden.
      */
+    @SuppressWarnings("all")
     public JSONObject toVoJSONObject() {
         return toJSONObject().fluentPut("context", null);
     }
@@ -389,6 +416,7 @@ final public class UnitResponse {
     /**
      * convert this response object into json object.
      */
+    @SuppressWarnings("all")
     public JSONObject toJSONObject() {
         try {
             return Reflection.toType(this, JSONObject.class);
@@ -399,14 +427,23 @@ final public class UnitResponse {
 
     public UnitResponse throwExceptionIfNotSuccess() {
         if (!succeeded()) {
-            throw new RuntimeException(toString());
+            if (getData() != null && getData() instanceof Throwable) {
+                throw new RuntimeException((Throwable) getData());
+            } else {
+                throw new RuntimeException(toString());
+            }
         }
         return this;
     }
 
+    @SuppressWarnings("unused")
     public UnitResponse throwExceptionIfNotSuccess(String exceptionMsg) {
         if (!succeeded()) {
-            throw new RuntimeException(exceptionMsg, new Throwable(toString()));
+            if (getData() != null && getData() instanceof Throwable) {
+                throw new RuntimeException(exceptionMsg, getData());
+            } else {
+                throw new RuntimeException(exceptionMsg, new Throwable(toString()));
+            }
         }
         return this;
     }
@@ -429,13 +466,14 @@ final public class UnitResponse {
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
+    @SuppressWarnings("unused")
     public UnitResponse successCall(Function<UnitResponse, UnitResponse> successCall) {
         if (successCall == null || !succeeded()) {
             return this;
         }
         try {
             return successCall.apply(this);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOG.error(e);
             return UnitResponse.createException(e);
         }
@@ -444,6 +482,7 @@ final public class UnitResponse {
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
+    @SuppressWarnings("unused")
     public UnitResponse successCall(Callable<UnitResponse> successCall) {
         if (successCall == null || !succeeded()) {
             return this;
@@ -459,6 +498,7 @@ final public class UnitResponse {
     /**
      * @param successCall 若当前output的code为SUCCESS时，该方法将会被执行(建议使用lambda表达式).
      */
+    @SuppressWarnings("unused")
     public void successCall(Consumer<UnitResponse> successCall) {
         if (successCall != null && succeeded()) {
             try {
@@ -469,6 +509,7 @@ final public class UnitResponse {
         }
     }
 
+    @SuppressWarnings("unused")
     public String getErrMsg() {
         if (succeeded() && errMsg != null) {
             LOG.warn("成功的output禁止使用errMsg属性：errMsg= " + errMsg);
@@ -477,6 +518,7 @@ final public class UnitResponse {
         return errMsg;
     }
 
+    @SuppressWarnings("all")
     public UnitResponse setErrMsg(String errMsg) {
         this.errMsg = errMsg;
         return this;
@@ -514,6 +556,7 @@ final public class UnitResponse {
      *
      * @param from the source
      */
+    @SuppressWarnings("unused")
     public static UnitResponse clone(UnitResponse from) {
         return from.clone();
     }
@@ -530,6 +573,7 @@ final public class UnitResponse {
     }
 
     @Override
+    @SuppressWarnings("all")
     protected UnitResponse clone() {
         return CloneUtil.cloneBean(this, UnitResponse.class);
     }
@@ -631,10 +675,12 @@ final public class UnitResponse {
             return new Context();
         }
 
+        @SuppressWarnings("all")
         public boolean isPretty() {
             return pretty;
         }
 
+        @SuppressWarnings("all")
         public Context setPretty(boolean pretty) {
             this.pretty = pretty;
             return this;
@@ -644,6 +690,7 @@ final public class UnitResponse {
             return sourceNodeId;
         }
 
+        @SuppressWarnings("all")
         public Context setSourceNodeId(String sourceNodeId) {
             this.sourceNodeId = sourceNodeId;
             return this;
@@ -662,15 +709,18 @@ final public class UnitResponse {
             return rollback;
         }
 
+        @SuppressWarnings("all")
         public Context setRollback(boolean rollback) {
             this.rollback = rollback;
             return this;
         }
 
+        @SuppressWarnings("all")
         public NodeStatus getNodeStatus() {
             return nodeStatus;
         }
 
+        @SuppressWarnings("all")
         public Context setNodeStatus(NodeStatus nodeStatus) {
             this.nodeStatus = nodeStatus;
             return this;
@@ -680,15 +730,18 @@ final public class UnitResponse {
             return messageType;
         }
 
+        @SuppressWarnings("all")
         public Context setMessageType(MessageType messageType) {
             this.messageType = messageType;
             return this;
         }
 
+        @SuppressWarnings("all")
         public long getCreationTimestamp() {
             return creationTimestamp;
         }
 
+        @SuppressWarnings("all")
         public Context setCreationTimestamp(long creationTimestamp) {
             this.creationTimestamp = creationTimestamp;
             return this;
@@ -698,12 +751,14 @@ final public class UnitResponse {
             return sentTimestamp;
         }
 
+        @SuppressWarnings("all")
         public Context setSentTimestamp(long sentTimestamp) {
             this.sentTimestamp = sentTimestamp;
             return this;
         }
 
         @Override
+        @SuppressWarnings("all")
         protected Context clone() {
             return CloneUtil.cloneBean(this, Context.class);
         }

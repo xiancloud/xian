@@ -1,9 +1,6 @@
 package com.apifest.oauth20.unit;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.authen.AccessToken;
@@ -31,12 +28,12 @@ public class ValidateAccessTokenUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         AccessToken token = OAuthService.auth.isValidToken(msg.get("accessToken", String.class));
         if (token != null) {
-            return UnitResponse.createSuccess(token);
+            handler.handle(UnitResponse.createSuccess(token));
         } else {
-            return UnitResponse.createUnknownError(null, "token required.");
+            handler.handle(UnitResponse.createUnknownError(null, "token required."));
         }
     }
 

@@ -1,8 +1,7 @@
 package info.xiancloud.rules;
 
-import info.xiancloud.core.NotifyHandler;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.Xian;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.gateway.executor.BaseController;
 
@@ -66,14 +65,14 @@ public abstract class RuleController extends BaseController {
         } else {
             Map<String, Object> params = processParams();
             LOG.info("[RuleController] params = " + params);
-            Xian.call(next.split("_")[0], next.split("_")[1], params, new NotifyHandler() {
-                protected void handle(UnitResponse unitResponse1) {
-                    unitResponse = unitResponse1;
-                    processReturnParams();
-                    callNext();
-                    work();
-                }
-            });
+            SingleRxXian
+                    .call(next.split("_")[0], next.split("_")[1], params)
+                    .subscribe(unitResponse1 -> {
+                        unitResponse = unitResponse1;
+                        processReturnParams();
+                        callNext();
+                        work();
+                    });
         }
     }
 

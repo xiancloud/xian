@@ -1,18 +1,17 @@
 package info.xiancloud.discoverybridge.application;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.NodeStatus;
 import info.xiancloud.core.distribution.service_discovery.ApplicationDiscovery;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.discoverybridge.DiscoveryBridgeGroup;
 
 /**
  * @author happyyangyuan
  */
+@SuppressWarnings("all")
 public class ApplicationUnregistrationBridge implements Unit {
     @Override
     public UnitMeta getMeta() {
@@ -31,13 +30,16 @@ public class ApplicationUnregistrationBridge implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest request) {
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
         NodeStatus nodeStatus = request.get("nodeStatus", NodeStatus.class);
         try {
             ApplicationDiscovery.singleton.unregister(ApplicationRegistrationBridge.applicationInstance(nodeStatus));
-            return UnitResponse.createSuccess();
+            handler.handle(UnitResponse.createSuccess());
+            return;
         } catch (Exception e) {
-            return UnitResponse.createException(e);
+            LOG.error(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
     }
 }

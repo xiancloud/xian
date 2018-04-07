@@ -22,7 +22,7 @@ public class DistZkLocker {
      * 加锁操作，阻塞直到你拿到锁为止，或者超时
      *
      * @param lockId         业务锁的id,保证全局唯一即可
-     * @param timeoutInMilli 超时时间，单位毫秒
+     * @param timeoutInMilli 超时时间，单位毫秒，如果为0则表示如果不能马上获取锁，则不等待直接超时。
      * @return 如果获取锁成功则返回内部锁id，否则返回一个失败的unit response 对象
      */
     public static Single<Integer> lock(String lockId, long timeoutInMilli) {

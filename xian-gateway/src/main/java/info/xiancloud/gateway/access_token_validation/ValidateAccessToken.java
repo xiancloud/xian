@@ -8,13 +8,13 @@ import info.xiancloud.core.Unit;
 import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.distribution.exception.UnitUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
-import info.xiancloud.core.message.SyncXian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
-import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.authen.AccessToken;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.gateway.executor.URIBean;
+import io.reactivex.Single;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -27,18 +27,15 @@ import java.util.regex.Pattern;
  */
 public class ValidateAccessToken {
 
-    public static boolean validate(UnitRequest request) {
+    public static Single<Boolean> validate(UnitRequest request) {
         if (!isSecure(request.getContext().getUri())) {
             //No secure requirement, then we do not check the access token.
-            return true;
+            return Single.just(true);
         }
-        try {
-            String scope = fetchAccessTokenAndReturnScope(request);
-            return Scope.validate(scope, request.getContext().getGroup(), request.getContext().getUnit());
-        } catch (AccessTokenFailure e) {
-            LOG.warn(e);
-            return false;
-        }
+        return fetchAccessTokenAndReturnScope(request)
+                .map(scope -> Scope.validate(scope, request.getContext().getGroup(), request.getContext().getUnit())
+                );
+
     }
 
     private static boolean isSecure(String uri) {
@@ -61,24 +58,25 @@ public class ValidateAccessToken {
      * query for access token info and put it into originalMap
      * and return the scope of current token.
      *
-     * @return the scope of the request.
-     * @throws AccessTokenFailure no token string is provided.
+     * @return the scope of the request or
+     * {@link AccessTokenFailure} if no token string is provided.
      */
-    private static String fetchAccessTokenAndReturnScope(UnitRequest request) throws AccessTokenFailure/*, UnknownScopeException*/ {
+    private static Single<String> fetchAccessTokenAndReturnScope(UnitRequest request) {
         String ip = request.getContext().getIp();
         if (StringUtil.isEmpty(ip))
             throw new IllegalArgumentException("Client's ip is empty, please check!");
         if (isWhiteIp(ip)) {
-            return Scope.api_all;
+            return Single.just(Scope.api_all);
         }
         String accessToken = request.getContext().getHeader() == null ? null :
                 request.getContext().getHeader().getOrDefault(Constant.XIAN_REQUEST_TOKEN_HEADER, null);
         if (StringUtil.isEmpty(accessToken)) {
-            throw new AccessTokenFailure(null);
+            return Single.error(new AccessTokenFailure(null));
         } else {
-            AccessToken accessTokenObject = forToken(accessToken);
-            request.getContext().setAccessToken(accessTokenObject);
-            return accessTokenObject.getScope();
+            return forToken(accessToken).map(accessTokenObject -> {
+                request.getContext().setAccessToken(accessTokenObject);
+                return accessTokenObject.getScope();
+            });
         }
     }
 
@@ -91,30 +89,38 @@ public class ValidateAccessToken {
         return false;
     }
 
-    private static AccessToken forToken(String tokenString) throws AccessTokenFailure {
-        UnitResponse o = SyncXian.call("OAuth", "validateAccessToken", new JSONObject() {{
+    /**
+     * @param tokenString the token string
+     * @return the access token or AccessTokenFailure exception if validation failed.
+     */
+    private static Single<AccessToken> forToken(String tokenString) {
+        return SingleRxXian.call("OAuth", "validateAccessToken", new JSONObject() {{
             put("accessToken", tokenString);
-        }});
-        if (!o.succeeded()) {
-            throw new AccessTokenFailure(tokenString);
-        }
-        return o.dataToType(AccessToken.class);
+        }}).map(o -> {
+            if (!o.succeeded()) {
+                throw new AccessTokenFailure(tokenString);
+            }
+            return o.dataToType(AccessToken.class);
+        });
     }
 
     /**
+     * @return json object which represents the access token object or an {@link AccessTokenFailure} exception.
      * @deprecated for internal usage, we should not use http api to access oauth interface, instead we use unit invocation.
      * use {@link #forToken(String)} instead.
      */
-    private static JSONObject requestForTokenObject(String accessToken) throws AccessTokenFailure {
-        JSONObject httpResponseJSON = SyncXian.call("httpClient", "apacheHttpClientGet", new JSONObject() {{
+    private static Single<JSONObject> requestForTokenObject(String accessToken) {
+        return SingleRxXian.call("httpClient", "apacheHttpClientGet", new JSONObject() {{
             put("url", getOauth20Url(accessToken));
-        }}).dataToJson();
-        if (httpResponseJSON.getJSONObject("statusLine").getIntValue("statusCode") == 200) {
-            String tokenJsonStr = httpResponseJSON.getString("entity");
-            return JSON.parseObject(tokenJsonStr);
-        } else {
-            throw new AccessTokenFailure(accessToken);
-        }
+        }}).map(unitResponse -> {
+            JSONObject httpResponseJSON = unitResponse.dataToJson();
+            if (httpResponseJSON.getJSONObject("statusLine").getIntValue("statusCode") == 200) {
+                String tokenJsonStr = httpResponseJSON.getString("entity");
+                return JSON.parseObject(tokenJsonStr);
+            } else {
+                throw new AccessTokenFailure(accessToken);
+            }
+        });
     }
 
     /**

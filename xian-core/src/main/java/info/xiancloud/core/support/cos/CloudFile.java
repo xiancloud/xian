@@ -2,11 +2,13 @@ package info.xiancloud.core.support.cos;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.message.SingleRxXian;
+import info.xiancloud.core.message.UnitResponse;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 云文件存储操作
@@ -21,6 +23,7 @@ public class CloudFile {
      * @param data 文件内容
      * @return successful/unsuccessful unit response
      */
+    @SuppressWarnings("unused")
     public static Completable save(String path, String data) {
         Map<String, Object> map = new HashMap<String, Object>() {{
             put("path", path);
@@ -35,6 +38,7 @@ public class CloudFile {
      * @param pathDataMap 批量数据,key为path，value为文件内容
      * @return completable
      */
+    @SuppressWarnings("all")
     public static Completable save(Map pathDataMap) {
         return SingleRxXian.call("cosService", "batchCosWrite", new JSONObject() {{
             put("files", pathDataMap);
@@ -48,6 +52,7 @@ public class CloudFile {
      * @param threadCount 并行数，如果你不知道该使用多大的线程数，请只使用具有默认值的{@linkplain #save(Map)}
      * @return completable
      */
+    @SuppressWarnings("unused")
     public static Completable save(Map pathDataMap, int threadCount) {
         return SingleRxXian.call("cosService", "batchCosWrite", new JSONObject() {{
             put("files", pathDataMap);
@@ -65,11 +70,8 @@ public class CloudFile {
         return SingleRxXian.call("cosService", "cosRead", new JSONObject() {{
             put("path", path);
         }}).flatMap(response -> {
-            String str = response.dataToStr();
-            if (response.succeeded() && str != null)
-                return Single.just(str);
-            else
-                return Single.error(response.getException());
+            response.throwExceptionIfNotSuccess();
+            return Single.just(Objects.requireNonNull(response.dataToStr()));
         });
     }
 
@@ -82,6 +84,6 @@ public class CloudFile {
     public static Single<Boolean> exists(String path) {
         return SingleRxXian.call("cosService", "cosCheckFileExists", new JSONObject() {{
             put("path", path);
-        }}).flatMap(response -> Single.just(response.dataToBoolean()));
+        }}).map(UnitResponse::dataToBoolean);
     }
 }

@@ -2,8 +2,8 @@ package info.xiancloud.dao.group.unit;
 
 import com.alibaba.fastjson.JSON;
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
-import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * dao unit template
+ * dao unit template.
+ * I'm sorry that this is another blocking DAO implementation.
  *
  * @author happyyangyuan
  */
@@ -64,16 +65,21 @@ public abstract class DaoUnit implements Unit {
     }
 
     /**
-     *
      * @param request the request object.
      * @param handler the unit response consumer, this handler must be executed asynchronously.
      */
     @Override
-    public final void execute(UnitRequest request, NotifyHandler handler) {
-        handler.callback(execute(request));
+    public final void execute(UnitRequest request, Handler<UnitResponse> handler) {
+        handler.handle(blockingExecute(request));
     }
 
-    private UnitResponse execute(UnitRequest msg) {
+    /**
+     * I am sorry that the dao operation is blocking.
+     *
+     * @param msg unit request object
+     * @return unit response
+     */
+    private UnitResponse blockingExecute(UnitRequest msg) {
         try {
             init(msg);
             transaction.get().begin();
@@ -122,6 +128,7 @@ public abstract class DaoUnit implements Unit {
      * 打印sql语句，它不会将sql执行，只是打印sql语句。
      * 仅供内部测试使用
      */
+    @SuppressWarnings("unused")
     public static void logSql(Class daoUnitClass, Map map) {
         try (
                 Connection conn = DriverManager.getConnection(DatasourceConfigReader.getWriteUrl(), DatasourceConfigReader.getWriteUser(), DatasourceConfigReader.getWritePwd())
@@ -146,7 +153,7 @@ public abstract class DaoUnit implements Unit {
         try {
             DaoUnit daoUnit = (DaoUnit) unitClass.newInstance();
             UnitRequest msg = new UnitRequest(map);
-            System.out.println("输出>>>>>>>>  " + JSON.toJSONString(daoUnit.execute(msg)));
+            System.out.println("输出>>>>>>>>  " + JSON.toJSONString(daoUnit.blockingExecute(msg)));
             PoolFactory.getPool().destroyPool();
         } catch (Throwable e) {
             e.printStackTrace();

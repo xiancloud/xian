@@ -1,10 +1,7 @@
 package info.xiancloud.httpclient.apache_http.no_auth;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -12,7 +9,6 @@ import info.xiancloud.core.socket.ISocketGroup;
 import info.xiancloud.core.util.RetryUtil;
 import info.xiancloud.httpclient.HttpClientGroup;
 import info.xiancloud.httpclient.apache_http.IApacheHttpClient;
-import io.reactivex.Flowable;
 import org.apache.http.HttpResponse;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.util.EntityUtils;
@@ -27,7 +23,7 @@ import java.util.Map;
  * @author happyyangyuan
  * @deprecated because it is synchronous
  */
-public class ApacheHttpClientGetUnit implements Unit<JSONObject> {
+public class ApacheHttpClientGetUnit implements Unit {
     @Override
     public String getName() {
         return "apacheHttpClientGet";
@@ -54,7 +50,7 @@ public class ApacheHttpClientGetUnit implements Unit<JSONObject> {
     }
 
     @Override
-    public Flowable<UnitResponse> execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) throws Exception {
         String url = msg.get("url", String.class);
         Map<String, String> headers = msg.get("headers");
         Integer readTimeoutInMillis = msg.get("readTimeoutInMillis", Integer.class);
@@ -67,11 +63,11 @@ public class ApacheHttpClientGetUnit implements Unit<JSONObject> {
                         XianConfig.getIntValue("apache.httpclient.max.try", 3),
                         ConnectTimeoutException.class);
             } catch (ConnectTimeoutException e) {
-                return Flowable.just(UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + url).setException(e));
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, e, "Connect timeout: " + url));
+                return;
             } catch (SocketTimeoutException e) {
-                return Flowable.just(UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + url).setException(e));
-            } catch (Throwable e) {
-                return Flowable.just(UnitResponse.createException(e));
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, e, "Read timeout: " + url));
+                return;
             }
             responseJSON.put("statusLine", new JSONObject() {{
                 put("statusCode", httpResponse.getStatusLine().getStatusCode());
@@ -84,9 +80,7 @@ public class ApacheHttpClientGetUnit implements Unit<JSONObject> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return Flowable.just(UnitResponse.createSuccess(responseJSON));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            handler.handle(UnitResponse.createSuccess(responseJSON));
         }
     }
 }

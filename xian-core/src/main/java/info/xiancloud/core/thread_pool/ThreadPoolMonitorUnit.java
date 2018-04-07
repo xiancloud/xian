@@ -2,12 +2,13 @@ package info.xiancloud.core.thread_pool;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.Input;
-import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.distribution.LocalNodeManager;
+import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.falcon.AbstractDiyMonitorUnit;
 import info.xiancloud.core.util.EnvUtil;
+import io.reactivex.Single;
 
 /**
  * Thread pool monitor.
@@ -39,8 +40,8 @@ public class ThreadPoolMonitorUnit extends AbstractDiyMonitorUnit {
     }
 
     @Override
-    public Object execute0() {
-        return UnitResponse.createSuccess(new JSONArray() {{
+    public Single<Object> execute0() {
+        return Single.just(UnitResponse.createSuccess(new JSONArray() {{
             add(new JSONObject() {{
                 put("title", "线程池");
                 put("value", ThreadPoolManager.activeCount());
@@ -62,7 +63,7 @@ public class ThreadPoolMonitorUnit extends AbstractDiyMonitorUnit {
 //                put("application", EnvironmentUtil.getApplication());
 //                put("nodeId", LocalNodeManager.LOCAL_NODE_ID);
 //            }});
-        }});
+        }}));
     }
 
 }

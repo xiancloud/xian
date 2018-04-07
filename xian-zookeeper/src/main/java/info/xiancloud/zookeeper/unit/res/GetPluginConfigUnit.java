@@ -1,9 +1,6 @@
 package info.xiancloud.zookeeper.unit.res;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.res.IResAware;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -35,15 +32,16 @@ public class GetPluginConfigUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String key = msg.get("key", String.class);
         String pluginName = msg.get("plugin", String.class);
         String value = IResAware.singleton.get(pluginName, key);
         if (StringUtil.isEmpty(value)) {
             LOG.debug("配置尚未注册到zk，因此返回null");
-            return UnitResponse.createUnknownError(null, "配置尚未注册至zk，请读取本地配置代替.");
+            handler.handle(UnitResponse.createUnknownError(null, "配置尚未注册至zk，请读取本地配置代替."));
+            return;
         }
-        return UnitResponse.createSuccess(value);
+        handler.handle(UnitResponse.createSuccess(value));
     }
 
     @Override

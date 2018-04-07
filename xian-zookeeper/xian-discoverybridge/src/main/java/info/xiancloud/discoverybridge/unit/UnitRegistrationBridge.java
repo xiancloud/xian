@@ -1,6 +1,7 @@
 package info.xiancloud.discoverybridge.unit;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.distribution.NodeStatus;
@@ -24,7 +25,7 @@ public class UnitRegistrationBridge implements Unit {
 
     @Override
     public Input getInput() {
-        return Input.create().add("unit", Unit.class, "the unit u want to register.", REQUIRED)
+        return Input.create().add("unit", Unit.class, "the unit you want to register.", REQUIRED)
                 .add("nodeStatus", NodeStatus.class, "the node status bean", REQUIRED);
     }
 
@@ -34,16 +35,19 @@ public class UnitRegistrationBridge implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    @SuppressWarnings("all")
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         UnitProxy unitProxy = msg.get("unit", UnitProxy.class);
         NodeStatus nodeStatus = msg.get("nodeStatus", NodeStatus.class);
         UnitInstance unitInstance = unitInstance(unitProxy, nodeStatus);
         try {
-            UnitDiscovery.singleton.register(unitInstance);
-            return UnitResponse.createSuccess();
+            UnitDiscovery.singleton.register(unitInstance);//Warning for blocking method!
+            handler.handle(UnitResponse.createSuccess());
+            return;
         } catch (Exception e) {
             LOG.error(e);
-            return UnitResponse.createUnknownError(null, "registration failed.");
+            handler.handle(UnitResponse.createUnknownError(e, "registration failed."));
+            return;
         }
     }
 

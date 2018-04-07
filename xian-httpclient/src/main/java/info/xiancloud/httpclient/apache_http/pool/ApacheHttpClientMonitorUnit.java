@@ -8,6 +8,7 @@ import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.falcon.AbstractDiyMonitorUnit;
 import info.xiancloud.core.util.EnvUtil;
+import io.reactivex.Single;
 
 /**
  * http连接池监控
@@ -38,9 +39,9 @@ public class ApacheHttpClientMonitorUnit extends AbstractDiyMonitorUnit {
     }
 
     @Override
-    public Object execute0() {
+    public Single<Object> execute0() {
 
-        return UnitResponse.createSuccess(new JSONArray() {
+        return Single.just(UnitResponse.createSuccess(new JSONArray() {
             {
                 add(new JSONObject() {
                     {
@@ -62,6 +63,6 @@ public class ApacheHttpClientMonitorUnit extends AbstractDiyMonitorUnit {
                     }
                 });
             }
-        });
+        }));
     }
 }

@@ -1,9 +1,6 @@
 package info.xiancloud.graylog2.unit;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.graylog2.GelfLog4j1Init;
@@ -30,12 +27,14 @@ public class DisableGraylogUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         try {
             GelfLog4j1Init.destroy();
-            return UnitResponse.createSuccess();
+            handler.handle(UnitResponse.createSuccess());
+            return;
         } catch (GelfLog4j1Init.AlreadyDestroyedException e) {
-            return UnitResponse.createException(e);
+            handler.handle(UnitResponse.createException(e));
+            return;
         }
     }
 

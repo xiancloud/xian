@@ -20,6 +20,7 @@ import java.util.function.Function;
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
+@SuppressWarnings("unused")
 public interface AsyncResult<T> {
 
     /**
@@ -116,6 +117,7 @@ public interface AsyncResult<T> {
      *
      * @return the mapped async result
      */
+    @SuppressWarnings("unused")
     default <V> AsyncResult<V> mapEmpty() {
         return map((V) null);
     }
@@ -188,6 +190,7 @@ public interface AsyncResult<T> {
      *
      * @return the mapped async result
      */
+    @SuppressWarnings("unused")
     default AsyncResult<T> otherwiseEmpty() {
         return otherwise(err -> null);
     }
@@ -199,6 +202,7 @@ public interface AsyncResult<T> {
      * @param <E>          the generic type
      * @return the newly created asyncResult
      */
+    @SuppressWarnings("unused")
     static <E> AsyncResult<E> fromUnitResponse(UnitResponse unitResponse) {
         return fromUnitResponse(unitResponse, null);
     }
@@ -213,6 +217,7 @@ public interface AsyncResult<T> {
         return fromUnitResponse(unitResponse, converter, null);
     }
 
+    @SuppressWarnings("unchecked")
     static <E> AsyncResult<E> fromUnitResponse(UnitResponse unitResponse, Callable<E> resultConverter, Callable<Throwable> exceptionConverter) {
         return new AsyncResult<E>() {
             @Override
@@ -240,7 +245,7 @@ public interface AsyncResult<T> {
                         throw new RuntimeException(e);
                     }
                 }
-                return unitResponse.getException();
+                return unitResponse.dataToException();
             }
 
             @Override

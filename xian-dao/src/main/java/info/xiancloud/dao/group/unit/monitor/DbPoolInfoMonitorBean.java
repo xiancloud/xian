@@ -5,7 +5,8 @@ import info.xiancloud.core.Bean;
 /**
  * @author happyyangyuan
  */
-public class DbPoolInfoMonitorBean extends Bean {
+@SuppressWarnings("all")
+public class DbPoolInfoMonitorBean implements Bean {
     private String title;
     private String datasource;
     private int value;

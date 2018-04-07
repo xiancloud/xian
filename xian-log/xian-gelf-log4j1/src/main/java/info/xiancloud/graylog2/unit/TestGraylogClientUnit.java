@@ -1,9 +1,6 @@
 package info.xiancloud.graylog2.unit;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
@@ -38,8 +35,8 @@ public class TestGraylogClientUnit implements Unit {
     }
 
     //返回的是执行的ms数
-    public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.createSuccess(test(msg.get("count", int.class), msg.get("tCount", int.class)));
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        handler.handle(UnitResponse.createSuccess(test(msg.get("count", int.class), msg.get("tCount", int.class))));
     }
 
     public static long test(int count, int tCount) {

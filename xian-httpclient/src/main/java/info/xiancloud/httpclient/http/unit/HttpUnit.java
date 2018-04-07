@@ -1,10 +1,7 @@
 package info.xiancloud.httpclient.http.unit;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.socket.ISocketGroup;
@@ -20,6 +17,7 @@ import java.util.Base64;
 
 /**
  * @author happyyangyuan
+ * @deprecated not fully tested.
  */
 public class HttpUnit implements Unit {
     @Override
@@ -44,7 +42,7 @@ public class HttpUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         ObjectInputStream ois = null;
         try {
             String reqBase64 = msg.get("req", String.class);
@@ -54,21 +52,22 @@ public class HttpUnit implements Unit {
             try {
                 response = request.executeLocal();
             } catch (ConnectException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + request.getUrl());
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_CONNECT_TIMEOUT, null, "Connect timeout: " + request.getUrl()));
+                return;
             } catch (SocketTimeoutException e) {
-                return UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + request.getUrl());
+                handler.handle(UnitResponse.createError(ISocketGroup.CODE_SOCKET_TIMEOUT, null, "Read timeout: " + request.getUrl()));
+                return;
             } catch (Throwable e) {
-                return UnitResponse.createException(e);
+                handler.handle(UnitResponse.createException(e));
+                return;
             }
             JSONObject retJson = new JSONObject();
             retJson.put("status", response.getStatus());
             retJson.put("headers", response.getHeaders());
             retJson.put("entity", response.string());
-            return UnitResponse.createSuccess(retJson);
+            handler.handle(UnitResponse.createSuccess(retJson));
         } catch (Throwable e) {
-            return UnitResponse.createException(e);
-        } finally {
-
+            handler.handle(UnitResponse.createException(e));
         }
     }
 
