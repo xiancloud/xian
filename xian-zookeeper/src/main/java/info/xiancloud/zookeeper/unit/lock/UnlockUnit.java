@@ -28,8 +28,11 @@ public class UnlockUnit implements Unit {
 
     @Override
     public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
-        ZkDistributedLock.unlock(msg.get("innerId", int.class));
-        handler.handle(UnitResponse.createSuccess("解锁成功:" + msg.get("innerId", int.class)));
+        boolean unlocked = ZkDistributedLock.unlock(msg.get("innerId", int.class));
+        if (unlocked)
+            handler.handle(UnitResponse.createSuccess(true, "解锁成功:" + msg.get("innerId", int.class)));
+        else
+            handler.handle(UnitResponse.createSuccess(false, "解锁失败:" + msg.get("innerId", int.class)));
     }
 
     @Override

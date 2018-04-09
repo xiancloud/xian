@@ -12,6 +12,7 @@ import org.apache.zookeeper.KeeperException;
 
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 
 /**
  * 向zk注册配置启动项的zk实现
@@ -51,13 +52,14 @@ public class ZkResInit extends ResInit {
                         LOG.error(innerError);
                     }
                 })
-                .subscribe(succeeded -> {
-                    if (succeeded) {
-                        LOG.info(String.format("plugin %s ,   version  %s  ,   configurations are written to zookeeper.", plugin, version));
-                    } else {
-                        LOG.error(String.format("plugin %s ,   version  %s  ,   failed to write configurations to zookeeper.", plugin, version));
-                    }
-                }, e -> LOG.error(String.format("plugin %s ,   version  %s  ,   failed to write configurations to zookeeper.", plugin, version), e));
+                .subscribe(
+                        succeed -> {
+                            if (succeed)
+                                LOG.info(String.format("plugin %s ,   version  %s  ,   configurations has been written to zookeeper.", plugin, version));
+                            else
+                                LOG.info(String.format("plugin %s ,   version  %s  ,   configurations has been written to zookeeper.", plugin, version));
+                        },
+                        e -> LOG.error(String.format("plugin %s ,   version  %s  ,   failed to write configurations to zookeeper.", plugin, version), e));
     }
 
     @Override

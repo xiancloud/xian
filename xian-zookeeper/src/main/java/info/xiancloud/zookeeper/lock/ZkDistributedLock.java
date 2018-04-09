@@ -1,6 +1,7 @@
 package info.xiancloud.zookeeper.lock;
 
 
+import info.xiancloud.core.support.zk.DistZkLocker;
 import info.xiancloud.core.util.DateUtil;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.zookeeper.ZkConnection;
@@ -9,7 +10,6 @@ import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static info.xiancloud.zookeeper.ZkPathManager.LOCK_ROOT;
@@ -21,14 +21,18 @@ import static info.xiancloud.zookeeper.ZkPathManager.LOCK_ROOT;
  * @author happyyangyuan
  */
 public class ZkDistributedLock {
+
     private static final Map<Integer, InterProcessMutex> map = new ConcurrentHashMap<>();
     private static final AtomicInteger innerIdGenerator = new AtomicInteger(0);
 
     /**
-     * 加锁
+     * lock the named lock
      * 注意：加锁和解锁必须配对地调用！Each call to acquire that returns true must be balanced by a call to release()
+     *
+     * @return the inner id of the lock or -1 if timed out waiting for the lock
+     * @throws RuntimeException any unknown runtime exception.
      */
-    public static int lock(String name, long timeoutInMilli) throws TimeoutException {
+    public static int lock(String name, long timeoutInMilli) {
         if (name.contains("/")) {
             throw new IllegalArgumentException("锁的名称不允许包含'/'，yourLockName= " + name);
         }
@@ -41,39 +45,53 @@ public class ZkDistributedLock {
         int innerId = innerIdGenerator.getAndIncrement();
         try {
             if (!lock.acquire(timeoutInMilli, TimeUnit.MILLISECONDS)) {
-                throw new TimeoutException(String.format("获取锁%s超时,超时时间%sms", name, timeoutInMilli));
+                LOG.info(String.format("获取锁%s超时,超时时间%sms", name, timeoutInMilli));
+                return DistZkLocker.TIME_OUT_INNER_ID;
+            } else {
+                map.put(innerId, lock);
+                return innerId;
             }
-        } catch (TimeoutException e) {
-            LOG.debug("获取锁超时不会写入全局缓存map，所以不会泄露");
-            throw e;
         } catch (Throwable e) {
-            LOG.error(e);
+            throw new RuntimeException(e);
         }
-        map.put(innerId, lock);
-        return innerId;
     }
 
     /**
      * 解锁
      * 注意：1、加锁和解锁必须配对地调用！
      * 2、解锁线程必须与加锁线程是同一个,即不支持那种异步回调解锁！
+     *
+     * @return true if unlock successfully otherwise false. We don't care how the unlock fails.
      */
-    public static void unlock(int innerId) {
+    public static boolean unlock(int innerId) {
         InterProcessMutex mutex = map.remove(innerId);
         if (mutex != null) {
             if (mutex.isAcquiredInThisProcess()) {
                 try {
                     mutex.release();
                     LOG.debug("解锁成功...");
-                    return;
+                    return true;
                 } catch (Exception e) {
-                    throw new RuntimeException("解锁线程必须与加锁线程是同一个,即不支持那种异步回调解锁！", e);
+                    LOG.error("解锁失败！", e);
+                    return false;
                 }
             } else {
-                LOG.error(new RuntimeException("解锁线程必须与加锁线程是同一个,不支持那种异步回调解锁！"));
+                LOG.error(new LockNotOwnedByCurrentThread());
+                return false;
             }
+        } else {
+            //这里暂时不抛出异常，只打印日志
+            LOG.error(new RuntimeException("API误用,根本不存在锁，你解什么锁?"));
+            return false;
         }
-        LOG.warn("API误用,根本不存在锁，你解什么锁?");
+    }
+
+    public static class LockNotOwnedByCurrentThread extends RuntimeException {
+
+        @Override
+        public String getLocalizedMessage() {
+            return "解锁线程必须与加锁线程是同一个,不支持那种异步回调解锁！";
+        }
     }
 
 }

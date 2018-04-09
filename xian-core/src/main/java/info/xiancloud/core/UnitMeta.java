@@ -319,8 +319,20 @@ public final class UnitMeta {
      *
      * @param failedUnitResponses the failed output demo object list.
      */
-    public void setFailedUnitResponses(List<UnitResponse> failedUnitResponses) {
+    public UnitMeta setFailedUnitResponses(List<UnitResponse> failedUnitResponses) {
         this.failedUnitResponses = failedUnitResponses;
+        return this;
+    }
+
+    /**
+     * add a failed unit response demo
+     *
+     * @param failedUnitResponse the failed unit response demo
+     * @return this
+     */
+    public UnitMeta addFailedUnitResponse(UnitResponse failedUnitResponse) {
+        failedUnitResponses.add(failedUnitResponse);
+        return this;
     }
 
     public String getVersion() {

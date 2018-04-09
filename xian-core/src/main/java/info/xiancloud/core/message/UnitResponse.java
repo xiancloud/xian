@@ -38,6 +38,7 @@ final public class UnitResponse {
     private String code;
     /**
      * the data object.
+     * Can be an exception.
      */
     private Object data;
     /*
@@ -45,9 +46,9 @@ final public class UnitResponse {
     private Throwable exception;
     */
     /**
-     * Error message. Do not use this errMsg when code is {@link Group#CODE_SUCCESS}
+     * description message.
      */
-    private String errMsg;
+    private String message;
 
     /**
      * There is always a default. Null pointer is not welcome.
@@ -100,6 +101,17 @@ final public class UnitResponse {
     }
 
     /**
+     * create a succeeded response instance with specified data.
+     *
+     * @param data   the data for the susccessful response
+     * @param errMsg the description message
+     * @return the newly created response
+     */
+    public static UnitResponse createSuccess(Object data, String errMsg) {
+        return createSuccess(data).setMessage(errMsg);
+    }
+
+    /**
      * Please pass an exception object to this method, and it returns a newly created response object with error code {@link Group#CODE_EXCEPTION}
      * and the exception object as the data.
      *
@@ -118,7 +130,7 @@ final public class UnitResponse {
      * @param errMsg the error message that you want to add.
      */
     public static UnitResponse createException(Throwable e, String errMsg) {
-        return UnitResponse.createException(e).setErrMsg(errMsg);
+        return UnitResponse.createException(e).setMessage(errMsg);
     }
 
     /**
@@ -142,7 +154,7 @@ final public class UnitResponse {
      * @return a newly created unit response representing the exception.
      */
     public static UnitResponse createException(String errCode, Throwable exception, String errMsg) {
-        return UnitResponse.createException(errCode, exception).setErrMsg(errMsg);
+        return UnitResponse.createException(errCode, exception).setMessage(errMsg);
     }
 
     /**
@@ -167,7 +179,7 @@ final public class UnitResponse {
         if (Group.CODE_SUCCESS.equalsIgnoreCase(errCode)) {
             throw new IllegalArgumentException("Only non-success code is allowed here.");
         }
-        return new UnitResponse().setCode(errCode).setData(data).setErrMsg(errMsg);
+        return new UnitResponse().setCode(errCode).setData(data).setMessage(errMsg);
     }
 
     /**
@@ -182,10 +194,10 @@ final public class UnitResponse {
     /**
      * @param code   {@link Group#CODE_SUCCESS SUCCESS}, {@link Group#CODE_UNKNOWN_ERROR FAILURE} etc.
      * @param data   the data bean or json
-     * @param errMsg the error message. Note that errMsg must be null when the {{@link #code}} is {@link Group#CODE_SUCCESS SUCCESS}
+     * @param errMsg the error message.
      */
     public static UnitResponse create(String code, Object data, String errMsg) {
-        return new UnitResponse().setCode(code).setData(data).setErrMsg(errMsg);
+        return new UnitResponse().setCode(code).setData(data).setMessage(errMsg);
     }
 
     /**
@@ -212,7 +224,7 @@ final public class UnitResponse {
     }
 
     /**
-     * Create a rolling back response object with the given errMsg.
+     * Create a rolling back response object with the given message.
      *
      * @param errMsg the error message.
      * @return An response object which will indicate a transactional rolling back.
@@ -510,17 +522,17 @@ final public class UnitResponse {
     }
 
     @SuppressWarnings("unused")
-    public String getErrMsg() {
-        if (succeeded() && errMsg != null) {
-            LOG.warn("成功的output禁止使用errMsg属性：errMsg= " + errMsg);
+    public String getMessage() {
+        /*if (succeeded() && message != null) {
+            LOG.warn("成功的output禁止使用errMsg属性：message= " + message);
             return null;
-        }
-        return errMsg;
+        }*/
+        return message;
     }
 
     @SuppressWarnings("all")
-    public UnitResponse setErrMsg(String errMsg) {
-        this.errMsg = errMsg;
+    public UnitResponse setMessage(String message) {
+        this.message = message;
         return this;
     }
 
@@ -569,7 +581,7 @@ final public class UnitResponse {
      */
     public static void copy(UnitResponse from, UnitResponse to) {
         //remember to modify this method when new properties are added.
-        to.setCode(from.code).setData(from.data).setContext(from.context.clone()).setErrMsg(from.errMsg);
+        to.setCode(from.code).setData(from.data).setContext(from.context.clone()).setMessage(from.message);
     }
 
     @Override
