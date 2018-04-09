@@ -1,6 +1,7 @@
 package info.xiancloud.plugins.yy.log;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -23,12 +24,12 @@ public class TestLogNullUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         long start = System.nanoTime();
         while (System.nanoTime() - start < 2 * 1000000L) {
             LOG.info(null);
         }
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
     }
 
     @Override

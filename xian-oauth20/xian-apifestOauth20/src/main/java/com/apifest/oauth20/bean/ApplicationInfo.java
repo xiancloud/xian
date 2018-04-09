@@ -16,22 +16,24 @@
 
 package com.apifest.oauth20.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.apifest.oauth20.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.apifest.oauth20.utils.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Contains info about a client application.
  * Used for client application representation.
+ * This is the application VO view object class.
  *
  * @author Rossitsa Borissova
+ * @author happyyangyuan migrate to fastjson and some other mofications.
  */
 public class ApplicationInfo implements Serializable {
 
@@ -48,7 +50,7 @@ public class ApplicationInfo implements Serializable {
     private String description;
 
 
-    @JSONField(name = "client_id",ordinal = 3)
+    @JSONField(name = "client_id", ordinal = 3)
     private String id = "";
 
     @JSONField(name = "client_secret", ordinal = 4)
@@ -66,7 +68,7 @@ public class ApplicationInfo implements Serializable {
     @JSONField(ordinal = 8)
     private Integer status;
 
-    @JSONField(name = "application_details",ordinal = 9)
+    @JSONField(name = "application_details", ordinal = 9)
     private Map<String, String> applicationDetails = null;
 
     public String getRegistered() {
@@ -82,7 +84,8 @@ public class ApplicationInfo implements Serializable {
     }
 
     public ApplicationInfo setScope(String scope) {
-        this.scope = scope;return this;
+        this.scope = scope;
+        return this;
     }
 
     public String getDescription() {
@@ -90,7 +93,8 @@ public class ApplicationInfo implements Serializable {
     }
 
     public ApplicationInfo setDescription(String description) {
-        this.description = description;return this;
+        this.description = description;
+        return this;
     }
 
     public String getName() {
@@ -114,7 +118,8 @@ public class ApplicationInfo implements Serializable {
     }
 
     public ApplicationInfo setStatus(Integer status) {
-        this.status = status;return this;
+        this.status = status;
+        return this;
     }
 
     public String getId() {

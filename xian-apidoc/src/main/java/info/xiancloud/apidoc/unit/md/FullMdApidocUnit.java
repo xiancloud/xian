@@ -5,6 +5,7 @@ import info.xiancloud.apidoc.ApidocGroup;
 import info.xiancloud.apidoc.handler.OAuth20MdBuilderHandler;
 import info.xiancloud.apidoc.handler.UnitMdBuilderHandler;
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -35,8 +36,8 @@ public class FullMdApidocUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.createSuccess(buildAll());
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        handler.handle(UnitResponse.createSuccess(buildAll()));
     }
 
 

@@ -2,14 +2,11 @@ package info.xiancloud.apidoc.unit.html;
 
 import info.xiancloud.apidoc.ApidocGroup;
 import info.xiancloud.apidoc.unit.md.FullMdApidocUnit;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.HttpContentType;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.Xian;
 
 /**
  * full html api doc generator
@@ -35,10 +32,15 @@ public class FullHtmlApidocUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        String md = Xian.call(FullMdApidocUnit.class, msg.getArgMap()).throwExceptionIfNotSuccess().dataToStr();
-        String html = MdToHtml.mdToHtml(md);
-        return UnitResponse.createSuccess(html).setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML));
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        SingleRxXian
+                .call(FullMdApidocUnit.class, msg.getArgMap())
+                .subscribe(unitResponse -> {
+                    unitResponse.throwExceptionIfNotSuccess();
+                    String md = unitResponse.dataToStr();
+                    String html = MdToHtml.mdToHtml(md);
+                    handler.handle(UnitResponse.createSuccess(html).setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML)));
+                });
     }
 
     @Override

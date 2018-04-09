@@ -1,6 +1,7 @@
 package info.xiancloud.test;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -24,7 +25,7 @@ public class TestUnitInWar implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest request) {
-        return UnitResponse.createSuccess("happy ending.");
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
+        handler.handle(UnitResponse.createSuccess("happy ending."));
     }
 }

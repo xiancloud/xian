@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
  * @author Rossitsa Borissova
  */
 @DocOAuth20
+@SuppressWarnings("all")
 public class OAuth20Handler extends SimpleChannelInboundHandler {
 
     /**
@@ -140,7 +141,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
         Matcher m = APPLICATION_PATTERN.matcher(req.uri());
         if (m.find()) {
             String clientId = m.group(1);
-            ApplicationInfo appInfo = auth.getApplicationInfo(clientId);
+            ApplicationInfo appInfo = auth.getApplicationInfo(clientId).blockingGet();
             if (appInfo != null) {
                 String json = JSON.toJSONString(appInfo);
                 LOG.debug(json);
@@ -165,7 +166,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
         if (tokenParam == null || tokenParam.isEmpty()) {
             response = ResponseBuilder.createBadRequestResponse();
         } else {
-            AccessToken token = auth.isValidToken(tokenParam);
+            AccessToken token = auth.isValidToken(tokenParam).blockingGet();
             if (token != null) {
                 String json = JSON.toJSONString(token);
                 LOG.debug(json);
@@ -270,7 +271,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
     private FullHttpResponse handleAuthorize(FullHttpRequest req) {
         FullHttpResponse response;
         try {
-            String redirectURI = auth.issueAuthorizationCode(req);
+            String redirectURI = auth.blockingIssueAuthorizationCode(req);
             // TODO: validation http protocol?
             LOG.info(String.format("redirectURI: %s", redirectURI));
 
@@ -300,7 +301,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
     FullHttpResponse handleRegister(FullHttpRequest req) {
         FullHttpResponse response = null;
         try {
-            ClientCredentials creds = auth.issueClientCredentials(req);
+            ClientCredentials creds = auth.issueClientCredentials(req).blockingGet();
             String jsonString = JSON.toJSONString(creds);
             LOG.info("credentials:" + jsonString);
             response = ResponseBuilder.createOkResponse(jsonString);
@@ -325,7 +326,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
     FullHttpResponse handleTokenRevoke(FullHttpRequest req) {
         boolean revoked = false;
         try {
-            revoked = auth.revokeToken(req);
+            revoked = auth.revokeToken(req).blockingGet();
         } catch (OAuthException e) {
             LOG.error("cannot revoke token", e);
             invokeExceptionHandler(e, req);
@@ -454,7 +455,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
         if (m.find()) {
             String clientId = m.group(1);
             try {
-                if (auth.updateClientApp(req, clientId)) {
+                if (auth.blockingUpdateClientApp(req, clientId)) {
                     response = ResponseBuilder.createOkResponse(ResponseBuilder.CLIENT_APP_UPDATED);
                 }
             } catch (OAuthException ex) {
@@ -472,7 +473,7 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
     FullHttpResponse handleGetAllClientApplications(FullHttpRequest req) {
         FullHttpResponse response;
         try {
-            List<ApplicationInfo> apps = filterClientApps(req, DBManagerFactory.getInstance().getAllApplications());
+            List<ApplicationInfo> apps = filterClientApps(req, DBManagerFactory.getInstance().getAllApplications().blockingGet());
             String jsonString = JSON.toJSONString(apps);
             response = ResponseBuilder.createOkResponse(jsonString);
         } catch (Exception e) {
@@ -521,18 +522,15 @@ public class OAuth20Handler extends SimpleChannelInboundHandler {
         String clientId = QueryParameter.getFirstElement(params, QueryParameter.CLIENT_ID);
         String userId = QueryParameter.getFirstElement(params, QueryParameter.USER_ID);
         if (clientId == null || clientId.isEmpty()) {
-            response = ResponseBuilder.createBadRequestResponse(
-                    String.format(ResponseBuilder.MANDATORY_PARAM_MISSING, QueryParameter.CLIENT_ID));
+            response = ResponseBuilder.createBadRequestResponse(String.format(ResponseBuilder.MANDATORY_PARAM_MISSING, QueryParameter.CLIENT_ID));
         } else if (userId == null || userId.isEmpty()) {
-            response = ResponseBuilder.createBadRequestResponse(
-                    String.format(ResponseBuilder.MANDATORY_PARAM_MISSING, QueryParameter.USER_ID));
+            response = ResponseBuilder.createBadRequestResponse(String.format(ResponseBuilder.MANDATORY_PARAM_MISSING, QueryParameter.USER_ID));
         } else {
             // check that LOCAL_NODE_ID exists, no matter whether it is active or not
-            if (!auth.isExistingClient(clientId)) {
+            if (!auth.isExistingClient(clientId).blockingGet()) {
                 response = ResponseBuilder.createBadRequestResponse(ResponseBuilder.INVALID_CLIENT_ID);
             } else {
-                AccessToken accessTokens = DBManagerFactory.getInstance().getAccessTokenByUserIdAndClientId(userId,
-                        clientId);
+                AccessToken accessTokens = DBManagerFactory.getInstance().getAccessTokenByUserIdAndClientId(userId, clientId).blockingGet();
                 String jsonString = JSON.toJSONString(accessTokens);
                 response = ResponseBuilder.createOkResponse(jsonString);
             }

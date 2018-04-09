@@ -1,9 +1,6 @@
 package info.xiancloud.plugins.yy.xhash;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.test.TestGroup;
@@ -35,14 +32,16 @@ public class TestXhashUnit implements Unit {
     private static volatile String x;
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String inputX = msg.get("x", String.class);
         initXOnlyOnce(inputX);
         if (!x.equals(inputX)) {
             LOG.error(new Throwable("验证不通过，xhash不按照预期运行，期望参数：" + x + "；实际参数：" + inputX));
-            return UnitResponse.createUnknownError(null, "验证不通过，xhash不按照预期运行，期望参数：" + x + "；实际参数：" + inputX);
+            handler.handle(UnitResponse.createUnknownError(null, "验证不通过，xhash不按照预期运行，期望参数：" + x + "；实际参数：" + inputX));
+            return;
         }
-        return UnitResponse.createSuccess(x);
+        handler.handle(UnitResponse.createSuccess(x));
+        return;
     }
 
     @Override

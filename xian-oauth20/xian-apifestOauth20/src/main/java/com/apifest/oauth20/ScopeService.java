@@ -30,8 +30,8 @@ import com.apifest.oauth20.validator.InputValidator;
 import info.xiancloud.core.util.LOG;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
+import io.reactivex.Maybe;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -76,19 +76,19 @@ public class ScopeService {
                         throw new OAuthException(SCOPE_NAME_INVALID_ERROR, HttpResponseStatus.BAD_REQUEST);
                     }
                     LOG.info(">>>>>>>>>>>>>>> scope = " + scope);
-                    Scope foundScope = DBManagerFactory.getInstance().findScope(scope.getScope());
+                    Scope foundScope = DBManagerFactory.getInstance().findScope(scope.getScope()).blockingGet();
                     if (foundScope != null) {
                         LOG.error("scope already exists");
                         throw new OAuthException(SCOPE_ALREADY_EXISTS, HttpResponseStatus.BAD_REQUEST);
                     } else {
                         // store in the DB, if already exists such a scope, overwrites it
-                        DBManagerFactory.getInstance().storeScope(scope);
+                        DBManagerFactory.getInstance().storeScope(scope).blockingGet();
                     }
                 } else {
                     LOG.error("scope is not valid");
                     throw new OAuthException(MANDATORY_FIELDS_ERROR, HttpResponseStatus.BAD_REQUEST);
                 }
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 LOG.error("cannot handle scope request", e);
                 throw new OAuthException(e, null, HttpResponseStatus.BAD_REQUEST);
             }
@@ -111,7 +111,7 @@ public class ScopeService {
         if (queryParams.containsKey("client_id")) {
             return getScopes(queryParams.get("client_id").get(0));
         }
-        List<Scope> scopes = DBManagerFactory.getInstance().getAllScopes();
+        List<Scope> scopes = DBManagerFactory.getInstance().getAllScopes().blockingGet();
         String jsonString;
         try {
             jsonString = JSON.toJSONString(scopes);
@@ -129,12 +129,10 @@ public class ScopeService {
      * @param clientId client id
      * @return the scope if it is valid, otherwise returns null
      */
-    public String getValidScope(String scope, String clientId) {
-        ClientCredentials creds = DBManagerFactory.getInstance().findClientCredentials(clientId);
-        if (creds == null) {
-            return null;
-        }
-        return getValidScopeByScope(scope, creds.getScope());
+    public Maybe<String> getValidScope(String scope, String clientId) {
+        return DBManagerFactory.getInstance()
+                .findClientCredentials(clientId)
+                .map(creds -> getValidScopeByScope(scope, creds.getScope()));
     }
 
     public String getValidScopeByScope(String scope, String storedScope) {
@@ -222,7 +220,7 @@ public class ScopeService {
             try {
                 Scope scope = InputValidator.validate(req.content().toString(CharsetUtil.UTF_8), Scope.class);
                 if (scope.validForUpdate()) {
-                    Scope foundScope = DBManagerFactory.getInstance().findScope(scopeName);
+                    Scope foundScope = DBManagerFactory.getInstance().findScope(scopeName).blockingGet();
                     if (foundScope == null) {
                         LOG.error("scope does not exist");
                         throw new OAuthException(SCOPE_NOT_EXIST, HttpResponseStatus.BAD_REQUEST);
@@ -251,8 +249,8 @@ public class ScopeService {
      * @return String message that will be returned in the response
      */
     public String deleteScope(String scopeName) throws OAuthException {
-        String responseMsg = "";
-        Scope foundScope = DBManagerFactory.getInstance().findScope(scopeName);
+        String responseMsg;
+        Scope foundScope = DBManagerFactory.getInstance().findScope(scopeName).blockingGet();
         if (foundScope == null) {
             LOG.error("scope does not exist");
             throw new OAuthException(SCOPE_NOT_EXIST, HttpResponseStatus.BAD_REQUEST);
@@ -262,7 +260,7 @@ public class ScopeService {
             if (registeredApps.size() > 0) {
                 responseMsg = SCOPE_USED_BY_APP_MESSAGE;
             } else {
-                boolean ok = DBManagerFactory.getInstance().deleteScope(scopeName);
+                boolean ok = DBManagerFactory.getInstance().deleteScope(scopeName).blockingGet();
                 if (ok) {
                     responseMsg = SCOPE_DELETED_OK_MESSAGE;
                 } else {
@@ -274,8 +272,8 @@ public class ScopeService {
     }
 
     public String getScopeByName(String scopeName) throws OAuthException {
-        String jsonString = null;
-        Scope scope = DBManagerFactory.getInstance().findScope(scopeName);
+        String jsonString;
+        Scope scope = DBManagerFactory.getInstance().findScope(scopeName).blockingGet();
         if (scope != null) {
             try {
                 jsonString = JSON.toJSONString(scope);
@@ -290,8 +288,8 @@ public class ScopeService {
     }
 
     protected List<ApplicationInfo> getClientAppsByScope(String scopeName) {
-        List<ApplicationInfo> scopeApps = new ArrayList<ApplicationInfo>();
-        List<ApplicationInfo> allApps = DBManagerFactory.getInstance().getAllApplications();
+        List<ApplicationInfo> scopeApps = new ArrayList<>();
+        List<ApplicationInfo> allApps = DBManagerFactory.getInstance().getAllApplications().blockingGet();
         for (ApplicationInfo app : allApps) {
             if (app.getScope() != null && app.getScope().contains(scopeName)) {
                 scopeApps.add(app);
@@ -320,24 +318,24 @@ public class ScopeService {
 
     protected List<Scope> loadScopes(String scope) {
         String[] scopes = scope.split(SPACE);
-        List<Scope> loadedScopes = new ArrayList<Scope>();
+        List<Scope> loadedScopes = new ArrayList<>();
         DBManager db = DBManagerFactory.getInstance();
         for (String name : scopes) {
-            loadedScopes.add(db.findScope(name));
+            loadedScopes.add(db.findScope(name).blockingGet());
         }
         return loadedScopes;
     }
 
     protected String getScopes(String clientId) throws OAuthException {
-        ClientCredentials credentials = DBManagerFactory.getInstance().findClientCredentials(clientId);
+        ClientCredentials credentials = DBManagerFactory.getInstance().findClientCredentials(clientId).blockingGet();
         String jsonString;
         if (credentials != null) {
             //scopes are separated by comma
             String scopes = credentials.getScope();
             String[] s = scopes.split(SPACE);
-            List<Scope> result = new ArrayList<Scope>();
+            List<Scope> result = new ArrayList<>();
             for (String name : s) {
-                Scope scope = DBManagerFactory.getInstance().findScope(name);
+                Scope scope = DBManagerFactory.getInstance().findScope(name).blockingGet();
                 result.add(scope);
             }
 

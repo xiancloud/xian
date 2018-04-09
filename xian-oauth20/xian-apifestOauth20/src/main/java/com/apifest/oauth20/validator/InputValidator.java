@@ -33,17 +33,17 @@ public class InputValidator {
      * @param input the input to be validated
      * @param clazz the class to be used to create an instance from the input
      * @return an instance created from the input
-     * @throws IOException
+     * @throws IOException ioException
      */
     public static <T> T validate(InputStream input, final Class<T> clazz) throws IOException {
         return JSON.parseObject(input, clazz);
     }
 
-    public static <T> T validate(byte[] input, final Class<T> clazz) throws IOException {
+    public static <T> T validate(byte[] input, final Class<T> clazz) {
         return JSON.parseObject(input, clazz);
     }
 
-    public static <T> T validate(String input, final Class<T> clazz) throws IOException {
+    public static <T> T validate(String input, final Class<T> clazz) {
         return JSON.parseObject(input, clazz);
     }
 

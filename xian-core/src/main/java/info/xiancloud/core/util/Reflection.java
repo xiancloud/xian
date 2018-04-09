@@ -209,6 +209,7 @@ public class Reflection {
      *
      * @return a newly created array list containing all the data
      */
+    @SuppressWarnings("all")
     public static <T> List<T> toTypedList(Object data, Class<T> type) {
         List<T> listResult = new ArrayList<>();
         if (data == null) {
@@ -240,6 +241,7 @@ public class Reflection {
      * @param <T>  the generic type
      * @return a newly created hash set contains all the data
      */
+    @SuppressWarnings("all")
     public static <T> Set<T> toTypedSet(Object data, Class<T> type) {
         Set<T> setResult = new HashSet<>();
         if (data == null) {
@@ -406,7 +408,7 @@ public class Reflection {
      *
      * @param nonCollectionType 目标类型，不允许是集合类型
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("all")
     private static <T> T toNonCollectionType(Object data, Class<T> nonCollectionType) {
         if (Collection.class.isAssignableFrom(nonCollectionType)) {
             throw new RuntimeException("API使用错误，本方法不支持将目标对象转为非集合类型");
@@ -617,12 +619,10 @@ public class Reflection {
     private static final LoadingCache<Class<?>, Boolean> map = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .maximumSize(100000)
-            .removalListener((RemovalListener<Class, Boolean>) notification -> {
-                LOG.info(new JSONObject() {{
-                    put("type", "cacheRemoved");
-                    put("data", notification);
-                }});
-            })
+            .removalListener((RemovalListener<Class, Boolean>) notification -> LOG.info(new JSONObject() {{
+                put("type", "cacheRemoved");
+                put("data", notification);
+            }}))
             .build(new CacheLoader<Class<?>, Boolean>() {
                 public Boolean load(Class<?> type) {
                     Boolean can = null;
@@ -654,6 +654,7 @@ public class Reflection {
         return map.getUnchecked(type);
     }
 
+    @SuppressWarnings("ALL")
     //判断某个对象是否是java的基本类型
     public static boolean isBasicType(Object o) {
         Class type = o.getClass();
@@ -671,6 +672,7 @@ public class Reflection {
      * @param getter 方法名 method name.
      * @return 对应的属性名 the mapped property name of the getter.
      */
+    @SuppressWarnings("unused")
     public static String getPropertyFromGetterName(String getter) {
         if (StringUtil.isEmpty(getter)) {
             LOG.warn("getter is empty!");
@@ -688,6 +690,7 @@ public class Reflection {
         return property.replaceFirst(firstChar, firstChar.toLowerCase());
     }
 
+    @SuppressWarnings("unused")
     public static List<String> getParameterNames(Method method) {
         Parameter[] parameters = method.getParameters();
         List<String> parameterNames = new ArrayList<>();

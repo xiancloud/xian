@@ -27,6 +27,7 @@ import java.util.Map;
 
 /**
  * Holds a client application information as it is stored in the DB.
+ * In fact this is a PO - persistent object for the application information.
  *
  * @author Rossitsa Borissova
  */

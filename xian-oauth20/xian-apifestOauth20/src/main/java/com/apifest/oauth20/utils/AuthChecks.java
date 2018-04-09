@@ -21,8 +21,6 @@ import com.apifest.oauth20.persistence.DBManagerFactory;
 import io.netty.handler.codec.http.HttpRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Performs authentication checks.
@@ -32,8 +30,6 @@ import org.slf4j.LoggerFactory;
 public class AuthChecks {
 
     private static final String BASIC = "Basic ";
-
-    protected static Logger log = LoggerFactory.getLogger(AuthChecks.class);
 
     protected DBManager db = DBManagerFactory.getInstance();
 
@@ -52,7 +48,7 @@ public class AuthChecks {
                 String authClientId = str[0];
                 String authClientSecret = str[1];
                 // check valid - DB call
-                if (db.validClient(authClientId, authClientSecret)) {
+                if (db.validClient(authClientId, authClientSecret).blockingGet()) {
                     clientId = authClientId;
                 }
             }

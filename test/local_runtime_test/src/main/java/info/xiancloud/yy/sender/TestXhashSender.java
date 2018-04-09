@@ -21,7 +21,7 @@ public class TestXhashSender {
                                     JSON.parseObject(HttpUtil.postWithEmptyHeader("http://localhost:9124/v1.0/testService/testXhash", new JSONObject() {{
                                         put("x", "zxcd-123-efga");
                                         put("y", RandomUtils.getRandomNumbers(4));
-                                    }}.toJSONString())),
+                                    }}.toJSONString()).blockingGet()),
                                     true
                             )
                     );
@@ -30,7 +30,7 @@ public class TestXhashSender {
                                     JSON.parseObject(HttpUtil.postWithEmptyHeader("http://localhost:9124/v1.0/testService/testXhash", new JSONObject() {{
                                         put("x", "abc-123-456");
                                         put("y", RandomUtils.getRandomNumbers(4));
-                                    }}.toJSONString())),
+                                    }}.toJSONString()).blockingGet()),
                                     true
                             )
                     );

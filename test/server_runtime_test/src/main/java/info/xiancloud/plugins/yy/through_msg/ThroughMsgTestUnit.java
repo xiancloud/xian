@@ -2,6 +2,7 @@ package info.xiancloud.plugins.yy.through_msg;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -23,10 +24,10 @@ public class ThroughMsgTestUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        return UnitResponse.createSuccess(new JSONObject() {{
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        handler.handle(UnitResponse.createSuccess(new JSONObject() {{
             put("$throughMsg", "what you see what you get.");
-        }});
+        }}));
     }
 
     @Override

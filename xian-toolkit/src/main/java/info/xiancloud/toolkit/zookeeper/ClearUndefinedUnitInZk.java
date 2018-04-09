@@ -1,9 +1,6 @@
 package info.xiancloud.toolkit.zookeeper;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
@@ -33,7 +30,7 @@ public class ClearUndefinedUnitInZk implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) throws Exception {
         /**
          * 请设置此变量来删除指定路径下的脏节点
          */
@@ -49,12 +46,10 @@ public class ClearUndefinedUnitInZk implements Unit {
                     ZkConnection.client.delete().forPath(fullPath);
                 }
             }
-        } catch (Throwable e) {
-            return UnitResponse.createException(e);
         } finally {
             ZkConnection.close();
         }
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
     }
 
     @Override

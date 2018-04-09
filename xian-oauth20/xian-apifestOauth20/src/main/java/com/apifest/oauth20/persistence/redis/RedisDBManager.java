@@ -26,9 +26,11 @@ import info.xiancloud.core.support.authen.AccessToken;
 import info.xiancloud.core.support.cache.api.CacheMapUtil;
 import info.xiancloud.core.support.cache.api.CacheObjectUtil;
 import info.xiancloud.core.util.StringUtil;
+import io.reactivex.Completable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,142 +44,158 @@ public class RedisDBManager implements DBManager {
     public static final String SCOPES_KEY = "oauth2.0-scopes";
 
     @Override
-    public boolean validClient(String clientId, String clientSecret) {
-        ClientCredentials clientCredentials = findClientCredentials(clientId);
-        if (clientCredentials != null && clientSecret.equals(clientCredentials.getSecret())
-                && ClientCredentials.ACTIVE_STATUS == clientCredentials.getStatus()) {
-            return true;
-        } else {
-            return false;
-        }
+    public Single<Boolean> validClient(String clientId, String clientSecret) {
+        return findClientCredentials(clientId)
+                .map(clientCredentials -> clientCredentials != null && clientSecret.equals(clientCredentials.getSecret())
+                        && ClientCredentials.ACTIVE_STATUS == clientCredentials.getStatus())
+                .switchIfEmpty(Single.just(false))
+                ;
+
     }
 
     @Override
-    public void storeClientCredentials(ClientCredentials clientCreds) {
-        CacheMapUtil.put(CLIENT_CREDENTIALS_KEY, clientCreds.getId(), clientCreds);
+    public Completable storeClientCredentials(ClientCredentials clientCreds) {
+        return CacheMapUtil.put(CLIENT_CREDENTIALS_KEY, clientCreds.getId(), clientCreds).toCompletable();
     }
 
     @Override
-    public ClientCredentials findClientCredentials(String clientId) {
+    public Maybe<ClientCredentials> findClientCredentials(String clientId) {
         return CacheMapUtil.get(CLIENT_CREDENTIALS_KEY, clientId, ClientCredentials.class);
     }
 
     @Override
-    public boolean updateClientCredentials(String clientId, String scope, String description, Integer status,
-                                           Map<String, String> applicationDetails) {
-        ClientCredentials clientCredentials = CacheMapUtil.get(CLIENT_CREDENTIALS_KEY, clientId,
-                ClientCredentials.class);
-        if (!StringUtil.isEmpty(scope)) {
-            clientCredentials.setScope(scope);
-        }
-        if (!StringUtil.isEmpty(description)) {
-            clientCredentials.setDescr(description);
-        }
-        if (status != null) {
-            clientCredentials.setStatus(status);
-        }
-        if (applicationDetails != null && !applicationDetails.isEmpty()) {
-            clientCredentials.setApplicationDetails(applicationDetails);
-        }
-        return CacheMapUtil.put(CLIENT_CREDENTIALS_KEY, clientId, clientCredentials) == null ? false : true;
+    public Single<Boolean> updateClientCredentials(String clientId, String scope, String description, Integer status, Map<String, String> applicationDetails) {
+        return CacheMapUtil
+                .get(CLIENT_CREDENTIALS_KEY, clientId, ClientCredentials.class)
+                .flatMapSingle(clientCredentials -> {
+                    if (!StringUtil.isEmpty(scope)) {
+                        clientCredentials.setScope(scope);
+                    }
+                    if (!StringUtil.isEmpty(description)) {
+                        clientCredentials.setDescr(description);
+                    }
+                    if (status != null) {
+                        clientCredentials.setStatus(status);
+                    }
+                    if (applicationDetails != null && !applicationDetails.isEmpty()) {
+                        clientCredentials.setApplicationDetails(applicationDetails);
+                    }
+                    return CacheMapUtil
+                            .put(CLIENT_CREDENTIALS_KEY, clientId, clientCredentials);
+                });
     }
 
     @Override
-    public List<ApplicationInfo> getAllApplications() {
-        List<ApplicationInfo> list = new ArrayList<ApplicationInfo>();
-        Collection<String> values = CacheMapUtil.values(CLIENT_CREDENTIALS_KEY);
-        for (String json : values) {
-            ClientCredentials creds = JSON.parseObject(json, ClientCredentials.class);
-            ApplicationInfo app = ApplicationInfo.loadFromClientCredentials(creds);
-            if (app != null) {
-                list.add(app);
-            }
-        }
-        return list;
+    public Single<List<ApplicationInfo>> getAllApplications() {
+        List<ApplicationInfo> list = new ArrayList<>();
+        return CacheMapUtil
+                .values(CLIENT_CREDENTIALS_KEY)
+                .switchIfEmpty(Single.just(new ArrayList<>()))
+                .map(values -> {
+                    for (String json : values) {
+                        ClientCredentials credentials = JSON.parseObject(json, ClientCredentials.class);
+                        ApplicationInfo app = ApplicationInfo.loadFromClientCredentials(credentials);
+                        if (app != null) {
+                            list.add(app);
+                        }
+                    }
+                    return list;
+                });
     }
 
     @Override
-    public void storeAuthCode(AuthCode authCode) {
-        CacheObjectUtil.set("acc:" + authCode.getCode(), authCode, 1800);
+    public Completable storeAuthCode(AuthCode authCode) {
+        return CacheObjectUtil.set("acc:" + authCode.getCode(), authCode, 1800);
         // RemoteCacheObject.set("acuri:" + authCode.getCode() +
         // authCode.getRedirectUri(), authCode.getCode(), 1800);
     }
 
     @Override
-    public AuthCode findAuthCode(String authCode/* , String redirectUri */) {
+    public Maybe<AuthCode> findAuthCode(String authCode/* , String redirectUri */) {
         return CacheObjectUtil.get("acc:" + authCode, AuthCode.class);
     }
 
     @Override
-    public void updateAuthCodeValidStatus(String authCode, boolean valid) {
-        AuthCode updatedAuthCode = CacheObjectUtil.get("acc:" + authCode, AuthCode.class).setValid(valid);
-        CacheObjectUtil.set("acc:" + authCode, updatedAuthCode);
+    public Completable updateAuthCodeValidStatus(String authCode, boolean valid) {
+        return CacheObjectUtil
+                .get("acc:" + authCode, AuthCode.class)
+                .map(updatedAuthCode -> {
+                    updatedAuthCode.setValid(valid);
+                    return updatedAuthCode;
+                })
+                .flatMapCompletable(updatedAuthCode -> CacheObjectUtil.set("acc:" + authCode, updatedAuthCode));
     }
 
     @Override
-    public void storeAccessToken(AccessToken accessToken) {
+    public Completable storeAccessToken(AccessToken accessToken) {
         Integer tokenExpirationInSeconds = Integer.valueOf((!accessToken.getRefreshExpiresIn().isEmpty())
                 ? accessToken.getRefreshExpiresIn() : accessToken.getExpiresIn());
-        CacheObjectUtil.set("at:" + accessToken.getToken(), accessToken, tokenExpirationInSeconds);
-        CacheObjectUtil.set("atr:" + accessToken.getRefreshToken() + accessToken.getClientId(),
-                accessToken.getToken());
-        // TODO 目前只支持同一个user在一个第三方app内只存储一个token
-        CacheObjectUtil.set("atuid:" + accessToken.getUserId() + ":" + accessToken.getClientId(),
-                accessToken.getToken(), tokenExpirationInSeconds);
+        return CacheObjectUtil
+                .set("at:" + accessToken.getToken(), accessToken, tokenExpirationInSeconds)
+                .andThen(CacheObjectUtil.set("atr:" + accessToken.getRefreshToken() + accessToken.getClientId(), accessToken.getToken()))
+                .andThen(
+                        // TODO 目前只支持同一个user在一个第三方application内只存储一个token
+                        CacheObjectUtil.set("atuid:" + accessToken.getUserId() + ":" + accessToken.getClientId(),
+                                accessToken.getToken(), tokenExpirationInSeconds));
     }
 
     @Override
-    public AccessToken findAccessTokenByRefreshToken(String refreshToken, String clientId) {
-        String accessTokenStr = CacheObjectUtil.get("atr:" + refreshToken + clientId, String.class);
-        if (!StringUtil.isEmpty(accessTokenStr)) {
-            return CacheObjectUtil.get("at:" + accessTokenStr, AccessToken.class);
-        } else {
-            return null;
-        }
+    public Maybe<AccessToken> findAccessTokenByRefreshToken(String refreshToken, String clientId) {
+        return CacheObjectUtil.get("atr:" + refreshToken + clientId, String.class)
+                .flatMap(accessTokenStr -> {
+                    if (!StringUtil.isEmpty(accessTokenStr)) {
+                        return CacheObjectUtil
+                                .get("at:" + accessTokenStr, AccessToken.class);
+                    } else {
+                        return Maybe.empty();
+                    }
+                });
     }
 
     @Override
-    public void updateAccessTokenValidStatus(String accessToken, boolean valid) {
-        AccessToken updatedTokenObject = CacheObjectUtil.get("at:" + accessToken, AccessToken.class).setValid(valid);
-        CacheObjectUtil.set("at:" + accessToken, updatedTokenObject);
+    public Completable updateAccessTokenValidStatus(String accessToken, boolean valid) {
+        return CacheObjectUtil.get("at:" + accessToken, AccessToken.class)
+                .map(updatedTokenObject -> updatedTokenObject.setValid(valid))
+                .flatMapCompletable(updatedTokenObject -> CacheObjectUtil.set("at:" + accessToken, updatedTokenObject));
     }
 
     @Override
-    public AccessToken findAccessToken(String accessToken) {
+    public Maybe<AccessToken> findAccessToken(String accessToken) {
         return CacheObjectUtil.get("at:" + accessToken, AccessToken.class);
     }
 
     @Override
-    public void removeAccessToken(String accessToken) {
-        CacheObjectUtil.remove("at:" + accessToken);
+    public Completable removeAccessToken(String accessToken) {
+        return CacheObjectUtil.remove("at:" + accessToken).toCompletable();
     }
 
     @Override
-    public AccessToken getAccessTokenByUserIdAndClientId(String userId, String clientId) {
-        String tokenStr = CacheObjectUtil.get("atuid:" + userId + ":" + clientId, String.class);
-        return CacheObjectUtil.get("at:" + tokenStr, AccessToken.class);
+    public Maybe<AccessToken> getAccessTokenByUserIdAndClientId(String userId, String clientId) {
+        return CacheObjectUtil.get("atuid:" + userId + ":" + clientId, String.class)
+                .flatMap(tokenStr -> CacheObjectUtil.get("at:" + tokenStr, AccessToken.class));
     }
 
     @Override
-    public boolean storeScope(Scope scope) {
-        CacheMapUtil.put(SCOPES_KEY, scope.getScope(), scope);
+    public Single<Boolean> storeScope(Scope scope) {
+        return CacheMapUtil.put(SCOPES_KEY, scope.getScope(), scope);
         // Redis.hset() method calling allways success
-        return true;
     }
 
     @Override
-    public List<Scope> getAllScopes() {
-        return CacheMapUtil.values(SCOPES_KEY).stream().map(value -> JSON.parseObject(value, Scope.class))
-                .collect(Collectors.toList());
+    public Single<List<Scope>> getAllScopes() {
+        return CacheMapUtil.values(SCOPES_KEY)
+                .map(values -> values.stream().map(value -> JSON.parseObject(value, Scope.class))
+                        .collect(Collectors.toList()))
+                .switchIfEmpty(Single.just(new ArrayList<>()));
     }
 
     @Override
-    public Scope findScope(String scopeName) {
+    public Maybe<Scope> findScope(String scopeName) {
         return CacheMapUtil.get(SCOPES_KEY, scopeName, Scope.class);
     }
 
     @Override
-    public boolean deleteScope(String scopeName) {
+    public Single<Boolean> deleteScope(String scopeName) {
         return CacheMapUtil.remove(SCOPES_KEY, scopeName);
     }
 }

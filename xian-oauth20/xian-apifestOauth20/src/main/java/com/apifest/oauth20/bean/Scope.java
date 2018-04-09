@@ -55,8 +55,7 @@ public class Scope implements Serializable{
     @JSONField(name = "pass_expires_in",ordinal = 4)
     private Integer passExpiresIn;
 
-    @JSONField(name = "" +
-            "",ordinal = 5)
+    @JSONField(ordinal = 5)
     private Integer refreshExpiresIn;
 
     public String getScope() {
@@ -164,10 +163,7 @@ public class Scope implements Serializable{
 
     public static boolean validScopeName(String scopeName) {
         Matcher m = SCOPE_PATTERN.matcher(scopeName);
-        if (m.find()) {
-            return true;
-        }
-        return false;
+        return m.find();
     }
 
     public static void main(String... args) {

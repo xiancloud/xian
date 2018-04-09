@@ -1,6 +1,7 @@
 package info.xiancloud.plugins.yy.sequential;
 
 import info.xiancloud.core.Group;
+import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
@@ -30,7 +31,7 @@ public class TestSequentialQueueUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         try {
             Thread.sleep(400);
         } catch (InterruptedException e) {
@@ -38,10 +39,12 @@ public class TestSequentialQueueUnit implements Unit {
         }
         if (nano.get() > msg.get("nano", long.class)) {
             LOG.error(new Throwable());
-            return UnitResponse.createUnknownError(null, "保序算法有问题！");
+            handler.handle(UnitResponse.createUnknownError(null, "保序算法有问题！"));
+            return;
         }
         nano.set(msg.get("nano", long.class));
-        return UnitResponse.createSuccess();
+        handler.handle(UnitResponse.createSuccess());
+        return;
     }
 
     @Override

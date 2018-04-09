@@ -36,10 +36,10 @@ public interface Unit {
     Input getInput();
 
     /**
-     * @return this unit's name. Defaults to the unit class name with first char to lower case.
+     * @return this unit's name. Defaults to the unit class name
      */
     default String getName() {
-        return StringUtil.firstCharToLowerCase(getClass().getSimpleName());
+        return getClass().getSimpleName();
     }
 
     /**

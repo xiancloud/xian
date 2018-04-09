@@ -5,7 +5,7 @@ import info.xiancloud.apidoc.unit.md.CustomizedMdApidocUnit;
 import info.xiancloud.apidoc.unit.md.FullMdApidocUnit;
 import info.xiancloud.apidoc.unit.md.GroupMdApidocUnit;
 import info.xiancloud.core.Unit;
-import info.xiancloud.core.message.Xian;
+import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.util.HttpUtil;
 
 import javax.servlet.http.HttpServlet;
@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 
 /**
  * @author happyyangyuan
+ * @deprecated use units to generate api doc instead.
  */
 public class ApidocServlet extends HttpServlet {
 
@@ -56,7 +57,7 @@ public class ApidocServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
         try {
             Unit apidocUnit = apidocUnitClass.newInstance();
-            out.print(Xian.call(apidocUnit.getGroup().getName(), apidocUnit.getName(), params, 2 * 60 * 1000)
+            out.print(SingleRxXian.call(apidocUnit.getGroup().getName(), apidocUnit.getName(), params/*, 2 * 60 * 1000*/).blockingGet()
                     .throwExceptionIfNotSuccess().dataToStr());
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);

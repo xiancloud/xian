@@ -24,6 +24,9 @@ import com.apifest.oauth20.bean.AuthCode;
 import com.apifest.oauth20.bean.ClientCredentials;
 import com.apifest.oauth20.bean.Scope;
 import info.xiancloud.core.support.authen.AccessToken;
+import io.reactivex.Completable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 import java.util.List;
 import java.util.Map;
@@ -37,21 +40,21 @@ public interface DBManager {
      * @param clientSecret client secret of the client
      * @return true when such a client exists, otherwise false
      */
-    boolean validClient(String clientId, String clientSecret);
+    Single<Boolean> validClient(String clientId, String clientSecret);
 
     /**
      * Stores client credentials in the DB.
      *
      * @param clientCreds client credentials
      */
-    void storeClientCredentials(ClientCredentials clientCreds);
+    Completable storeClientCredentials(ClientCredentials clientCreds);
 
     /**
      * Stores auth codes in the DB.
      *
      * @param authCode that will be stored in the DB
      */
-    void storeAuthCode(AuthCode authCode);
+    Completable storeAuthCode(AuthCode authCode);
 
     /**
      * Updates auth code valid status.
@@ -59,14 +62,16 @@ public interface DBManager {
      * @param authCode the auth code to be updated
      * @param valid    the new status of the auth code
      */
-    void updateAuthCodeValidStatus(String authCode, boolean valid);
+    Completable updateAuthCodeValidStatus(String authCode, boolean valid);
 
     /**
      * Stores access tokens in the DB.
+     * It is better to support multiple access tokens for one application.
+     * TODO But 目前只支持同一个user在一个第三方application内只存储一个token
      *
      * @param accessToken that will be stored in the DB
      */
-    void storeAccessToken(AccessToken accessToken);
+    Completable storeAccessToken(AccessToken accessToken);
 
     /**
      * Loads an access token record from DB by passed refreshToken
@@ -75,7 +80,7 @@ public interface DBManager {
      * @param clientId     client id
      * @return access token object
      */
-    AccessToken findAccessTokenByRefreshToken(String refreshToken, String clientId);
+    Maybe<AccessToken> findAccessTokenByRefreshToken(String refreshToken, String clientId);
 
     /**
      * Updates access token status.
@@ -83,15 +88,15 @@ public interface DBManager {
      * @param accessToken the access token to be updated
      * @param valid       the new status of the access token
      */
-    void updateAccessTokenValidStatus(String accessToken, boolean valid);
+    Completable updateAccessTokenValidStatus(String accessToken, boolean valid);
 
     /**
      * Loads an access token record from DB by passed accessToken
      *
      * @param accessToken access token
-     * @return access token object
+     * @return access token bean wrapped with the {@link Single single event observable}, empty if does not exist.
      */
-    AccessToken findAccessToken(String accessToken);
+    Maybe<AccessToken> findAccessToken(String accessToken);
 
     /**
      * Loads an auth code record from DB by passed authCode and redirect uri.
@@ -99,7 +104,7 @@ public interface DBManager {
      * @param authCode authCode
      * @return auth code object if it is valid, otherwise <code>null</code>
      */
-    AuthCode findAuthCode(String authCode/*, String redirectUri*/);
+    Maybe<AuthCode> findAuthCode(String authCode/*, String redirectUri*/);
 
     /**
      * Loads a client credentials from DB by passed LOCAL_NODE_ID.
@@ -107,7 +112,7 @@ public interface DBManager {
      * @param clientId client id
      * @return client credentials object that will be stored in the DB
      */
-    ClientCredentials findClientCredentials(String clientId);
+    Maybe<ClientCredentials> findClientCredentials(String clientId);
 
     /**
      * Stores OAuth20 scope in the DB.
@@ -115,14 +120,14 @@ public interface DBManager {
      * @param scope OAuth20 scope to be stored in the DB
      * @return <code>true</code> if the scope is successfully stored, <code>false</code> otherwise
      */
-    boolean storeScope(Scope scope);
+    Single<Boolean> storeScope(Scope scope);
 
     /**
      * Lists all registered scopes.
      *
-     * @return {@link List} of all scopes stored in the DB
+     * @return {@link List} of all scopes stored in the DB. Empty if no scopes found. This method never returns null.
      */
-    List<Scope> getAllScopes();
+    Single<List<Scope>> getAllScopes();
 
     /**
      * Loads a scope from DB by its name.
@@ -130,7 +135,7 @@ public interface DBManager {
      * @param scopeName the name of the scope to be loaded from the DB
      * @return {@link Scope} the loaded scope object
      */
-    Scope findScope(String scopeName);
+    Maybe<Scope> findScope(String scopeName);
 
     /**
      * Updates client application scope, description, status and details.
@@ -141,14 +146,14 @@ public interface DBManager {
      * @param status      the status of the client app
      * @return <code>true</code> if the update is successful, <code>false</code> otherwise
      */
-    boolean updateClientCredentials(String clientId, String scope, String description, Integer status, Map<String, String> applicationDetails);
+    Single<Boolean> updateClientCredentials(String clientId, String scope, String description, Integer status, Map<String, String> applicationDetails);
 
     /**
      * Lists all client applications stored in the DB.
      *
      * @return {@link List} of all registered client applications
      */
-    List<ApplicationInfo> getAllApplications();
+    Single<List<ApplicationInfo>> getAllApplications();
 
     /**
      * Deletes an oauth20 scope.
@@ -156,7 +161,7 @@ public interface DBManager {
      * @param scopeName the name of the scope to be deleted
      * @return <code>true</code> if the scope is successfully deleted, otherwise <code>false</code>
      */
-    boolean deleteScope(String scopeName);
+    Single<Boolean> deleteScope(String scopeName);
 
     /**
      * Returns the only one active access token for a user and a client application.
@@ -165,13 +170,13 @@ public interface DBManager {
      * @param clientId the id of the client application
      * @return {@link AccessToken}
      */
-    AccessToken getAccessTokenByUserIdAndClientId(String userId, String clientId);
+    Maybe<AccessToken> getAccessTokenByUserIdAndClientId(String userId, String clientId);
 
     /**
      * Remove an access token.
      *
      * @param accessToken the access token to be removed
      */
-    void removeAccessToken(String accessToken);
+    Completable removeAccessToken(String accessToken);
 
 }

@@ -13,7 +13,7 @@ public class App {
                     .addHeader("token", "123")
                     .setSSL(null, null)
                     //.setContent("yyq")
-                    .execute();
+                    .execute().blockingGet();
         } catch (Exception e) {
             e.printStackTrace();
         }

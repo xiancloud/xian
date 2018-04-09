@@ -7,6 +7,7 @@ import info.xiancloud.core.support.cache.CacheService;
 import info.xiancloud.core.support.cache.vo.ScanVo;
 import info.xiancloud.core.util.Reflection;
 import io.reactivex.Completable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 import java.util.HashSet;
@@ -215,9 +216,9 @@ public final class CacheObjectUtil {
      * @param cacheKey the key for the cache
      * @param clazz    the class
      * @param <T>      the type
-     * @return single event observable for the cached object.
+     * @return maybe event observable for the cached object, if the result is null, then the we will get a empty result.
      */
-    public static <T> Single<T> get(String cacheKey, Class<T> clazz) {
+    public static <T> Maybe<T> get(String cacheKey, Class<T> clazz) {
         return get(CacheService.CACHE_CONFIG_BEAN, cacheKey, clazz);
     }
 
@@ -228,15 +229,19 @@ public final class CacheObjectUtil {
      * @param cacheKey        the key for the cache
      * @param clazz           the class
      * @param <T>             the type
-     * @return single event observable for the cached object.
+     * @return maybe for the cached object.
      */
-    public static <T> Single<T> get(CacheConfigBean cacheConfigBean, String cacheKey, Class<T> clazz) {
+    public static <T> Maybe<T> get(CacheConfigBean cacheConfigBean, String cacheKey, Class<T> clazz) {
         return SingleRxXian.call(CacheService.CACHE_SERVICE, "cacheObjectGet", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", cacheKey);
-        }}).map(unitResponseObject -> {
-            unitResponseObject.throwExceptionIfNotSuccess();
-            return Reflection.toType(unitResponseObject.getData(), clazz);
+        }}).flatMapMaybe(unitResponse -> {
+            unitResponse.throwExceptionIfNotSuccess();
+            if (unitResponse.getData() == null) {
+                return Maybe.empty();
+            } else {
+                return Maybe.just(Reflection.toType(unitResponse.getData(), clazz));
+            }
         });
     }
 

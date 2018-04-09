@@ -7,6 +7,7 @@ import info.xiancloud.core.support.cache.CacheConfigBean;
 import info.xiancloud.core.support.cache.CacheService;
 import info.xiancloud.core.util.Reflection;
 import io.reactivex.Completable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 import java.util.*;
@@ -114,20 +115,23 @@ public final class CacheMapUtil {
         }}).toCompletable();
     }
 
-    public static <T> Single<T> get(String key, String field, Class<T> clazz) {
+    public static <T> Maybe<T> get(String key, String field, Class<T> clazz) {
         return get(CacheService.CACHE_CONFIG_BEAN, key, field, clazz);
     }
 
-    public static <T> Single<T> get(CacheConfigBean cacheConfigBean, String key, String field, Class<T> clazz) {
+    public static <T> Maybe<T> get(CacheConfigBean cacheConfigBean, String key, String field, Class<T> clazz) {
         return SingleRxXian
                 .call(CacheService.CACHE_SERVICE, "cacheMapGet", new JSONObject() {{
                     put("cacheConfig", cacheConfigBean);
                     put("key", key);
                     put("field", field);
                 }})
-                .map(unitResponse -> {
+                .flatMapMaybe(unitResponse -> {
                             unitResponse.throwExceptionIfNotSuccess();
-                            return Reflection.toType(unitResponse.getData(), clazz);
+                            if (unitResponse.getData() == null)
+                                return Maybe.empty();
+                            else
+                                return Maybe.just(Reflection.toType(unitResponse.getData(), clazz));
                         }
                 );
     }
@@ -154,35 +158,70 @@ public final class CacheMapUtil {
     }
 */
 
-    public static <K, V> Single<Map<K, V>> getAll(String key, Class<K> kClazz, Class<V> vClazz) {
+    /**
+     * retrival the cached map
+     *
+     * @param key    the key
+     * @param kClazz the key's class
+     * @param vClazz the values's class
+     * @param <K>    the generic type of the key
+     * @param <V>    the generic type of the value
+     * @return the whole map or null if the key does not exist
+     */
+    public static <K, V> Maybe<Map<K, V>> getAll(String key, Class<K> kClazz, Class<V> vClazz) {
         return getAll(CacheService.CACHE_CONFIG_BEAN, key, kClazz, vClazz);
     }
 
-    public static <K, V> Single<Map<K, V>> getAll(CacheConfigBean cacheConfigBean, String key, Class<K> kClazz, Class<V> vClazz) {
+    /**
+     * retrival the cached map
+     *
+     * @param cacheConfigBean the datasource configuration of the cache
+     * @param key             the key
+     * @param kClazz          the key's class
+     * @param vClazz          the values's class
+     * @param <K>             the generic type of the key
+     * @param <V>             the generic type of the value
+     * @return the whole map
+     */
+    @SuppressWarnings("all")
+    public static <K, V> Maybe<Map<K, V>> getAll(CacheConfigBean cacheConfigBean, String key, Class<K> kClazz, Class<V> vClazz) {
         return SingleRxXian
                 .call(CacheService.CACHE_SERVICE, "cacheMapGetAll", new JSONObject() {{
                     put("cacheConfig", cacheConfigBean);
                     put("key", key);
                 }})
-                .map(unitResponse -> {
+                .flatMapMaybe(unitResponse -> {
                     unitResponse.throwExceptionIfNotSuccess();
-                    Map<String, String> map = null;
-                    if (unitResponse.getData() != null)
-                        map = Map.class.cast(unitResponse.getData());
-                    if (map == null || map.isEmpty())
-                        return new HashMap<>();
-                    Map<K, V> maps = new HashMap<>();
-                    map.forEach((_key, _value) -> {
-                        maps.put(kClazz.cast(_key), Reflection.toType(_value, vClazz));
-                    });
-                    return maps;
+                    if (unitResponse.getData() == null)
+                        return Maybe.empty();
+                    else {
+                        JSONObject map = unitResponse.dataToJson();
+                        if (map == null || map.isEmpty())
+                            return Maybe.just(new HashMap<>());
+                        Map<K, V> maps = new HashMap<>();
+                        map.forEach((_key, _value) -> maps.put(Reflection.toType(_key, kClazz), Reflection.toType(_value, vClazz)));
+                        return Maybe.just(maps);
+                    }
                 });
     }
 
+    /**
+     * @param key   the cache key
+     * @param field the field in the map
+     * @return true if any elements are removed. False if no fields are removed, which means the field is not in the map originally.
+     */
     public static Single<Boolean> remove(String key, String field) {
         return remove(CacheService.CACHE_CONFIG_BEAN, key, field);
     }
 
+    /**
+     * remove the elements in the map
+     *
+     * @param cacheConfigBean the datasource configuration
+     * @param key             the key
+     * @param field           the field
+     * @return true if any elements are removed. False if no fields are removed, which means the field is not in the map originally.
+     */
     public static Single<Boolean> remove(CacheConfigBean cacheConfigBean, String key, String field) {
         return SingleRxXian.call(CacheService.CACHE_SERVICE, "cacheMapRemove", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
@@ -190,19 +229,28 @@ public final class CacheMapUtil {
             put("field", field);
         }}).map(unitResponse -> {
             unitResponse.throwExceptionIfNotSuccess();
-            long result = (long) unitResponse.getData();
+            long result = Objects.requireNonNull(unitResponse.dataToLong());
             return result > 0;
         });
     }
 
-    public static void batchRemove(Map<String, List<String>> batchRemoves) {
-        batchRemove(CacheService.CACHE_CONFIG_BEAN, batchRemoves);
+    /**
+     * batch remove the elements in the cached map
+     *
+     * @param batchRemoves Map(key, fields) the sub map you want to remvoe
+     */
+    @SuppressWarnings("unused")
+    public static Completable batchRemove(Map<String, List<String>> batchRemoves) {
+        return batchRemove(CacheService.CACHE_CONFIG_BEAN, batchRemoves);
     }
 
     /**
+     * batch remove the elements in the cached map
+     *
      * @param cacheConfigBean cacheConfigBean
-     * @param batchRemoves    Map(key, fields)
+     * @param batchRemoves    Map(key, fields) the sub map you want to remvoe
      */
+    @SuppressWarnings("all")
     public static Completable batchRemove(CacheConfigBean cacheConfigBean, Map<String, List<String>> batchRemoves) {
         return SingleRxXian
                 .call(CacheService.CACHE_SERVICE, "cacheMapBatchRemove", new JSONObject() {{
@@ -213,43 +261,80 @@ public final class CacheMapUtil {
                 .toCompletable();
     }
 
+    /**
+     * clear the cached map
+     *
+     * @param key the key
+     * @return true if any elements are removed. false if no keys are removed, usually this is because the map is empty already.
+     */
     public static Single<Boolean> clear(String key) {
         return clear(CacheService.CACHE_CONFIG_BEAN, key);
     }
 
+    /**
+     * clear the cached map
+     *
+     * @param cacheConfigBean the datasource configuration
+     * @param key             the cache key
+     * @return true if any elements are cleared, false if no keys are cleared.
+     */
     public static Single<Boolean> clear(CacheConfigBean cacheConfigBean, String key) {
         return SingleRxXian.call(CacheService.CACHE_SERVICE, "cacheMapClear", new JSONObject() {{
             put("cacheConfig", cacheConfigBean);
             put("key", key);
         }}).map(unitResponse -> {
             unitResponse.throwExceptionIfNotSuccess();
-            long result = (long) unitResponse.getData();
+            long result = Objects.requireNonNull(unitResponse.dataToLong());
             return result > 0;
         });
     }
 
-    public static Single<Set<String>> keys(String key) {
+    public static Maybe<Set<String>> keys(String key) {
         return keys(CacheService.CACHE_CONFIG_BEAN, key);
     }
 
-    @SuppressWarnings("unchecked")
-    public static Single<Set<String>> keys(CacheConfigBean cacheConfigBean, String key) {
+    /**
+     * retrial all the keys of the cached map
+     *
+     * @param cacheConfigBean datasource configuration
+     * @param key             cache key
+     * @return all the keys of the cached map, or null if the key does not exist
+     */
+    public static Maybe<Set<String>> keys(CacheConfigBean cacheConfigBean, String key) {
         return SingleRxXian
                 .call(CacheService.CACHE_SERVICE, "cacheMapKeys", new JSONObject() {{
                     put("cacheConfig", cacheConfigBean);
                     put("key", key);
                 }})
-                .map(unitResponse -> {
+                .flatMapMaybe(unitResponse -> {
                     unitResponse.throwExceptionIfNotSuccess();
-                    return (Set<String>) unitResponse.getData();
+                    if (unitResponse.getData() == null)
+                        return Maybe.empty();
+                    else
+                        return Maybe.just(Reflection.toTypedSet(unitResponse.getData(), String.class));
                 });
     }
 
-    public static <T> Single<Set<T>> keys(String key, Class<T> kClazz) {
+    /**
+     * retrial all the keys of the cached map
+     *
+     * @param key    cache key
+     * @param kClazz the key's class
+     * @return all the keys of the cached map, or null if the key does not exist
+     */
+    public static <T> Maybe<Set<T>> keys(String key, Class<T> kClazz) {
         return keys(CacheService.CACHE_CONFIG_BEAN, key, kClazz);
     }
 
-    public static <T> Single<Set<T>> keys(CacheConfigBean cacheConfigBean, String key, Class<T> kClazz) {
+    /**
+     * retrial all the keys of the cached map
+     *
+     * @param cacheConfigBean datasource configuration
+     * @param key             cache key
+     * @param kClazz          the key's class
+     * @return all the keys of the cached map, or null if the key does not exist
+     */
+    public static <T> Maybe<Set<T>> keys(CacheConfigBean cacheConfigBean, String key, Class<T> kClazz) {
         return keys(cacheConfigBean, key)
                 .map(keySet -> {
                     Set<T> _keys = new TreeSet<>();
@@ -258,38 +343,72 @@ public final class CacheMapUtil {
                 });
     }
 
-    public static Single<List<String>> values(String key) {
+    /**
+     * @param key the cached list's key
+     * @return the whole list if exists or null if the key does not exist.
+     */
+    public static Maybe<List<String>> values(String key) {
         return values(CacheService.CACHE_CONFIG_BEAN, key);
     }
 
     /**
-     * retrieval the values in the cache list
+     * retrieval all the values in the cache list
+     *
+     * @return the whole list if exists or null if the key does not exist.
      */
-    @SuppressWarnings("unchecked")
-    public static Single<List<String>> values(CacheConfigBean cacheConfigBean, String key) {
+    public static Maybe<List<String>> values(CacheConfigBean cacheConfigBean, String key) {
         return SingleRxXian
                 .call(CacheService.CACHE_SERVICE, "cacheMapValues", new JSONObject() {{
                     put("cacheConfig", cacheConfigBean);
                     put("key", key);
                 }})
-                .map(unitResponse -> {
+                .flatMapMaybe(unitResponse -> {
                     unitResponse.throwExceptionIfNotSuccess();
-                    return (List<String>) unitResponse.getData();
+                    if (unitResponse.getData() == null)
+                        return Maybe.empty();
+                    else
+                        return Maybe.just(Reflection.toTypedList(unitResponse.getData(), String.class));
                 });
     }
 
-    public static <T> Single<List<T>> values(String key, Class<T> vClazz) {
+    /**
+     * retrieval all the values in the cache map
+     *
+     * @param key    the key of the cached map
+     * @param vClazz the value's class
+     * @param <T>    the value's generic type
+     * @return the whole list if exists or null if the key does not exist.return
+     */
+    public static <T> Maybe<List<T>> values(String key, Class<T> vClazz) {
         return values(CacheService.CACHE_CONFIG_BEAN, key, vClazz);
     }
 
-    public static <T> Single<List<T>> values(CacheConfigBean cacheConfigBean, String key, Class<T> vClazz) {
-        List<T> lists = new ArrayList<>();
-        return values(cacheConfigBean, key)
-                .map(collection -> {
-                    if (collection != null && !collection.isEmpty()) {
-                        collection.forEach(json -> lists.add(Reflection.toType(json, vClazz)));
-                    }
-                    return lists;
+    /**
+     * retrieval all the values in the cached map
+     *
+     * @param cacheConfigBean datasource configuration of the cache system
+     * @param key             the key of the cache
+     * @param vClazz          the element class
+     * @param <T>             the generic type of the list
+     * @return the whole list if exists or null if the key does not exist.return
+     */
+    public static <T> Maybe<List<T>> values(CacheConfigBean cacheConfigBean, String key, Class<T> vClazz) {
+        /*
+        return values(cacheConfigBean, key);
+        It is a bad idea to call values(cacheConfigBean,key) to get a string list, because this may cause a waste of
+        serialization and deserialization.
+        */
+        return SingleRxXian
+                .call(CacheService.CACHE_SERVICE, "cacheMapValues", new JSONObject() {{
+                    put("cacheConfig", cacheConfigBean);
+                    put("key", key);
+                }})
+                .flatMapMaybe(unitResponse -> {
+                    unitResponse.throwExceptionIfNotSuccess();
+                    if (unitResponse.getData() == null)
+                        return Maybe.empty();
+                    else
+                        return Maybe.just(Reflection.toTypedList(unitResponse.getData(), vClazz));
                 });
     }
 

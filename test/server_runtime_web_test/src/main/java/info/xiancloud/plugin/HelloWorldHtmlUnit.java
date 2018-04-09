@@ -1,9 +1,6 @@
 package info.xiancloud.plugin;
 
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.HttpContentType;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -30,9 +27,10 @@ public class HelloWorldHtmlUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) {
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         LOG.info(msg.getArgMap());
-        return UnitResponse.createSuccess("<html><body><h1>hello world.</h1></body></html>")
+        UnitResponse unitResponse = UnitResponse.createSuccess("<html><body><h1>hello world.</h1></body></html>")
                 .setContext(UnitResponse.Context.create().setHttpContentType(HttpContentType.TEXT_HTML));
+        handler.handle(unitResponse);
     }
 }
