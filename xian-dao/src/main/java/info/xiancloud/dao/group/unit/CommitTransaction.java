@@ -20,7 +20,7 @@ public final class CommitTransaction implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("提交事务").setPublic(false);
+        return UnitMeta.createWithDescription("提交事务").setDocApi(false);
     }
 
     @Override

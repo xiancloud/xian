@@ -17,9 +17,9 @@ public final class UnitMeta {
 
     private String description;
     /**
-     * todo rename to apidoc
+     * indicate whether to generate apidoc for the unit
      */
-    private boolean publik = true;//public是关键字，所以这里取名为publik，但是getter和setter命名还是isPublic()和setPublic()
+    private boolean docApi = true;
     /**
      * whether or not to use transaction.
      */
@@ -102,18 +102,18 @@ public final class UnitMeta {
         return this;
     }
 
-    public boolean isPublic() {
-        return publik;
+    public boolean isDocApi() {
+        return docApi;
     }
 
     /**
-     * Set this unit to be public or private, currently only public units are shown in api doc.
+     * Set whether or not the unit will be shown in api doc.
      *
-     * @param isPublic true: is public，false：private<br>
-     *                 defaults to true
+     * @param docApi true api doc of this unit will be generated，false otherwise.
+     *               defaults to true
      */
-    public UnitMeta setPublic(boolean isPublic) {
-        this.publik = isPublic;
+    public UnitMeta setDocApi(boolean docApi) {
+        this.docApi = docApi;
         return this;
     }
 

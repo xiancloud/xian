@@ -23,7 +23,7 @@ public class UnitMonitorSchedule implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("获取unit调用次数").setPublic(false)
+        return UnitMeta.createWithDescription("获取unit调用次数").setDocApi(false)
                 .setBroadcast(UnitMeta.Broadcast.create().setSuccessDataOnly(true).setAsync(false))
                 .setMonitorEnabled(false);
     }

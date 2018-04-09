@@ -26,7 +26,7 @@ public class GetUnitNode implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.create().setDescription("find out which node the group/unit is in")
-                .setPublic(false)
+                .setDocApi(false)
                 ;
     }
 

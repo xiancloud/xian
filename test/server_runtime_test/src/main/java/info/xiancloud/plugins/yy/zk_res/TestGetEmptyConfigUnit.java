@@ -17,7 +17,7 @@ public class TestGetEmptyConfigUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setPublic(false);
+        return UnitMeta.create().setDocApi(false);
     }
 
     @Override

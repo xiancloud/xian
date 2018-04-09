@@ -21,7 +21,7 @@ public class RollbackAndCloseTogetherUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("分布式事务回滚").setPublic(false);
+        return UnitMeta.createWithDescription("分布式事务回滚").setDocApi(false);
     }
 
     @Override

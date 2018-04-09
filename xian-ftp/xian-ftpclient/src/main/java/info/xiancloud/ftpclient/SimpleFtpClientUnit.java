@@ -22,7 +22,7 @@ public class SimpleFtpClientUnit implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.createWithDescription("A simple ftp client tool, login every time you use it and the connection is closed after your file uploading is done.")
-                .setPublic(false);
+                .setDocApi(false);
     }
 
     @Override

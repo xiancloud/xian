@@ -17,7 +17,7 @@ public class TestXhashUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("验证xhashSender").setPublic(false);
+        return UnitMeta.createWithDescription("验证xhashSender").setDocApi(false);
     }
 
     @Override

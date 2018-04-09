@@ -28,7 +28,7 @@ public class IssueAccessToken implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.createWithDescription("分配token，token会在指定的时间内过期，过期后需要重新申请。")
-                .setPublic(true)
+                .setDocApi(true)
                 .setSecure(false)
                 .setSuccessfulUnitResponse(UnitResponse.createSuccess(new JSONObject() {{
                     put("valid", true);

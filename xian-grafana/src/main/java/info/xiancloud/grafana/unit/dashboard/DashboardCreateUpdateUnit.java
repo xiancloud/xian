@@ -28,7 +28,7 @@ public class DashboardCreateUpdateUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("创建, 更新").setPublic(false);
+        return UnitMeta.createWithDescription("创建, 更新").setDocApi(false);
     }
 
     @Override

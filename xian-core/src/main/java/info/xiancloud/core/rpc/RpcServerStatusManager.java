@@ -41,7 +41,7 @@ public class RpcServerStatusManager implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("rpc开关").setPublic(false).setBroadcast();
+        return UnitMeta.create().setDescription("rpc开关").setDocApi(false).setBroadcast();
     }
 
     @Override

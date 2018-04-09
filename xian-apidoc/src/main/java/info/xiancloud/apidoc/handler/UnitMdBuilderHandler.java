@@ -80,7 +80,7 @@ public class UnitMdBuilderHandler extends BaseMdBuilderHandler {
                 bw.write(" 接口列表\r\n");
                 Collection<UnitProxy> unitProxies = unitMultimap.get(groupName);
                 for (UnitProxy unitBean : unitProxies) {
-                    if (!unitBean.getMeta().isPublic()) {
+                    if (!unitBean.getMeta().isDocApi()) {
                         LOG.info(String.format(" ---api-doc-unit接口:%s/%s非公开访问的，跳过生成", groupProxy.getName(),
                                 unitBean.getName()));
                         continue;

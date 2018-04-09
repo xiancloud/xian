@@ -24,7 +24,7 @@ public class SendShortMsg implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("发送短消息").setPublic(true);
+        return UnitMeta.createWithDescription("发送短消息").setDocApi(true);
     }
 
     @Override

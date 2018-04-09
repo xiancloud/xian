@@ -18,7 +18,7 @@ public class EnableGraylogUnit implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.createWithDescription("enable the graylog client to send udp log stream to remote graylog server.")
-                .setPublic(false)
+                .setDocApi(false)
                 .setBroadcast();
     }
 

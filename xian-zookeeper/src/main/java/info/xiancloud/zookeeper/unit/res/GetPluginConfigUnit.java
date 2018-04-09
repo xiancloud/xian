@@ -21,7 +21,7 @@ public class GetPluginConfigUnit implements Unit {
     public UnitMeta getMeta() {
         return UnitMeta.createWithDescription("现在本unit只用来做调试使用，程序内如果想要获取注册中心配置值，" +
                 "请直接使用IResAware.singleton.get()")
-                .setPublic(false);
+                .setDocApi(false);
     }
 
     @Override

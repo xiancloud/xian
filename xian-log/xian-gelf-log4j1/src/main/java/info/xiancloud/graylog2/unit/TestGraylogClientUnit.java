@@ -24,7 +24,7 @@ public class TestGraylogClientUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("测试graylog日志输出").setPublic(false);
+        return UnitMeta.createWithDescription("测试graylog日志输出").setDocApi(false);
     }
 
     @Override

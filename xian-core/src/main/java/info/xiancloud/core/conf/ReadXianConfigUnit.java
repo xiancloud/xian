@@ -16,7 +16,7 @@ public class ReadXianConfigUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("Read xian config").setPublic(false);
+        return UnitMeta.create().setDescription("Read xian config").setDocApi(false);
     }
 
     @Override

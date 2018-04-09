@@ -21,7 +21,7 @@ public final class RollbackTransaction implements Unit {
     }
 
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("回滚当前事务并关闭数据库连接;你可以放心调用它任意次,本质上它只执行一次回滚操作,后续调用都是直接被忽略掉的;如果当前不存在事务,那么返回操作失败.").setPublic(false);
+        return UnitMeta.createWithDescription("回滚当前事务并关闭数据库连接;你可以放心调用它任意次,本质上它只执行一次回滚操作,后续调用都是直接被忽略掉的;如果当前不存在事务,那么返回操作失败.").setDocApi(false);
     }
 
     @Override

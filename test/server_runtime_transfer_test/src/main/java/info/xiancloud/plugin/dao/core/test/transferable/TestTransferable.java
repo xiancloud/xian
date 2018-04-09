@@ -18,7 +18,7 @@ public class TestTransferable implements Unit {
     public UnitMeta getMeta() {
         return UnitMeta.
                 create()
-                .setPublic(false)
+                .setDocApi(false)
                 .setTransferable(true);
     }
 

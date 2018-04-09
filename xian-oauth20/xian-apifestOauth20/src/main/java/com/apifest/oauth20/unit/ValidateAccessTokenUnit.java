@@ -18,7 +18,7 @@ public class ValidateAccessTokenUnit implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.createWithDescription("验证accessToken正确性")
-                .setPublic(true)
+                .setDocApi(true)
                 .setSecure(false);
     }
 

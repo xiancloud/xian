@@ -17,7 +17,7 @@ public class ThroughUnitTest implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.create()
-                .setPublic(false)
+                .setDocApi(false)
                 .setBodyRequired(true)
                 .setDataOnly(true);
     }

@@ -25,7 +25,7 @@ public class GetUnitDefinition implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("获取unit的完整定义").setPublic(false);
+        return UnitMeta.create().setDescription("获取unit的完整定义").setDocApi(false);
     }
 
     @Override

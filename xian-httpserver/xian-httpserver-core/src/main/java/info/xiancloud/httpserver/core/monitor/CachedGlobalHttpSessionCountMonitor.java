@@ -23,7 +23,7 @@ public class CachedGlobalHttpSessionCountMonitor extends AbstractDiyMonitorUnit 
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("查询全局所有缓存的http session数量").setPublic(true);
+        return UnitMeta.createWithDescription("查询全局所有缓存的http session数量").setDocApi(true);
     }
 
     @Override

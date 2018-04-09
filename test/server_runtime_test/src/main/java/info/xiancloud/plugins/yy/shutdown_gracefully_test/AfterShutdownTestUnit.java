@@ -17,7 +17,7 @@ public class AfterShutdownTestUnit implements Unit {
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.createWithDescription("测试服务停止时，尚未结束的unit可以优雅的运行完毕")
-                .setPublic(false);
+                .setDocApi(false);
     }
 
     @Override

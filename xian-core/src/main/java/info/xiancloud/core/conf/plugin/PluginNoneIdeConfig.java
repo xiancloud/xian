@@ -22,7 +22,7 @@ public class PluginNoneIdeConfig extends PluginConfig implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("Read configuration in plugin, internally used only.").setPublic(false);
+        return UnitMeta.create().setDescription("Read configuration in plugin, internally used only.").setDocApi(false);
     }
 
     @Override

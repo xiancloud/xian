@@ -21,7 +21,7 @@ public final class BeginTransaction implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("开始事务，返回事务id").setPublic(false);
+        return UnitMeta.createWithDescription("开始事务，返回事务id").setDocApi(false);
     }
 
     @Override

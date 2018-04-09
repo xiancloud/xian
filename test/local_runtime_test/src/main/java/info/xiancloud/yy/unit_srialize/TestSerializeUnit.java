@@ -18,7 +18,7 @@ public class TestSerializeUnit implements Unit {
     public UnitMeta getMeta() {
         return UnitMeta
                 .createWithDescription("测试unit序列化指定属性")
-                .setPublic(false);
+                .setDocApi(false);
     }
 
     @Override
