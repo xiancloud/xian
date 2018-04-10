@@ -3,8 +3,8 @@ package info.xiancloud.rules;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.TraverseClasspath;
-import info.xiancloud.gateway.executor.BaseController;
-import info.xiancloud.gateway.executor.URIBean;
+import info.xiancloud.gateway.controller.BaseController;
+import info.xiancloud.gateway.controller.URIBean;
 import info.xiancloud.gateway.handle.TransactionalNotifyHandler;
 import info.xiancloud.gateway.rule_engine.IControllerMapping;
 

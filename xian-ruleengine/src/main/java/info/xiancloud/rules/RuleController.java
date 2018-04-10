@@ -3,7 +3,7 @@ package info.xiancloud.rules;
 import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
-import info.xiancloud.gateway.executor.BaseController;
+import info.xiancloud.gateway.controller.BaseController;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

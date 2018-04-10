@@ -162,6 +162,7 @@ public class Node implements INode {
         IdManager.makeSureMsgId(context);
         context.setNodeStatus(getSimpleStatus());
         context.setMessageType(MessageType.request);
+        context.setSourceNodeId(nodeId);//this node id
     }
 
     //1. init a msgId if not exists one, set msgId into the context.

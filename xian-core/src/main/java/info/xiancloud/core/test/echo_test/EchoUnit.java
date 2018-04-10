@@ -27,7 +27,8 @@ public class EchoUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setBodyRequired(true);
+        return UnitMeta.create().setBodyRequired(true)
+                .setDocApi(false);
     }
 
     @Override

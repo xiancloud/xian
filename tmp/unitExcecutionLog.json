@@ -1,0 +1,45 @@
+{
+  "unit": "TestReceiveBroadcastUnit",
+  "_cost": 0,
+  "type": "unit",
+  "unitResponse": {
+    "code": "SUCCESS",
+    "context": {
+      "creationTimestamp": 0,
+      "messageType": "response",
+      "msgId": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local_1523366282474_5",
+      "pretty": false,
+      "rollback": false,
+      "sentTimestamp": 0,
+      "sourceNodeId": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local",
+      "ssid": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local_1523366282573_1"
+    },
+    "msgId": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local_1523366282474_5"
+  },
+  "unitRequest": {
+    "argMap": {},
+    "context": {
+      "creationTimestamp": 0,
+      "destinationNodeId": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local",
+      "fromRemote": true,
+      "group": "test",
+      "messageType": "request",
+      "msgId": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local_1523366282474_5",
+      "nodeStatus": {
+        "activeCount": 2,
+        "cpuCores": 4,
+        "initTime": 1523366228395,
+        "nodeId": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local",
+        "port": 0,
+        "queueSize": 0
+      },
+      "readyOnly": false,
+      "routed": true,
+      "sentTimestamp": 0,
+      "ssid": "xian_runtime_happyyangyuan.local_local---gatewayTest---80369@happyyangyuan.local_1523366282573_1",
+      "transferredAlready": false,
+      "unit": "TestReceiveBroadcastUnit"
+    }
+  },
+  "group": "test"
+}

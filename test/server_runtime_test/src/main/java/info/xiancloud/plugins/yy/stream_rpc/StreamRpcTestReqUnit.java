@@ -1,10 +1,7 @@
 package info.xiancloud.plugins.yy.stream_rpc;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Handler;
-import info.xiancloud.core.Input;
-import info.xiancloud.core.Unit;
+import info.xiancloud.core.*;
 import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
@@ -23,6 +20,11 @@ public class StreamRpcTestReqUnit implements Unit {
         return new Input()
                 .add("file", String.class, "")
                 .add("newFile", String.class, "");
+    }
+
+    @Override
+    public UnitMeta getMeta() {
+        return UnitMeta.create().setDocApi(false);
     }
 
     @Override

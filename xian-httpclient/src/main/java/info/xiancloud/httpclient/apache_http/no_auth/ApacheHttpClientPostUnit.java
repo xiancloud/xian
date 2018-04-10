@@ -31,7 +31,8 @@ public class ApacheHttpClientPostUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("http post请求");
+        return UnitMeta.createWithDescription("http post请求")
+                .setDocApi(false);
     }
 
     @Override

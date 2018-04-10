@@ -18,7 +18,8 @@ public class GetPackagesToScan implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setBroadcast(UnitMeta.Broadcast.create().setSuccessDataOnly(true));
+        return UnitMeta.create().setBroadcast(UnitMeta.Broadcast.create().setSuccessDataOnly(true))
+                .setDocApi(false);
     }
 
     @Override

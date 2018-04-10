@@ -1,4 +1,4 @@
-package info.xiancloud.gateway.executor;
+package info.xiancloud.gateway.controller;
 
 import info.xiancloud.core.Group;
 import info.xiancloud.core.message.UnitRequest;

@@ -1,9 +1,6 @@
 package info.xiancloud.core.message;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.distribution.MessageType;
-import info.xiancloud.core.distribution.NodeStatus;
-import info.xiancloud.core.support.authen.AccessToken;
 import info.xiancloud.core.Constant;
 import info.xiancloud.core.distribution.MessageType;
 import info.xiancloud.core.distribution.NodeStatus;
@@ -16,12 +13,13 @@ import java.util.Map;
  *
  * @author happyyangyuan
  */
+@SuppressWarnings("ALL")
 public final class RequestContext {
 
     private String ssid;
     private String msgId;
     private NodeStatus nodeStatus;
-    private long creationTimestamp;//timestamp for message creation
+    /*private long creationTimestamp; timestamp for message creation; we disable this property for performance consideration.  */
     private long sentTimestamp;//message sent time in milli
     private MessageType messageType;
     private Map<String, String> header;
@@ -154,14 +152,14 @@ public final class RequestContext {
         return this;
     }
 
-    public long getCreationTimestamp() {
+    /*public long getCreationTimestamp() {
         return creationTimestamp;
     }
 
     public RequestContext setCreationTimestamp(long creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
         return this;
-    }
+    }*/
 
     /**
      * If this unitRequest is a http request from the api gateway, then an non-empty http header map is returned,

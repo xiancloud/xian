@@ -637,7 +637,7 @@ final public class UnitResponse {
 
         private NodeStatus nodeStatus;
 
-        private long creationTimestamp;//timestamp for response creation
+        /*private long creationTimestamp; timestamp for response creation; we disable this property for performance consideration.*/
         private long sentTimestamp;//message sent time in milli
 
         /**
@@ -748,7 +748,7 @@ final public class UnitResponse {
             return this;
         }
 
-        @SuppressWarnings("all")
+        /*@SuppressWarnings("all")
         public long getCreationTimestamp() {
             return creationTimestamp;
         }
@@ -757,7 +757,7 @@ final public class UnitResponse {
         public Context setCreationTimestamp(long creationTimestamp) {
             this.creationTimestamp = creationTimestamp;
             return this;
-        }
+        }*/
 
         public long getSentTimestamp() {
             return sentTimestamp;

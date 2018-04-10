@@ -1,19 +1,17 @@
 package info.xiancloud.core.message.sender.remote;
 
+import info.xiancloud.core.Group;
 import info.xiancloud.core.NotifyHandler;
+import info.xiancloud.core.Unit;
 import info.xiancloud.core.distribution.LocalNodeManager;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.sender.AbstractAsyncSender;
 import info.xiancloud.core.util.EnvUtil;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
- * 远程发送器，负载均衡发送器
+ * this is the load balanced remote sender
  *
  * @author happyyangyuan
  */
@@ -38,9 +36,9 @@ public class RemoteSender extends AbstractAsyncSender {
      *
      * @param nodeId the destination node id.
      */
-    private void sendToRemote(String nodeId) throws InvocationTargetException, IllegalAccessException {
+    private void sendToRemote(String nodeId) {
         unitRequest.getContext().setDestinationNodeId(nodeId);
-        unitRequest.getContext().setSourceNodeId(LocalNodeManager.LOCAL_NODE_ID);
+        /*unitRequest.getContext().setSourceNodeId(LocalNodeManager.LOCAL_NODE_ID); let the node instance to fill this source node id property*/
         LocalNodeManager.sendLoadBalanced(unitRequest, callback);
     }
 

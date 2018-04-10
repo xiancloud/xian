@@ -14,7 +14,8 @@ import info.xiancloud.core.util.StringUtil;
 public class GetNodeInfoUnit implements Unit {
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDescription("获取所有节点详细信息");
+        return UnitMeta.create().setDescription("获取所有节点详细信息")
+                .setDocApi(false);
     }
 
     @Override

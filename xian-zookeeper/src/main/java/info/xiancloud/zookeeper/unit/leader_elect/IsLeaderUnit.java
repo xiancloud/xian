@@ -17,7 +17,8 @@ public class IsLeaderUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("判断自身是否是leader");
+        return UnitMeta.createWithDescription("判断自身是否是leader")
+                .setDocApi(false);
     }
 
     @Override

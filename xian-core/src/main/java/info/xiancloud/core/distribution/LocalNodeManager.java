@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * 本地节点管理，本类维护着一个全局的本地单例节点<br>
+ * 本地节点管理，本类维护着一个全局的本地单例节点{@link Node}<br>
  * 注意：{@link Node}不具备负载均衡以及节点路由功能，也不应该具备！<br>
  * 提示：负载均衡的能力存在于 {@link UnitRouter} {@linkplain ApplicationRouter} {@link GroupRouter}
  *

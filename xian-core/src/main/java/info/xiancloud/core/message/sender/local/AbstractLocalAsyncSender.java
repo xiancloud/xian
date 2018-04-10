@@ -27,13 +27,12 @@ import java.util.Set;
  */
 class AbstractLocalAsyncSender extends AbstractAsyncSender {
 
-    private final Map<String, Object> originalMap;
-
     AbstractLocalAsyncSender(UnitRequest request, NotifyHandler callback) {
         super(request, callback);
         unitRequest.getContext().setDestinationNodeId(LocalNodeManager.LOCAL_NODE_ID);
-        originalMap = request.getArgMap();
-        //we should clone a new local map to avoid the original map elements to be changed.
+        Map<String, Object> originalMap = request.getArgMap();
+        //we clone a new local map to avoid the original map elements being changed.
+        // todo or unmodifiable map?
         Map<String, Object> clonedMap = new HashMap<>();
         if (originalMap != null) {
             for (String s : originalMap.keySet()) {
@@ -85,18 +84,18 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
         return required;
     }
 
-    private void responseCallback(UnitResponse unitResponse1, long start) {
-        fillResponseContext(unitResponse1.getContext());
+    private void responseCallback(UnitResponse unitResponse, long start) {
+        fillResponseContext(unitResponse.getContext());
         long cost = (System.nanoTime() - start) / 1000000;
         JSONObject logJson = new JSONObject().
                 fluentPut("group", unitRequest.getContext().getGroup()).
                 fluentPut("unit", unitRequest.getContext().getUnit()).
                 fluentPut(Constant.COST, cost).
-                fluentPut("unitRequest", originalMap).
-                fluentPut("unitResponse", unitResponse1).
+                fluentPut("unitRequest", unitRequest).
+                fluentPut("unitResponse", unitResponse).
                 fluentPut("type", "unit");
         LOG.info(logJson/*.toJSONString() maybe json object is better for performance? */);
-        callback.callback(unitResponse1);
+        callback.callback(unitResponse);
     }
 
     //note that context data is full-filled step by step, not at once.

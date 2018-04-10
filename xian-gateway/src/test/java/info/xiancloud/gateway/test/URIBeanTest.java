@@ -1,6 +1,6 @@
 package info.xiancloud.gateway.test;
 
-import info.xiancloud.gateway.executor.URIBean;
+import info.xiancloud.gateway.controller.URIBean;
 import org.junit.Assert;
 import org.junit.Test;
 

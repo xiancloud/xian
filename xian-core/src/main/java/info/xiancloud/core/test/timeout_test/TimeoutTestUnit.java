@@ -16,6 +16,11 @@ public class TimeoutTestUnit implements Unit {
     }
 
     @Override
+    public UnitMeta getMeta() {
+        return UnitMeta.create().setDocApi(false);
+    }
+
+    @Override
     public Input getInput() {
         return new Input();
     }

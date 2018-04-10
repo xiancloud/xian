@@ -13,7 +13,7 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.support.authen.AccessToken;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.gateway.executor.URIBean;
+import info.xiancloud.gateway.controller.URIBean;
 import io.reactivex.Single;
 
 import java.util.Arrays;

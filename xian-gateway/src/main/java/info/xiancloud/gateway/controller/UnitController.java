@@ -1,4 +1,4 @@
-package info.xiancloud.gateway.executor;
+package info.xiancloud.gateway.controller;
 
 import info.xiancloud.core.message.SingleRxXian;
 import info.xiancloud.core.message.UnitRequest;
