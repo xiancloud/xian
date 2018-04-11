@@ -5,8 +5,8 @@ import info.xiancloud.core.Input;
 import info.xiancloud.core.LocalUnitsManager;
 import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.Unit;
-import info.xiancloud.core.message.sender.IAsyncSender;
-import info.xiancloud.core.sequence.default_sequencer.DefaultSequencer;
+import info.xiancloud.core.message.sender.AbstractAsyncSender;
+import info.xiancloud.core.sequence.default_sequencer.AsyncSequencer;
 import info.xiancloud.core.sequence.sequence_no_garantee.NoSequenceGuaranteeSequencer;
 import info.xiancloud.core.util.LOG;
 
@@ -23,14 +23,14 @@ public interface ISequencer {
      * @param asyncSender the asynchronous sender called if sequence operation is succeeded.
      * @param onFailure   sequence failure handler called if the sequence operation failed directly
      */
-    void sequence(IAsyncSender asyncSender, NotifyHandler onFailure);
+    void sequence(AbstractAsyncSender asyncSender, NotifyHandler onFailure);
 
     static ISequencer build(String group, String unit, JSONObject argMap) {
         Unit unit1 = LocalUnitsManager.getLocalUnit(group, unit);
         Input input = unit1.getInput();
         if (input != null && input.isSequential()) {
             LOG.info("sequential: " + group + "." + unit);
-            return new DefaultSequencer(group, unit, argMap);
+            return new AsyncSequencer(group, unit, argMap);
         } else {
             return new NoSequenceGuaranteeSequencer();
         }

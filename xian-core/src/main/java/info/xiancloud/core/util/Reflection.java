@@ -51,7 +51,7 @@ public class Reflection {
      * Scan and get classes under certain annotation, and initiate them.
      */
     public static <T> List<T> getWithAnnotatedClass(Class annotationClass, String packages) {
-        return (List) new ArrayList() {{
+        return new ArrayList<T>() {{
             addAll(TraverseClasspath.getWithAnnotatedClass(annotationClass, packages));
         }};
     }

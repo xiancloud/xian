@@ -99,7 +99,7 @@ public class SingleRxXian {
                 @Override
                 protected void handle(UnitResponse unitResponse) {
                     if (unitResponse != null)
-                        emitter.onSuccess(unitResponse);//todo type cast exception.
+                        emitter.onSuccess(unitResponse);
                     else {
                         emitter.onError(new Exception("unit response is null"));
                     }

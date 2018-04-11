@@ -69,4 +69,10 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
      */
     protected abstract void asyncSend() throws Exception;
 
+    /**
+     * @return the callback object when this sender finished sending the unit request.
+     */
+    public NotifyHandler getCallback() {
+        return callback;
+    }
 }

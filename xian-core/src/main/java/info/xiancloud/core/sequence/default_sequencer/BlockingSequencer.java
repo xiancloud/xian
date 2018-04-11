@@ -7,7 +7,7 @@ import com.google.common.cache.LoadingCache;
 import info.xiancloud.core.NotifyHandler;
 import info.xiancloud.core.message.LackParamException;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.message.sender.IAsyncSender;
+import info.xiancloud.core.message.sender.AbstractAsyncSender;
 import info.xiancloud.core.sequence.ISequencer;
 import info.xiancloud.core.thread_pool.SingleThreadExecutorGroup;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
@@ -23,7 +23,7 @@ import java.util.Set;
  *
  * @author happyyangyuan
  */
-public class DefaultSequencer implements ISequencer {
+public class BlockingSequencer implements ISequencer {
     private String group;
     private String unit;
     private JSONObject argMap;
@@ -56,14 +56,14 @@ public class DefaultSequencer implements ISequencer {
         return intKey;
     }
 
-    public DefaultSequencer(String group, String unit, JSONObject argMap) {
+    public BlockingSequencer(String group, String unit, JSONObject argMap) {
         this.group = group;
         this.unit = unit;
         this.argMap = argMap;
     }
 
     @Override
-    public void sequence(IAsyncSender asyncSender, NotifyHandler onFailure) {
+    public void sequence(AbstractAsyncSender asyncSender, NotifyHandler onFailure) {
         try {
             getSequentialData();
         } catch (LackParamException lackParam) {
