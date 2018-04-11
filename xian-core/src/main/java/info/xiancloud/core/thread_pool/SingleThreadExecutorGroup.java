@@ -52,11 +52,11 @@ public class SingleThreadExecutorGroup {
      * @param key      sticky key
      * @param runnable the task
      */
-    public void execute(String key, Runnable runnable) {
+    public void execute(int key, Runnable runnable) {
         if (StringUtil.isEmpty(key)) {
             throw new IllegalArgumentException("入参key不允许为空！");
         }
-        int mod = Math.abs(key.hashCode() % map.size());
+        int mod = Math.abs(key % map.size());
         LOG.debug("_sequential   选取第" + mod + "根线程执行任务，threadKey=" + key);
         ThreadPoolExecutor executor = map.get(mod);
         executor.execute(ThreadPoolManager.wrapRunnable(runnable, MsgIdHolder.get()));
