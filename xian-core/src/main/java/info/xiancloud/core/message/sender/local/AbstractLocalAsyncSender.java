@@ -8,6 +8,7 @@ import info.xiancloud.core.message.LackParamException;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.message.sender.AbstractAsyncSender;
+import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 
@@ -44,7 +45,7 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
 
     @Override
     protected void asyncSend() {
-        long start = System.nanoTime();
+        final long start = System.nanoTime();
         Unit unit = LocalUnitsManager.getLocalUnit(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit());
         if (unit == null) {
             UnitResponse unitResponse = new UnitUndefinedException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()).toUnitResponse();
@@ -57,17 +58,21 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
                 UnitResponse unitResponse = UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
                 responseCallback(unitResponse, start);
             } else {
-                try {
-                    unit.execute(unitRequest, unitResponse -> {
-                        if (unitResponse == null) {
-                            unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
-                            LOG.error(unitResponse);
-                        }
-                        responseCallback(unitResponse, start);
-                    });
-                } catch (Throwable e) {
-                    responseCallback(UnitResponse.createException(e), start);
-                }
+                ThreadPoolManager.execute(() -> {
+                    // we don't know whether the unit execution is asynchronous or blocking
+                    // so here we submit the task to the thread pool for execution to make it 100% asynchronous.
+                    try {
+                        unit.execute(unitRequest, unitResponse -> {
+                            if (unitResponse == null) {
+                                unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
+                                LOG.error(unitResponse);
+                            }
+                            responseCallback(unitResponse, start);
+                        });
+                    } catch (Throwable e) {
+                        responseCallback(UnitResponse.createException(e), start);
+                    }
+                });
             }
         }
     }
