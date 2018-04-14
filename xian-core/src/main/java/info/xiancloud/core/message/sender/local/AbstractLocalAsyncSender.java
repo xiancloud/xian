@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Sender class for Local unit call. We also make this process asynchronous. The mechanism is we submit the request to our business thread pool for execution,
@@ -49,15 +50,16 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
         Unit unit = LocalUnitsManager.getLocalUnit(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit());
         if (unit == null) {
             UnitResponse unitResponse = new UnitUndefinedException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()).toUnitResponse();
-            responseCallback(unitResponse, start);
+            responseCallback(unitResponse, start, false);
         } else {
             Set<Input.Obj> required = getRequired(unit, unitRequest);
             if (!required.isEmpty()) {
                 String[] requiredParamNames = required.stream().map(Input.Obj::getName).toArray(String[]::new);
                 LackParamException lackParamException = new LackParamException(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit(), requiredParamNames);
                 UnitResponse unitResponse = UnitResponse.createError(Group.CODE_LACK_OF_PARAMETER, lackParamException.getLacedParams(), lackParamException.getMessage());
-                responseCallback(unitResponse, start);
+                responseCallback(unitResponse, start, false);
             } else {
+                timeoutAfter(unitRequest.getContext().getTimeOutInMilli(), start);
                 ThreadPoolManager.execute(() -> {
                     // we don't know whether the unit execution is asynchronous or blocking
                     // so here we submit the task to the thread pool for execution to make it 100% asynchronous.
@@ -67,14 +69,24 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
                                 unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
                                 LOG.error(unitResponse);
                             }
-                            responseCallback(unitResponse, start);
+                            responseCallback(unitResponse, start, false);
                         });
                     } catch (Throwable e) {
-                        responseCallback(UnitResponse.createException(e), start);
+                        responseCallback(UnitResponse.createException(e), start, false);
                     }
                 });
             }
         }
+    }
+
+    private void timeoutAfter(long timeoutInMilli, long start) {
+        ThreadPoolManager.schedule(() -> {
+            if (callback.getTimeout() == null) {
+                // If the stateful callback object's timeout property is empty which means it is not called back nor timed out either.
+                callback.setTimeout(true);
+                responseCallback(UnitResponse.createTimeout(new TimeoutException(), String.format("unit执行超时，%s ms", timeoutInMilli)), start, true);
+            }
+        }, timeoutInMilli);
     }
 
     private static Set<Input.Obj> getRequired(Unit recipient, UnitRequest unitRequest) {
@@ -89,7 +101,8 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
         return required;
     }
 
-    private void responseCallback(UnitResponse unitResponse, long start) {
+    private void responseCallback(UnitResponse unitResponse, long start, Boolean timeout) {
+        callback.setTimeout(timeout);
         fillResponseContext(unitResponse.getContext());
         long cost = (System.nanoTime() - start) / 1000000;
         JSONObject logJson = new JSONObject().

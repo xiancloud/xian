@@ -38,6 +38,7 @@ public final class RequestContext {
     private String destinationNodeId;//the destination node this request is meant to be sent
     private String sourceNodeId;// which node this request is from
     private String ip;//which ip this request is from. present only when this request is from the http gateway.
+    private long timeOutInMilli = Constant.UNIT_DEFAULT_TIME_OUT_IN_MILLI;//the timeout in milliseconds waiting for the execution of the destiniation unit.
 
     public String getDestinationNodeId() {
         return destinationNodeId;
@@ -244,6 +245,20 @@ public final class RequestContext {
     public RequestContext setIp(String ip) {
         this.ip = ip;
         return this;
+    }
+
+    public long getTimeOutInMilli() {
+        return timeOutInMilli;
+    }
+
+    /**
+     * set the timeout for the execution of the requested unit.
+     * defaults to {@link Constant#UNIT_DEFAULT_TIME_OUT_IN_MILLI} if you leave it alone.
+     *
+     * @param timeOutInMilli
+     */
+    public void setTimeOutInMilli(long timeOutInMilli) {
+        this.timeOutInMilli = timeOutInMilli;
     }
 
     public static RequestContext create() {

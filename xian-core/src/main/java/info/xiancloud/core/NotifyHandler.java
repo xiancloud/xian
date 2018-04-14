@@ -12,14 +12,13 @@ import java.util.List;
  */
 public abstract class NotifyHandler {
 
-    private boolean timeout = false;
+    /**
+     * Boolean object, 'null' means not yet, 'true' for timeout, 'false' if already called back.
+     * Defaults to null.
+     */
+    private Boolean timeout = null;
     private List<Action> beforeActions = new ArrayList<>();
     private List<Action> afterActions = new ArrayList<>();
-
-    public NotifyHandler setTimeout(boolean timeout) {
-        this.timeout = timeout;
-        return this;
-    }
 
     public void callback(UnitResponse unitResponseObject) {
         for (Action beforeAction : beforeActions) {
@@ -29,7 +28,7 @@ public abstract class NotifyHandler {
                 LOG.error("beforeAction执行失败，但是不妨碍下一个action执行", throwable);
             }
         }
-        if (timeout) {
+        if (timeout != null && timeout) {
             LOG.error("本次消息已经被判定为超时,但是超时后又收到了响应! unitResponseObject= " + unitResponseObject);
         } else {
             try {
@@ -56,6 +55,15 @@ public abstract class NotifyHandler {
     }
 
     protected abstract void handle(UnitResponse unitResponse);
+
+    public NotifyHandler setTimeout(boolean timeout) {
+        this.timeout = timeout;
+        return this;
+    }
+
+    public Boolean getTimeout() {
+        return timeout;
+    }
 
     public abstract static class Action {
         protected abstract void run(UnitResponse out);

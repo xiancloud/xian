@@ -1,7 +1,7 @@
 package info.xiancloud.core.sequence.sequence_no_garantee;
 
 import info.xiancloud.core.NotifyHandler;
-import info.xiancloud.core.message.sender.IAsyncSender;
+import info.xiancloud.core.message.sender.AbstractAsyncSender;
 import info.xiancloud.core.sequence.ISequencer;
 
 /**
@@ -13,7 +13,7 @@ import info.xiancloud.core.sequence.ISequencer;
 public class NoSequenceGuaranteeSequencer implements ISequencer {
 
     @Override
-    public void sequence(IAsyncSender asyncSender, NotifyHandler onFailure) {
+    public void sequence(AbstractAsyncSender asyncSender, NotifyHandler onFailure) {
         asyncSender.send();
     }
 }

@@ -6,7 +6,6 @@ import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -30,21 +29,15 @@ public class ThreadPoolManager {
         executor.allowCoreThreadTimeOut(true);
     }
 
-    private static final List<ExecutorService> executors = new CopyOnWriteArrayList<>(new ArrayList<ExecutorService>() {{
+    private static final List<ExecutorService> executors = new CopyOnWriteArrayList<ExecutorService>() {{
         add(executor);
-    }});
+    }};
+    private static final ScheduledExecutorService scheduledExecutorService = newScheduledExecutor(2);
 
     /**
      * 由业务层自行维护的线程池，这里只是对其进行监控而已；
      */
     private static final Set<ExecutorService> explicitExecutors = new CopyOnWriteArraySet<>();
-
-    /**
-     * @deprecated 请使用 {@link #getValidExecutor()}
-     */
-    private static ThreadPoolExecutor getExecutor() {
-        return executor;
-    }
 
     public static ThreadFactory threadFactory() {
         return executor.getThreadFactory();
@@ -274,10 +267,33 @@ public class ThreadPoolManager {
         return newSingleThreadScheduler().scheduleWithFixedDelay(proxy, 0, delayInMilli, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Creates and executes a one-shot action that becomes enabled after the given delay.
+     *
+     * @param runnable     the runnable
+     * @param delayInMilli the delay in milliseconds
+     * @return the future
+     */
+    public static ScheduledFuture schedule(Runnable runnable, long delayInMilli) {
+        Runnable proxy = wrapRunnable(runnable, null);
+        return scheduledExecutorService.schedule(proxy, delayInMilli, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * create a new xian monitored scheduled thread pool
+     *
+     * @param corePoolSize the core pool size
+     * @return the newly created thread pool
+     */
+    public static ScheduledExecutorService newScheduledExecutor(int corePoolSize) {
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(corePoolSize);
+        executors.add(scheduledExecutorService);
+        return scheduledExecutorService;
+    }
+
     // 新建一个executor并管理起来
     private static ScheduledExecutorService newSingleThreadScheduler() {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        // 这个threadFactory还有待深入研究
         executors.add(scheduledExecutorService);
         return scheduledExecutorService;
     }
@@ -289,6 +305,9 @@ public class ThreadPoolManager {
         return group;
     }
 
+    /**
+     * @deprecated this is blocking execution
+     */
     public static boolean execWithTimeout(final int timeoutInMilliseconds, final String name, final Callable task) {
         Future future = getValidExecutor().submit(task);
         try {
@@ -303,7 +322,7 @@ public class ThreadPoolManager {
     }
 
     /**
-     * 执行限时任务
+     * @deprecated this is blocking execution
      */
     public static boolean execWithTimeout(final int timeoutInMilliseconds, final String name, final Runnable task) {
         Future future = getValidExecutor().submit(task);

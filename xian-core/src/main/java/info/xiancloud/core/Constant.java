@@ -12,7 +12,7 @@ public class Constant {
     public static final String XIAN_MSG_ID_HEADER = XIAN_HEADER_PREFIX + "msgId";
     public static final String XIAN_REQUEST_TOKEN_HEADER = XIAN_HEADER_PREFIX + "accessToken";
 
-    public static final long UNIT_DEFAULT_TIME_OUT_IN_MILLI = 1000 * 20;
+    public static final long UNIT_DEFAULT_TIME_OUT_IN_MILLI = 1000 * 5;
     public static final int SYSTEM_EXIT_CODE_FOR_RPC_ERROR = -100;
     public static final int SYSTEM_EXIT_CODE_FOR_SYS_INIT_ERROR = -1;
 

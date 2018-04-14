@@ -183,6 +183,17 @@ final public class UnitResponse {
     }
 
     /**
+     * create a new timed out unit response.
+     *
+     * @param dataOrException the data or exception object.
+     * @param errMsg          the error message.
+     * @return the newly created unit response object.
+     */
+    public static UnitResponse createTimeout(Object dataOrException, String errMsg) {
+        return new UnitResponse().setCode(Group.CODE_TIME_OUT).setData(dataOrException).setMessage(errMsg);
+    }
+
+    /**
      * @param data   the value
      * @param errMsg error message.
      * @return the newly created response instance.
