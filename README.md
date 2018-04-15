@@ -1,6 +1,10 @@
 # xian
 xian是一个微服务框架，更确切的说是一个微服务套件。它基于Java8编写，不依赖spring，不依赖dubbo，上手和学习难度非常小。如果是以学会使用为目的，只要你会Java语言会gradle构建工具，甚至不需要了解微服务的各种概念，比学会使用dubbo和spring cloud不知道简单多少倍。
 
+很开心地告诉大家，现在我们可以基于xian开发100%异步的微服务了！我们基于netty非阻塞io和rxJava2响应式编程风格，实现了以同步风格代码开发异步业务逻辑。
+从gateway到业务层，整个业务生命周期都是异步的！当然，DAO层目前依然使用的是阻塞的JDBC，是由于目前我们局限于JDBC阻塞的标准API。
+至此，xian也是actor模型的完整实现了，希望哪天可以跟akka、vertx做性能pk！
+
 
 
 ## xian frame的基础介绍
@@ -12,6 +16,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 5. 微服务接口编排。
 6. 部署和监控问题。
 7. 帮助实现devops开发运维协作能力。
+8. 实现异步业务而没有回调地狱！
 ### 基于xian你可以实现如下逻辑架构图对应的微服务集群
 ![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://happyyangyuan.top/xian/基于xian的微服务逻辑架构图.png)
 
@@ -37,24 +42,39 @@ public class HelloWorldUnit implements Unit {
     }
 
     @Override
-    public UnitResponse execute(UnitRequest msg) { // 当前微服务单元的执行逻辑
-        System.out.println("hello world, "+ msg.getString("yourName"));
-        return UnitResponse.success();
-    }
+    public void execute(UnitRequest msg,Handler<UnitResponse> handler) { // 当前微服务单元的执行逻辑
+        UnitResponse unitResponse = UnitResponse.createSuccess("hello world, "+ msg.getString("yourName"));
+        handler.handle(unitResponse); // callback回调 以返回unit执行结果
+    }
 }
 ````
 定义一个微服务单元是不是很简单？ 接下来我们展示如何使用RPC来调用该服务单元：
 ````java
-UnitResponse resp = Xian.call("test", "helloWorld", map/bean);
+UnitResponse resp = SingleRxXian.call("test", "helloWorld", map/bean).blockingGet();//这种阻塞业务的方式，我们是非常不推荐的！这里仅仅做展示。
 ````
 以上是同步RPC调用，下面展示异步RPC调用：
 ````java
-Xian.call("test", "helloWorld", map/bean, new NotifyHandler() {
-    handle(UnitResponse response){
-        // do sth with the response.
-    }
-});
+SingleRxXian
+    .call("test", "helloWorld", map/bean)
+    .subscribe(unitResponse -> {
+        // 这里可以对unitResponse进行处理
+    });
+    
+// 链式调用， 这里如果大家对rxJava有一定的了解的话，那么以下代码你肯定信手拈来
+SingleRxXian
+    .call("test", "helloWorld", map/bean)
+    .flatMap(unitResponse -> {
+       return SingleRxXian.call("anotherGroup", "anotherUnit0", unitResponse.dataToMap());
+    })
+    .flatMap(unitResponse -> {
+       return SingleRxXian.call("anotherGroup", "anotherUnit1", unitResponse.dataToMap());
+    })
+    .subscribe(unitResponse -> {
+        // 这里可以对unitResponse进行处理
+    });
+    
 ````
+
 接下来，你只需要在各个微服务内编写各自的微服务单元，然后就可以实现自己的分布式应用啦，就是这么简单！
 
 ### xian_template
