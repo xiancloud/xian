@@ -1,6 +1,7 @@
 package info.xiancloud.rpcnettyserver;
 
 
+import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.distribution.Node;
 import info.xiancloud.core.rpc.RpcServer;
 import info.xiancloud.core.util.LOG;
@@ -26,7 +27,7 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
  */
 public class RpcNettyServer implements RpcServer {
 
-    private final boolean SSL = System.getProperty("XIAN_RPC_SSL") != null;
+    private final boolean SSL = XianConfig.getBoolValue("XIAN_RPC_SSL");
     private Channel parentChannel;
 
     private void start() throws Exception {
@@ -41,7 +42,9 @@ public class RpcNettyServer implements RpcServer {
         } else {
             sslCtx = null;
         }
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        // Boss thread pool below for handling incoming connections.
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        // Worker thread pool below for handling channel read/write. Here we only allow 1 thread to make sure the message order.
         EventLoopGroup workerGroup = new NioEventLoopGroup(1);
         ServerBootstrap b = new ServerBootstrap();
         b.group(bossGroup, workerGroup)
