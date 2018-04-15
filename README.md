@@ -295,7 +295,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 
 ### 规划中的功能
 1. 基于api网关内置反向代理实现灰度/蓝绿/红黑发布。
-~~2. 集成rxJava实现纯异步的微服务调用模式，可完全杜绝线程阻塞情况的发生，预估可成倍提升业务线程的性能。~~ 已上线。
+2. ~~集成rxJava实现纯异步的微服务调用模式，可完全杜绝线程阻塞情况的发生，预估可成倍提升业务线程的性能。~~ 已上线。
 3. 不局限于特定语言，将来会率先支持.NET语言实现微服务，帮助解决许多传统企业历史信息系统转型互联网微服务架构。可行性方面，本框架已经抽象出了rpc通信协议规范和服务治理规范，因此几乎其他所有OOP语言都可以集成进来。
 4. 基于“录音机”的API自动化测试方案。
 5. 分库分表方案。
@@ -327,7 +327,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 2. 请大家多多指点，加星加星！关注！ 那些开发中和规划中的功能就全靠你们的星星了，可怜脸。
 3. 鸣谢：  
     http://netty.io,  
-    http:
+    https://github.com/ReactiveX/RxJava,  
     https://github.com/alibaba/fastjson,  
     https://github.com/google/guava,  
     https://logging.apache.org/log4j,  
