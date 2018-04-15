@@ -34,7 +34,6 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
         unitRequest.getContext().setDestinationNodeId(LocalNodeManager.LOCAL_NODE_ID);
         Map<String, Object> originalMap = request.getArgMap();
         //we clone a new local map to avoid the original map elements being changed.
-        // todo or unmodifiable map?
         Map<String, Object> clonedMap = new HashMap<>();
         if (originalMap != null) {
             for (String s : originalMap.keySet()) {
