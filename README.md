@@ -327,11 +327,11 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 2. 请大家多多指点，加星加星！关注！ 那些开发中和规划中的功能就全靠你们的星星了，可怜脸。
 3. 鸣谢：  
     http://netty.io,  
-    https://github.com/ReactiveX/RxJava,  
-    https://github.com/alibaba/fastjson,  
-    https://github.com/google/guava,  
+    https://github.com/ReactiveX/RxJava,  
+    https://github.com/alibaba/fastjson,  
+    https://github.com/google/guava,  
     https://logging.apache.org/log4j,  
     http://zookeeper.apache.org,  
-    http://curator.apache.org;
+    http://curator.apache.org;
 
 
