@@ -13,9 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * xian统一的业务线程池,建议所有人都用本线程池内的线程来执行任务
- * <p>
- * todo 1、为所有的executor对应名称，方便监控；
- * todo 2、那些非ThreadPoolExecutor类型的线程池目前无法监控到
  *
  * @author happyyangyuan
  */
