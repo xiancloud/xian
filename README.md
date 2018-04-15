@@ -125,9 +125,14 @@ public class DemoUnit01 implements Unit {
     //...
     
     @Override
-    public UnitResponse execute(UnitRequest msg) {
-        return Xian.call("demoGroup02", "demoUnit02",
-                new JSONObject().fluentPut("param", msg.get("param", "a temp param if absent.")));
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
+        SingleRxXian
+            .call(
+                    "demoGroup02",
+                    "demoUnit02",
+                    new JSONObject().fluentPut("param", msg.get("param", "a temp param if absent."))
+                )
+            .subscribe(handler::handle);
     }
 }
 ````
@@ -193,18 +198,14 @@ tips: 可以设置你自己想要的参数来定制不同的API文档出来哦�
 http method为post，这是xian frame的网关标准。
 2. 而demoUnit01调用demoUnit02的rpc标准代码如下：
 ````java
-Xian.call("demoGroup02", "demoUnit02", map/bean);
+UnitResponse unitResponse = SingleRxXian.call("demoGroup02", "demoUnit02", map/bean).blockingGet();
 //详见DemoUnit01.java类
 //上面'demoGroup02'为目标Unit的groupName，'demoUnit02'为目标unit的名称。
 ````
 
 以上是同步调用，很多时候，我们希望异步方式实现任务提交，示例如下：
 ````java
-Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
- handle(UnitResponse response){
-    //doSth with the response.
- }
-});
+SingleRxXian.call("demoGroup01", "demoUnit01",new JSONObject()).subscribe();
 ````
 
 3. 我们为大家准备的project template是方便大家基于此template来扩展新的微服务，而不用浪费时间来自己开发gradle和shell脚本了，请遵循以下xian_template规范如下
@@ -216,7 +217,7 @@ Xian.call("demoGroup01", "demoUnit01",new JSONObject(), new NotifyHandler(){
  
 4. 以上使用启动脚本来运行各个节点的方式我们成为集群模式
 
-5. xian frame的IDE内非集群模式
+5. xianframe的IDE运行模式
 
 子module /xian_template/test内可以开发Junit代码或者直接写main入口代码进行单元测试，它将所有的本project定义的unit统一在本地管理，而不使用注册中心，我们可以直接使用rpc工具类"Xian.java"来本地调用的各个unit。详见/xian_template project内的DemoUnitTest.java类。
 
@@ -284,6 +285,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 28. 一致性哈希算法的封装支持。
 29. 基于一致性哈希算法的异步保序功能。
 31. 插件式无限扩展新功能的能力。
+32. **函数响应式同步编程风格实现异步业务逻辑。**
 
 ### 正在开发中的功能
 1. 内置持久层框架对分布式事务支持
@@ -293,7 +295,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 
 ### 规划中的功能
 1. 基于api网关内置反向代理实现灰度/蓝绿/红黑发布。
-2. 集成rxJava实现纯异步的微服务调用模式，可完全杜绝线程阻塞情况的发生，预估可成倍提升业务线程的性能。
+~~2. 集成rxJava实现纯异步的微服务调用模式，可完全杜绝线程阻塞情况的发生，预估可成倍提升业务线程的性能。~~ 已上线。
 3. 不局限于特定语言，将来会率先支持.NET语言实现微服务，帮助解决许多传统企业历史信息系统转型互联网微服务架构。可行性方面，本框架已经抽象出了rpc通信协议规范和服务治理规范，因此几乎其他所有OOP语言都可以集成进来。
 4. 基于“录音机”的API自动化测试方案。
 5. 分库分表方案。
@@ -309,7 +311,7 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 5. 题外话，打个小广告，如果你对spring cloud感兴趣，同时你习惯使用gradle构建工具的，推荐一个我写的基于gradle的spring cloud入门教程https://github.com/happyyangyuan/springcloud-quickstart
 
 #### 与dubbo的对比
-1. dubbo服务提供方与调用方接口依赖方式太强：调用方对提供方的抽象接口存在强依赖关系，需要严格的管理版本依赖，才不会出现服务方与调用方的不一致导致应用无法编译成功等一系列问题；而xian frame调用方与被调用方之间是物理强解耦的，没有接口依赖关系，只有逻辑依赖关系，只要参数和响应是适配的，就能相互兼容，尤其是单方面增加和减少可选字段参数完全不影响对端的兼容性。
+1. dubbo服务提供方与调用方接口依赖方式太强：调用方对提供方的抽象接口存在强依赖关系，需要严格的管理版本依赖才不会出现服务方与调用方的不一致导致应用无法编译成功等一系列问题；而xianframe调用方与被调用方之间是物理强解耦的，没有接口依赖关系，只有逻辑依赖关系，只要参数和响应是适配的，就能相互兼容，尤其是单方面增加和减少可选字段参数完全不影响对端的兼容性。
 2. 外部系统无法直接对接dubbo协议，即服务对平台敏感，难以简单复用：通常我们在提供对外服务时，都会以REST的方式提供出去，这样可以实现跨平台的特点。在dubbo中我们要提供REST接口时，不得不实现一层代理，用来将RPC接口转换成REST接口进行对外发布。所以当当网在dubbox（基于dubbo的开源扩展）中增加了对REST支持。而xian frame已经通过http gateway网关将xian内部的服务一一映射成为了可以直接访问的httpURI地址了，外部系统可以访问当xian frame提供的任何微服务而不需要任何二次开发来实现一个http代理server来提供rest服务。
 3. dubbo只是一个rpc框架，而xian frame是一个包含服务治理、调用链路追踪、dao层内置框架、集中配置、分布式锁、缓存技术、内置监控、部署和持续集成解决方案等等的微服务框架套件。
 4. 当然xian frame和dubbo一样都还没支持多语言。
@@ -324,6 +326,12 @@ xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
 1. xian，即“贤”，来自某个人的名，代表“好”、“佳”的意思。谨以此名字纪念我死去的爱情。
 2. 请大家多多指点，加星加星！关注！ 那些开发中和规划中的功能就全靠你们的星星了，可怜脸。
 3. 鸣谢：  
-    http://netty.io, https://github.com/alibaba/fastjson, https://github.com/google/guava, https://logging.apache.org/log4j, http://zookeeper.apache.org, http://curator.apache.org;
+    http://netty.io,  
+    http:
+    https://github.com/alibaba/fastjson,  
+    https://github.com/google/guava,  
+    https://logging.apache.org/log4j,  
+    http://zookeeper.apache.org,  
+    http://curator.apache.org;
 
 
