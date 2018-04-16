@@ -116,7 +116,7 @@ public class PluginFileUtil {
      */
     public static String pluginName(String jarName) {
         if (jarName.contains("-"))
-            return jarName.substring(0, jarName.lastIndexOf("-"));
+            return jarName.substring(0, jarName.lastIndexOf(version(jarName)));
         throw new IllegalArgumentException("Not a standard jar name: " + jarName);
     }
 
