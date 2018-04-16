@@ -91,14 +91,22 @@ public class PluginFileUtil {
     }
 
     /**
-     * @param jarName plugin jar name
+     * @param fileName plugin jar name
      * @return plugin jar version, see build.gradle for the version configuration.
      * @throws IllegalArgumentException the jar name is not a standard name: name-version.jar
      */
-    public static String version(String jarName) {
-        if (jarName.contains("-"))
-            return jarName.substring(jarName.lastIndexOf("-") + 1, jarName.length() - 4);
-        throw new IllegalArgumentException("Not a standard jar name: " + jarName);
+    public static String version(String fileName) {
+        String versionNumber = "";
+        if (fileName.contains(".")) {
+            String majorVersion = fileName.substring(0, fileName.indexOf("."));
+            String minorVersion = fileName.substring(fileName.indexOf("."));
+            int delimiter = majorVersion.lastIndexOf("-");
+            if (majorVersion.indexOf("_") > delimiter) delimiter = majorVersion.indexOf("_");
+            majorVersion = majorVersion.substring(delimiter + 1, fileName.indexOf("."));
+            versionNumber = majorVersion + minorVersion;
+            return versionNumber;
+        } else
+            throw new IllegalArgumentException("Not a standard jar name: " + fileName);
     }
 
     /**

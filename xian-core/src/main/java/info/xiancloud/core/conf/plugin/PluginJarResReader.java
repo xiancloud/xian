@@ -12,9 +12,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * @author happyyangyuan
  * Read configuration in the jar file <br>
  * 读取jar包内的资源
+ *
+ * @author happyyangyuan
  */
 public class PluginJarResReader extends AbstractPluginConfigReader {
 
