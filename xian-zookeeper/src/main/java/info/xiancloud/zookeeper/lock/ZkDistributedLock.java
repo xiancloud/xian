@@ -1,7 +1,6 @@
 package info.xiancloud.zookeeper.lock;
 
 
-import info.xiancloud.core.support.zk.DistZkLocker;
 import info.xiancloud.core.util.DateUtil;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.zookeeper.ZkConnection;
@@ -21,6 +20,10 @@ import static info.xiancloud.zookeeper.ZkPathManager.LOCK_ROOT;
  * @author happyyangyuan
  */
 public class ZkDistributedLock {
+    /**
+     * timed out waiting for the lock
+     */
+    public static final int TIME_OUT_INNER_ID = -1;
 
     private static final Map<Integer, InterProcessMutex> map = new ConcurrentHashMap<>();
     private static final AtomicInteger innerIdGenerator = new AtomicInteger(0);
@@ -46,7 +49,7 @@ public class ZkDistributedLock {
         try {
             if (!lock.acquire(timeoutInMilli, TimeUnit.MILLISECONDS)) {
                 LOG.info(String.format("获取锁%s超时,超时时间%sms", name, timeoutInMilli));
-                return DistZkLocker.TIME_OUT_INNER_ID;
+                return TIME_OUT_INNER_ID;
             } else {
                 map.put(innerId, lock);
                 return innerId;

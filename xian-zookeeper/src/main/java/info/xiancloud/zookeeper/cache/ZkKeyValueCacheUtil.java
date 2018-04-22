@@ -2,12 +2,10 @@ package info.xiancloud.zookeeper.cache;
 
 import com.google.common.cache.*;
 import info.xiancloud.core.init.shutdown.ShutdownHook;
-import info.xiancloud.core.support.zk.DistZkLocker;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.zookeeper.ZkConnection;
 import info.xiancloud.zookeeper.ZkPathManager;
-import io.reactivex.Single;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.zookeeper.KeeperException;
 
@@ -80,12 +78,12 @@ public class ZkKeyValueCacheUtil implements ShutdownHook {
             data = "";
         }
         String fullPath = getFullPath(subPath);
-        Integer innerLockId = DistZkLocker
+        /*Integer innerLockId = DistZkLocker
                 .lock(ZkKeyValueCacheUtil.class.getName() + "-lock:" + fullPath.replace("/", "_"), 0)
                 .onErrorResumeNext(timeoutException -> {
                     //遇到锁则直接超时不执行
                     return Single.error(new CacheLockedException(subPath));
-                }).blockingGet();
+                }).blockingGet();*/
         try {
             try {
                 ZkConnection.client.setData().forPath(fullPath, data.getBytes());
@@ -96,7 +94,8 @@ public class ZkKeyValueCacheUtil implements ShutdownHook {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {
-            DistZkLocker.unlock(innerLockId);
+            /*DistZkLocker.unlock(innerLockId);*/
+            LOG.debug("nothing to do.");
         }
     }
 

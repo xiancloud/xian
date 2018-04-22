@@ -96,7 +96,9 @@ public class PluginFileUtil {
      * @throws IllegalArgumentException the jar name is not a standard name: name-version.jar
      */
     public static String version(String fileName) {
-        String versionNumber = "";
+        if (fileName.endsWith(".jar"))
+            fileName = fileName.substring(0, fileName.lastIndexOf(".jar"));
+        String versionNumber;
         if (fileName.contains(".")) {
             String majorVersion = fileName.substring(0, fileName.indexOf("."));
             String minorVersion = fileName.substring(fileName.indexOf("."));
@@ -116,7 +118,7 @@ public class PluginFileUtil {
      */
     public static String pluginName(String jarName) {
         if (jarName.contains("-"))
-            return jarName.substring(0, jarName.lastIndexOf(version(jarName)));
+            return jarName.substring(0, jarName.lastIndexOf("-" + version(jarName)));
         throw new IllegalArgumentException("Not a standard jar name: " + jarName);
     }
 
