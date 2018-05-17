@@ -1,7 +1,7 @@
 //see https://plugins.gradle.org/plugin/io.codearte.nexus-staging
-plugins {
-    id "io.codearte.nexus-staging" version "0.11.0"
-}
+//plugins {
+//    id "io.codearte.nexus-staging" version "0.11.0"
+//}
 
 subprojects {
     apply plugin: 'java'
