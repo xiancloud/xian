@@ -65,7 +65,7 @@ subprojects {
     }
 
     // Signature of artifacts
-    signing {
+    /*signing {
         sign configurations.archives
     }
 
@@ -118,7 +118,7 @@ subprojects {
     nexusStaging {
         username = ossrhUser
         password = ossrhPassword
-    }
+    }*/
 
     if (project.file('WebRoot').exists()) {
         println 'web detected:' + project.name
