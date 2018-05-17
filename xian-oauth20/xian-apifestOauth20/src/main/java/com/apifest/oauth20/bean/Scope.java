@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  *
  * @author Rossitsa Borissova
  */
-public class Scope implements Serializable{
+public class Scope implements Serializable {
 
     public static final String DESCRIPTION_FIELD = "description";
     public static final String CC_EXPIRES_IN_FIELD = "ccExpiresIn";
@@ -52,10 +52,10 @@ public class Scope implements Serializable{
     @JSONField(name = "cc_expires_in", ordinal = 3)
     private Integer ccExpiresIn;
 
-    @JSONField(name = "pass_expires_in",ordinal = 4)
+    @JSONField(name = "pass_expires_in", ordinal = 4)
     private Integer passExpiresIn;
 
-    @JSONField(ordinal = 5)
+    @JSONField(name = "refresh_expires_in", ordinal = 5)
     private Integer refreshExpiresIn;
 
     public String getScope() {

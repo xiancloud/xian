@@ -1,6 +1,7 @@
 package com.apifest.oauth20.unit;
 
 import com.apifest.oauth20.Authenticator;
+import com.apifest.oauth20.ScopeService;
 import info.xiancloud.core.Group;
 
 /**
@@ -9,8 +10,12 @@ import info.xiancloud.core.Group;
  * @author happyyangyuan
  */
 public class OAuthService implements Group {
-    static final Authenticator auth = new Authenticator();
+    public static final Authenticator auth = new Authenticator();
     public static final Group singleton = new OAuthService();
+
+    public static ScopeService getScopeService() {
+        return new ScopeService();
+    }
 
     @Override
     public String getName() {
