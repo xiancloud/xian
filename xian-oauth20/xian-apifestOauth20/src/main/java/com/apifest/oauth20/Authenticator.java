@@ -414,7 +414,7 @@ public class Authenticator {
                 ;
     }
 
-    protected Single<Boolean> isExistingClient(String clientId) {
+    public Single<Boolean> isExistingClient(String clientId) {
         return db.findClientCredentials(clientId)
                 .map(creds -> true)
                 .switchIfEmpty(Single.just(false))
