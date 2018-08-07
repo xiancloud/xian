@@ -1,0 +1,3 @@
+dependencies {
+    compile 'io.reactiverse:reactive-pg-client:0.10.0'
+}
