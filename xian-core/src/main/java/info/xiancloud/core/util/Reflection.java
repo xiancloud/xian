@@ -26,8 +26,11 @@ public class Reflection {
 
     /**
      * Scan for all subclasses of the given parent class/interface.<br>
-     * Please pay attention that this method is used by {@link LOG}'s static field initialization, which means we are in danger of class loading deadlock.
+     * Please pay attention that this method is used by {@link LOG}'s static field initialization and using LOG here could be in danger of class loading deadlock.
      * So we cannot use {@link LOG  LOG util class} in this method.
+     * Note:
+     * 1. We only scan for the default package.
+     * 2. This method is too expensive, it is advised to cache the result.
      *
      * @return a list of subclass instances or empty array list if no subclass is found.
      */
@@ -37,6 +40,7 @@ public class Reflection {
                 addAll(TraverseClasspath.getSubclassInstances(tClass));
             }
 
+            @Override
             public String toString() {
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < this.size(); i++) {
@@ -48,7 +52,22 @@ public class Reflection {
     }
 
     /**
+     * scan and get the concrete subclasses.
+     * Note
+     * 1. we only scan for the default package.
+     * 2. This method is too expensive, it is advised to cache the result.
+     *
+     * @param clazz parent class
+     * @param <T>   parent class generic type
+     * @return a set of concret subclasses.
+     */
+    public static <T> Set<Class<? extends T>> getNonAbstractSubclasses(Class<T> clazz) {
+        return TraverseClasspath.getNonAbstractSubClasses(clazz);
+    }
+
+    /**
      * Scan and get classes under certain annotation, and initiate them.
+     * Note that we only scan for the default package.
      */
     public static <T> List<T> getWithAnnotatedClass(Class annotationClass, String packages) {
         return new ArrayList<T>() {{

@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':xian-dao:xian-daocore')
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.42'
+    compile group: 'com.alibaba', name: 'druid', version: '1.0.29'
+}

@@ -80,7 +80,6 @@ public class Node implements INode {
         publisher.p2pPublish(request.getContext().getDestinationNodeId(), payload);
     }
 
-
     public UnitResponse send(UnitRequest request) {
         String ssid = IdManager.nextSsid();
         request.getContext().setSsid(ssid);

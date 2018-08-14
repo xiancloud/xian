@@ -46,7 +46,7 @@ public class LifecycleEventHandlers {
         if (!loadedLock.get())
             synchronized (loadedLock) {
                 if (!loadedLock.get()) {
-                    Set<Class<? extends LifecycleHandler>> subClasses = TraverseClasspath.getSubclasses(LifecycleHandler.class);
+                    Set<Class<? extends LifecycleHandler>> subClasses = TraverseClasspath.getNonAbstractSubclasses(LifecycleHandler.class);
                     for (Class<? extends LifecycleHandler> clazz : subClasses) {
                         if (clazz.isAnnotationPresent(OnRequest.class)) {
                             private_requestEventHandlers.add(clazz);
@@ -57,7 +57,7 @@ public class LifecycleEventHandlers {
                             LOG.info(String.format("postIssueTokenHandler added {%s}", clazz));
                         }
                     }
-                    Set<Class<? extends ExceptionEventHandler>> exceptionHandlerClasses = TraverseClasspath.getSubclasses(ExceptionEventHandler.class);
+                    Set<Class<? extends ExceptionEventHandler>> exceptionHandlerClasses = TraverseClasspath.getNonAbstractSubclasses(ExceptionEventHandler.class);
                     for (Class<? extends ExceptionEventHandler> clazz : exceptionHandlerClasses) {
                         if (clazz.isAnnotationPresent(OnException.class)) {
                             private_exceptionHandlers.add(clazz);

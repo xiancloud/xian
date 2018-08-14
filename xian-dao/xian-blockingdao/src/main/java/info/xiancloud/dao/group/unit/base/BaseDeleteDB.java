@@ -2,8 +2,8 @@ package info.xiancloud.dao.group.unit.base;
 
 import info.xiancloud.core.UnitMeta;
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.dao.global.Table;
-import info.xiancloud.dao.global.TableHeader;
+import info.xiancloud.dao.core.model.ddl.Table;
+import info.xiancloud.dao.core.model.ddl.TableHeader;
 import info.xiancloud.dao.group.unit.DaoUnit;
 import info.xiancloud.dao.jdbc.sql.Action;
 import info.xiancloud.dao.jdbc.sql.DeleteAction;

@@ -2,24 +2,39 @@ package info.xiancloud.core;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import info.xiancloud.core.util.Reflection;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
- * data base Page query bean
+ * database Page query bean
  *
- * @author hang, happyyangyuan
+ * @author happyyangyuan
  */
 public class Page implements Serializable {
 
-    private static final long serialVersionUID = -5395997221963176643L;
-
-    private List list;                // list result of this page
-    private int pageNumber;           // page number
-    private int pageSize;             // result amount of this page
-    private int totalPage;            // total page
-    private int totalRow;             // total row
+    /**
+     * list result of this page
+     */
+    private List<Map<String, Object>> list;
+    /**
+     * page number
+     */
+    private int pageNumber;
+    /**
+     * result amount of this page
+     */
+    private int pageSize;
+    /**
+     * total page
+     */
+    private int totalPage;
+    /**
+     * total row
+     */
+    private int totalRow;
 
     public static Page create(String jsonStr) {
         if (jsonStr != null) {
@@ -45,7 +60,7 @@ public class Page implements Serializable {
     }
 
     /**
-     * Constructor.
+     * Constructor
      *
      * @param list       the list of paginate result
      * @param pageNumber the page number
@@ -53,8 +68,25 @@ public class Page implements Serializable {
      * @param totalPage  the total page of paginate
      * @param totalRow   the total row of paginate
      */
-    public Page(List list, int pageNumber, int pageSize, int totalPage, int totalRow) {
+    public Page(List<Map<String, Object>> list, int pageNumber, int pageSize, int totalPage, int totalRow) {
         this.list = list;
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+        this.totalPage = totalPage;
+        this.totalRow = totalRow;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param list       the list of paginate result
+     * @param pageNumber the page number
+     * @param pageSize   the page size
+     * @param totalPage  the total page of paginate
+     * @param totalRow   the total row of paginate
+     */
+    public Page(JSONArray list, int pageNumber, int pageSize, int totalPage, int totalRow) {
+        this.list = Reflection.toType(list, List.class);
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.totalPage = totalPage;

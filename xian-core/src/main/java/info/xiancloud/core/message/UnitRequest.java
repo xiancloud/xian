@@ -33,7 +33,9 @@ final public class UnitRequest {
     }
 
     public RequestContext getContext() {
-        if (context == null) context = RequestContext.create();
+        if (context == null) {
+            context = RequestContext.create();
+        }
         return context;
     }
 

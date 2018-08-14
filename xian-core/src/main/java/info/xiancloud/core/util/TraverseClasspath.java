@@ -21,9 +21,8 @@ import java.util.Set;
 public class TraverseClasspath {
 
     /**
-     * reflection is not thread-safe scanning the jars files in the classpath,
+     * Reflection is not thread-safe scanning the jars files in the classpath,
      * must be synchronized otherwise a "java.lang.IllegalStateException: zip file closed" is thrown.
-     * by happyyangyuan at 2017-01-22
      */
     synchronized public static <T> Set<Class<? extends T>> getNonAbstractSubClasses(Class<T> parentClass, String... packages) {
         try {
@@ -74,7 +73,7 @@ public class TraverseClasspath {
     /**
      * 获取所有的子类class
      */
-    public static <T> Set<Class<? extends T>> getSubclasses(Class<T> clazz) {
+    public static <T> Set<Class<? extends T>> getNonAbstractSubclasses(Class<T> clazz) {
         return getNonAbstractSubClasses(clazz, defaultPackages());
     }
 

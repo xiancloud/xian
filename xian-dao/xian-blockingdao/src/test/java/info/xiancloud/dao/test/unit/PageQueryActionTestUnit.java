@@ -4,7 +4,7 @@ import info.xiancloud.core.Group;
 import info.xiancloud.core.UnitMeta;
 import info.xiancloud.dao.group.unit.DaoUnit;
 import info.xiancloud.dao.jdbc.sql.Action;
-import info.xiancloud.dao.jdbc.sql.PaginateSelectAction;
+import info.xiancloud.dao.core.action.select.PaginateSelectAction;
 import info.xiancloud.dao.test.DaoTestGroup;
 
 /**

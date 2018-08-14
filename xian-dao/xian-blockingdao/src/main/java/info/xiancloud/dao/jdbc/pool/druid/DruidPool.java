@@ -1,10 +1,9 @@
 package info.xiancloud.dao.jdbc.pool.druid;
 
-import info.xiancloud.dao.jdbc.pool.DataSource;
-import info.xiancloud.dao.jdbc.pool.DatasourceConfigReader;
-import info.xiancloud.dao.jdbc.pool.AbstractPool;
 
-import java.sql.Connection;
+import info.xiancloud.dao.core.pool.AbstractPool;
+import info.xiancloud.dao.core.pool.DatasourceConfigReader;
+import info.xiancloud.dao.core.pool.XianDataSource;
 
 /**
  * 阿里druid连接池,由于我们使用的是腾讯云cdb,不需要我们内部使用读写分离所以这里不提供读写分离数据源
@@ -14,7 +13,7 @@ import java.sql.Connection;
 public class DruidPool extends AbstractPool {
 
     @Override
-    public synchronized void initPool() {
+    public synchronized void initPoolIfNot() {
         if (!initialized) {
             writableDataSource = new DruidDataSource(DatasourceConfigReader.getWriteUrl(),
                     DatasourceConfigReader.getWriteUser(),
@@ -33,29 +32,19 @@ public class DruidPool extends AbstractPool {
     }
 
     @Override
-    public DataSource getMasterDatasource() {
+    public XianDataSource getMasterDatasource() {
         if (!initialized) {
-            initPool();
+            initPoolIfNot();
         }
         return writableDataSource;
     }
 
     @Override
-    public DataSource getSlaveDatasource() {
+    public XianDataSource getSlaveDatasource() {
         if (!initialized) {
-            initPool();
+            initPoolIfNot();
         }
         return readOnlyDataSource;
-    }
-
-    @Override
-    public Connection getReadConnection() {
-        return getSlaveDatasource().getConnection();
-    }
-
-    @Override
-    public Connection getWriteConnection() {
-        return getMasterDatasource().getConnection();
     }
 
     @Override

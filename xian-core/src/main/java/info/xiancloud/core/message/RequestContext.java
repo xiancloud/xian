@@ -16,8 +16,8 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 public final class RequestContext {
 
-    private String ssid;
-    private String msgId;
+    private String ssid;// unit request id, TODO no matter local or remote unit request.
+    private String msgId;// the business chain id.
     private NodeStatus nodeStatus;
     /*private long creationTimestamp; timestamp for message creation; we disable this property for performance consideration.  */
     private long sentTimestamp;//message sent time in milli

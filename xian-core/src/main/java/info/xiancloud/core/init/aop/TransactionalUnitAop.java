@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * @author happyyangyuan
- * @deprecated xianframe currently can not supports distributed transactions.
+ * @deprecated xian frame currently can not supports distributed transactions.
  */
 public class TransactionalUnitAop implements IUnitAop, IStartService {
 
