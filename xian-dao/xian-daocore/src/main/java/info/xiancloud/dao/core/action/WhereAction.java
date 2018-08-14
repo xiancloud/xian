@@ -7,29 +7,36 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * 本类单一职责：拼装where条件
+ * 本类单一职责：拼装where条件.
+ * Any actions with where clause should extends this class,
+ * such as {@link info.xiancloud.dao.core.action.update.UpdateAction},
+ * {@link info.xiancloud.dao.core.action.select.SelectAction}
  *
  * @author happyyangyuan
  */
 public abstract class WhereAction extends AbstractSqlAction {
 
-    /**
-     * @return where clause
-     */
-    protected abstract String[] where();
+    @Override
+    protected final String patternSql() {
+        return sqlHeader().concat(buildWhere(getMap())).concat(" ").concat(sqlTail());
+    }
 
     /**
      * produces the sql header. <br/>
-     * eg. select * from source_table.
-     * Where clause is not in sql header
+     * eg. <code>select * from source_table</code><br/>
+     * <code> update table0 set col0=123 </code><br/>
+     * Note that where clause is not part of sql header
      *
      * @return sql header
      */
     protected abstract String sqlHeader();
 
-    protected String sqlPattern() {
-        return sqlHeader().concat(buildWhere(getMap())).concat(" ").concat(sqlTail());
-    }
+    /**
+     * Give an array of serach conditions for the frame to format a where clause.
+     *
+     * @return search condition string array. eg. {col0 = 10, col1 > 0}
+     */
+    protected abstract String[] searchConditions();
 
     /**
      * @return 它应当返回sql语句的整个尾部
@@ -40,7 +47,7 @@ public abstract class WhereAction extends AbstractSqlAction {
 
     private String buildWhere(Map<String, Object> map) {
         String where = " where ";
-        for (String whereFragment : where()) {
+        for (String whereFragment : searchConditions()) {
             if (!ignoreWhereFragment(whereFragment, map)) {
                 where = where.concat(" ").concat(adjustWhereFragment(where, whereFragment));
             }

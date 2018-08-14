@@ -6,7 +6,6 @@ import info.xiancloud.core.util.Reflection;
 import info.xiancloud.dao.core.action.AbstractSqlAction;
 import info.xiancloud.dao.core.action.ISingleTableAction;
 import info.xiancloud.dao.core.model.sqlresult.BatchInsertionResult;
-import info.xiancloud.dao.core.sql.XianSqlDriver;
 import io.reactivex.Single;
 
 import java.util.List;
@@ -56,8 +55,4 @@ public abstract class BatchInsertAction extends AbstractSqlAction implements ISi
         return Reflection.toType(getMap().get("values"), List.class);
     }
 
-    @Override
-    public XianSqlDriver getSqlDriver() {
-        return super.getSqlDriver();
-    }
 }

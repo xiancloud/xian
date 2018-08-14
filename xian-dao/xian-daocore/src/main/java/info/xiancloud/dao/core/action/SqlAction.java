@@ -40,7 +40,10 @@ public interface SqlAction extends ISqlLogger {
     String getPatternSql();
 
     /**
-     * safety check.
+     * Safety check.
+     * Overwrite this method to provide your own check logic.
+     *
+     * @return checking result, succeeded response or failure response, no exception should be thrown.
      */
     UnitResponse check();
 

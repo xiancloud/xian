@@ -126,7 +126,7 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     }
 
     @Override
-    public String getPatternSql() {
+    public final String getPatternSql() {
         if (patternSql == null) {
             patternSql = adjustInClause(PatternUtil.bareError(patternSql()));
         }
@@ -187,22 +187,22 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     }
 
     @Override
-    public Map<String, Object> getMap() {
+    public final Map<String, Object> getMap() {
         return map;
     }
 
     @Override
-    public XianConnection getConnection() {
+    public final XianConnection getConnection() {
         return connection;
     }
 
     @Override
-    public DaoUnit getDaoUnit() {
+    public final DaoUnit getDaoUnit() {
         return daoUnit;
     }
 
     @Override
-    public String getFullSql() {
+    public final String getFullSql() {
         if (fullSql == null) {
             fullSql = getSqlDriver().preparedParams(getPatternSql(), map).length <= MAX_PATTERN_PARAM_COUNT ?
                     SqlUtils.mapToSql(getPatternSql(), map) :

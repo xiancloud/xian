@@ -1,6 +1,7 @@
 package info.xiancloud.dao.core.action.select;
 
 import info.xiancloud.dao.core.action.AbstractSqlAction;
+import info.xiancloud.dao.core.model.sqlresult.ISelectionResult;
 import io.reactivex.Single;
 
 /**
@@ -31,7 +32,7 @@ public abstract class CustomSelectAction extends AbstractSqlAction implements IS
     }
 
     @Override
-    protected final Single<?> executeSql() {
+    protected final Single<? extends ISelectionResult> executeSql() {
         return SelectActionHelper.executeWhichSql(this, resultType());
     }
 

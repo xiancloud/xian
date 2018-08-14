@@ -16,7 +16,7 @@ public abstract class SelectAction extends WhereAction implements ISelect {
     /**
      * table names string split by comma
      */
-    private Object tableSource;
+    private Object sourceTable;
 
     @Override
     protected final Single<? extends SqlExecutionResult> executeSql() {
@@ -38,10 +38,10 @@ public abstract class SelectAction extends WhereAction implements ISelect {
 
     @Override
     public final Object getSourceTable() {
-        if (tableSource == null) {
-            tableSource = tableSource();
+        if (sourceTable == null) {
+            sourceTable = sourceTable();
         }
-        return tableSource;
+        return sourceTable;
     }
 
     /**
@@ -64,7 +64,7 @@ public abstract class SelectAction extends WhereAction implements ISelect {
      *
      * @return table source is table name list for the select sql, can be either array, list or string split by comma.
      */
-    protected abstract Object tableSource();
+    protected abstract Object sourceTable();
 
     @Override
     protected String sqlHeader() {
@@ -82,10 +82,10 @@ public abstract class SelectAction extends WhereAction implements ISelect {
             }
         }
         StringBuilder sb = new StringBuilder();
-        if (tableSource() instanceof String) {
-            sb.append(tableSource());
+        if (sourceTable() instanceof String) {
+            sb.append(sourceTable());
         } else {
-            for (String table : (String[]) tableSource()) {
+            for (String table : (String[]) sourceTable()) {
                 sb.append(getSplitter(table)).append(table);
             }
             sb = new StringBuilder(sb.substring(1));
