@@ -134,7 +134,8 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     }
 
     /**
-     * produces a pattern sql
+     * produces a pattern sql.
+     * This method is called only once.
      *
      * @return a deferred result which will emit either a single successful pattern or an error
      */

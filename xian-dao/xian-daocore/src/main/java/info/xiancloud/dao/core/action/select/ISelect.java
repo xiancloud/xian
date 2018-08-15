@@ -1,11 +1,6 @@
 package info.xiancloud.dao.core.action.select;
 
-import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
-
-import java.sql.Connection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * select sql action interface

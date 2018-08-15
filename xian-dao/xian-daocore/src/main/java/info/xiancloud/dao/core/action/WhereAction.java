@@ -22,24 +22,26 @@ public abstract class WhereAction extends AbstractSqlAction {
     }
 
     /**
-     * produces the sql header. <br/>
+     * Produces sql header. A sql header is select and from clause or update table set xxx=yyy clause. <br/>
      * eg. <code>select * from source_table</code><br/>
      * <code> update table0 set col0=123 </code><br/>
-     * Note that where clause is not part of sql header
+     * Note: where clause is not part of sql header
      *
      * @return sql header
      */
     protected abstract String sqlHeader();
 
     /**
-     * Give an array of serach conditions for the frame to format a where clause.
+     * Give an array of search conditions for the frame to format a where clause.
      *
      * @return search condition string array. eg. {col0 = 10, col1 > 0}
      */
     protected abstract String[] searchConditions();
 
     /**
-     * @return 它应当返回sql语句的整个尾部
+     * A sql tail is clause like order by xxx, group by xxx, limit 0,10, etc.
+     *
+     * @return tail of a sql statement. Defaults to empty string.
      */
     protected String sqlTail() {
         return "";

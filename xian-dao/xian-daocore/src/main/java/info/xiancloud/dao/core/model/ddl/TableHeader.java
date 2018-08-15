@@ -2,9 +2,8 @@
 package info.xiancloud.dao.core.model.ddl;
 
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.dao.jdbc.sql.ISingleTableAction;
 
-import java.sql.Connection;
+import java.sql.*;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -49,11 +48,46 @@ public interface TableHeader {
         if (table != null) {
             Map<String, Class<?>> columnTypeMap = table.getColumnTypeMap();
             if (columnTypeMap == null || columnTypeMap.size() == 0) {
-                ISingleTableAction.doBuildTable(table, connection);
+                //todo so here if table metadata has changed, we have to restart java application to reload the table metadata.
+                doBuildTable(table, connection);
                 return table.getColumnTypeMap();
             }
             return table.getColumnTypeMap();
         }
         return null;
+    }
+
+    static void doBuildTable(Table table, Connection conn) {
+        String sql = "SELECT * FROM " + table.getName() + " WHERE 1 = 2";
+        Statement stm;
+        try {
+            stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery(sql);
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            JavaType javaType = new JavaType();
+            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                String colName = rsmd.getColumnName(i);
+                String colClassName = rsmd.getColumnClassName(i);
+
+                Class<?> clazz = javaType.getType(colClassName);
+                if (clazz != null) {
+                    table.setColumnType(colName, clazz);
+                } else {
+                    int type = rsmd.getColumnType(i);
+                    if (type == Types.BINARY || type == Types.VARBINARY || type == Types.BLOB) {
+                        table.setColumnType(colName, byte[].class);
+                    } else if (type == Types.CLOB || type == Types.NCLOB) {
+                        table.setColumnType(colName, String.class);
+                    } else {
+                        table.setColumnType(colName, String.class);
+                    }
+                }
+            }
+            rs.close();
+            stm.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -2,7 +2,7 @@ package info.xiancloud.dao.core.action.select;
 
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.dao.core.action.WhereAction;
-import info.xiancloud.dao.core.model.sqlresult.SqlExecutionResult;
+import info.xiancloud.dao.core.model.sqlresult.ISelectionResult;
 import io.reactivex.Single;
 
 import java.util.Arrays;
@@ -19,7 +19,7 @@ public abstract class SelectAction extends WhereAction implements ISelect {
     private Object sourceTable;
 
     @Override
-    protected final Single<? extends SqlExecutionResult> executeSql() {
+    public final Single<? extends ISelectionResult> executeSql() {
         return SelectActionHelper.executeWhichSql(this, resultType());
     }
 

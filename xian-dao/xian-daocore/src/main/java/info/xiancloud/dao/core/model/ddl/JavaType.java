@@ -1,4 +1,4 @@
-package info.xiancloud.dao.jdbc.sql;
+package info.xiancloud.dao.core.model.ddl;
 
 import java.util.HashMap;
 import java.util.Map;

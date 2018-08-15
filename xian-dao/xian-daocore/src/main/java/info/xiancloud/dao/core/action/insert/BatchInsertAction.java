@@ -51,8 +51,23 @@ public abstract class BatchInsertAction extends AbstractSqlAction implements ISi
         throw new RuntimeException("pattern for batch insertion is forbidden.");
     }
 
+    /**
+     * Records to be inserted.
+     * A batch prepared insert sql is like:
+     * <p>
+     * <code>
+     * INSERT INTO table_name VALUES
+     * (?,?,?),
+     * (?,?,?),
+     * (?,?,?)
+     * </code>
+     * <p>
+     * values for the batch is a map list
+     *
+     * @return values
+     */
     public List<Map<String, Object>> getValues() {
-        return Reflection.toType(getMap().get("values"), List.class);
+        return Reflection.toType(getMap().get(BATCH_INSERTION_VALUES_KEY), List.class);
     }
 
 }
