@@ -22,7 +22,7 @@ public abstract class SafetyChecker {
      */
     private static UnitResponse doStrictCheck(WhereAction action, Map map) {
         LOG.debug("db执行安全检查..." + map);
-        for (String whereFragment : action.where()) {
+        for (String whereFragment : action.searchConditions()) {
             if (action.ignoreWhereFragment(whereFragment, map)) {
                 LOG.info(String.format("WARN-安全检查不通过...检查where语句%s发现它是一个全表操作!参数=%s", whereFragment, map));
                 return UnitResponse.createError(DaoGroup.CODE_LACK_OF_PARAMETER, PatternUtil.getCamelKeys(whereFragment), "缺少参数");
@@ -39,7 +39,7 @@ public abstract class SafetyChecker {
      * @return succeeded response for checking pass, and failure response for checking not passed.
      */
     public static UnitResponse doCheck(WhereAction action, Map map) {
-        String[] whereArray = action.where();
+        String[] whereArray = action.searchConditions();
         if (whereArray != null) {
             for (String whereFragment : whereArray) {
                 if (!action.ignoreWhereFragment(whereFragment, map)) {

@@ -3,7 +3,9 @@ package info.xiancloud.dao.core.action.insert;
 import info.xiancloud.dao.core.action.AbstractSqlAction;
 import info.xiancloud.dao.core.action.IDML;
 import info.xiancloud.dao.core.action.IUnique;
+import info.xiancloud.dao.core.model.sqlresult.SingleInsertionResult;
 import info.xiancloud.dao.core.utils.BasicSqlBuilder;
+import io.reactivex.Single;
 
 /**
  * Sql insertion  action
@@ -28,6 +30,11 @@ public abstract class InsertAction extends AbstractSqlAction implements IUnique,
      * @return the table name
      */
     abstract protected String tableName();
+
+    @Override
+    protected Single<SingleInsertionResult> executeSql() {
+        return getSqlDriver().insert(getPatternSql(), getMap());
+    }
 
     @Override
     protected String patternSql() {

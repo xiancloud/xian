@@ -8,11 +8,14 @@ import info.xiancloud.dao.core.DaoGroup;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.insert.BatchInsertAction;
 import info.xiancloud.dao.core.action.select.CustomSelectAction;
+import info.xiancloud.dao.core.model.ddl.JavaType;
+import info.xiancloud.dao.core.model.ddl.Table;
 import info.xiancloud.dao.core.model.sqlresult.*;
 import info.xiancloud.dao.core.sql.BaseSqlDriver;
 import info.xiancloud.dao.core.utils.BasicSqlBuilder;
 import info.xiancloud.dao.core.utils.PatternUtil;
 import info.xiancloud.dao.core.utils.SqlUtils;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import java.sql.*;
@@ -164,6 +167,47 @@ public class JdbcSqlDriver extends BaseSqlDriver {
             });
         }
         return Single.just(idCol);
+    }
+
+    @Override
+    public Completable buildTableMetaData(Table table) {
+        return Completable.fromAction(() -> {
+            doBuildTable(table, connection0);
+        });
+    }
+
+    private static void doBuildTable(Table table, Connection conn) {
+        String sql = "SELECT * FROM " + table.getName() + " WHERE 1 = 2";
+        Statement stm;
+        try {
+            stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery(sql);
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            JavaType javaType = new JavaType();
+            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                String colName = rsmd.getColumnName(i);
+                String colClassName = rsmd.getColumnClassName(i);
+
+                Class<?> clazz = javaType.getType(colClassName);
+                if (clazz != null) {
+                    table.setColumnType(colName, clazz);
+                } else {
+                    int type = rsmd.getColumnType(i);
+                    if (type == Types.BINARY || type == Types.VARBINARY || type == Types.BLOB) {
+                        table.setColumnType(colName, byte[].class);
+                    } else if (type == Types.CLOB || type == Types.NCLOB) {
+                        table.setColumnType(colName, String.class);
+                    } else {
+                        table.setColumnType(colName, String.class);
+                    }
+                }
+            }
+            rs.close();
+            stm.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

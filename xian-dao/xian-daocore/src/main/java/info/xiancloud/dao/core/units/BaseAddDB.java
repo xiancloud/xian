@@ -1,11 +1,10 @@
-package info.xiancloud.dao.group.unit.base;
+package info.xiancloud.dao.core.units;
 
 import info.xiancloud.core.UnitMeta;
+import info.xiancloud.dao.core.action.SqlAction;
+import info.xiancloud.dao.core.action.insert.InsertAction;
 import info.xiancloud.dao.core.model.ddl.Table;
 import info.xiancloud.dao.core.model.ddl.TableHeader;
-import info.xiancloud.dao.group.unit.DaoUnit;
-import info.xiancloud.dao.jdbc.sql.Action;
-import info.xiancloud.dao.jdbc.sql.InsertAction;
 
 import java.util.Map;
 
@@ -21,12 +20,18 @@ abstract public class BaseAddDB extends DaoUnit {
     }
 
     @Override
-    public Action[] getActions() {
-        return new Action[]{
+    public SqlAction[] getActions() {
+        return new SqlAction[]{
                 new InsertAction() {
                     private Table table;
 
-                    public Table getTable(Map map) {
+                    @Override
+                    public String tableName() {
+                        Table table = getTable(getMap());
+                        return table == null ? "" : table.getName();
+                    }
+
+                    private Table getTable(Map map) {
                         if (table != null) {
                             return table;
                         }
@@ -40,20 +45,6 @@ abstract public class BaseAddDB extends DaoUnit {
                         }
                         return null;
                     }
-
-                    @Override
-                    public String table() {
-                        Table table = getTable(map);
-                        return table == null ? "" : table.getName();
-                    }
-
-                    @Override
-                    public String[] unique() {
-                        Table table = getTable(map);
-                        return table == null ? new String[]{} : table.getUnique();
-                    }
-
-                    ;
                 }
         };
     }

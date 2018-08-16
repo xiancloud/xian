@@ -1,5 +1,7 @@
 package info.xiancloud.dao.core.sql;
 
+import info.xiancloud.dao.core.model.ddl.Table;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -23,5 +25,13 @@ public interface ISingleTableSqlDriver {
      * @return primary column name
      */
     Single<String> getIdCol(String tableName);
+
+    /**
+     * build {@link info.xiancloud.dao.core.model.ddl.Table tableMetaData}
+     *
+     * @param table
+     * @return A deferred result
+     */
+    Completable buildTableMetaData(Table table);
 
 }

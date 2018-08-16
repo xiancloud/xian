@@ -9,8 +9,8 @@ import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.dao.core.DaoGroup;
 import info.xiancloud.dao.core.action.AbstractSqlAction;
-import info.xiancloud.dao.core.action.select.ISelect;
 import info.xiancloud.dao.core.action.SqlAction;
+import info.xiancloud.dao.core.action.select.ISelect;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.pool.PoolFactory;
 import info.xiancloud.dao.core.transaction.TransactionFactory;
@@ -19,8 +19,7 @@ import io.reactivex.Observable;
 import java.util.Map;
 
 /**
- * dao unit template.
- * I'm sorry that this is another blocking DAO implementation.
+ * Dao unit template.
  *
  * @author happyyangyuan
  */
@@ -46,9 +45,8 @@ public abstract class DaoUnit implements Unit {
         boolean readOnly = readOnly(sqlActions, request) || request.getContext().isReadyOnly();
         UnitResponse[] lastResponse = {null};
         TransactionFactory.getTransaction(request.getContext().getMsgId(), readOnly)
-                .subscribe(transaction -> {
-                    Observable.fromArray(sqlActions)
-                            .doOnNext(action -> {
+                .subscribe(transaction -> Observable.fromArray(sqlActions)
+                        .doOnNext(action ->
                                 action.execute(DaoUnit.this, request.getArgMap(), transaction.getConnection())
                                         .doOnSuccess(unitResponse -> {
                                             if (!unitResponse.succeeded()) {
@@ -59,20 +57,20 @@ public abstract class DaoUnit implements Unit {
                                             } else {
                                                 lastResponse[0] = unitResponse;
                                             }
-                                        })
-                                ;
-                            })
-                            .doOnComplete(() -> transaction.commit().subscribe(() -> handler.handle(lastResponse[0])))
-                            .doOnError(error -> {
-                                transaction.rollback().subscribe(
-                                        () -> handler.handle(UnitResponse.createError(DaoGroup.CODE_DB_ERROR, error, null))
-                                );
-                            })
-                            .subscribe();
-                })
+                                        }))
+                        .doOnComplete(() -> transaction.commit().subscribe(() -> handler.handle(lastResponse[0])))
+                        .doOnError(error -> transaction.rollback().subscribe(
+                                () -> handler.handle(UnitResponse.createError(DaoGroup.CODE_DB_ERROR, error, null))
+                        ))
+                        .subscribe())
         ;
     }
 
+    /**
+     * provides sql actions here
+     *
+     * @return sql actions array
+     */
     abstract public SqlAction[] getActions();
 
     private boolean readOnly(SqlAction[] sqlActions, UnitRequest request) {
@@ -88,10 +86,13 @@ public abstract class DaoUnit implements Unit {
     /**
      * 打印sql语句，它不会将sql执行，只是打印sql语句。
      * 仅供内部测试使用
+     *
+     * @param daoUnitClass unit class
+     * @param map          parameter map
      */
-    public static void logSql(Class daoUnitClass, Map map) {
+    public static void logSql(Class daoUnitClass, Map<String, Object> map) {
         XianConnection connection = PoolFactory.getPool().getMasterDatasource().getConnection().blockingGet();
-        DaoUnit daoUnit = null;
+        DaoUnit daoUnit;
         try {
             daoUnit = (DaoUnit) daoUnitClass.newInstance();
             for (SqlAction action : daoUnit.getActions()) {
@@ -108,13 +109,16 @@ public abstract class DaoUnit implements Unit {
     /**
      * 执行sql
      * 仅供内部测试使用
+     *
+     * @param unitClass unit class
+     * @param map       parameter map
      */
     public static void test(Class unitClass, Map<String, Object> map) {
         try {
             DaoUnit daoUnit = (DaoUnit) unitClass.newInstance();
             UnitRequest msg = new UnitRequest(map);
             daoUnit.execute(msg, unitResponse -> {
-                System.out.println("输出>>>>>>>>  " + unitResponse);
+                System.out.println("dao output>>>>>>>>  " + unitResponse);
             });
             PoolFactory.getPool().destroyPoolIfNot();
         } catch (Throwable e) {

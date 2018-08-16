@@ -19,6 +19,7 @@ import java.util.Date;
  * 5. connection does not own the transaction reference.
  * 6. xian dao should not rely on the {@link MsgIdHolder} ability.
  * 7. transactions don't have 'close' method, let connections make the 'close' operation.
+ * 8. transaction ends right after it is rollbacked or committed, and connection it references is returned to pool immediately.
  *
  * @author happyyangyuan
  * @see info.xiancloud.dao.core.pool.IPool
@@ -35,12 +36,15 @@ public interface XianTransaction {
 
     /**
      * begin this transaction.
+     *
+     * @return deferred result
      */
     Completable begin();
 
     /**
-     * submit a commit request.
+     * Submit a commit request.
      * Note that the transaction will only be committed until all nested transaction commitment requests are submitted.
+     * And finally return the connection to pool immediately.
      *
      * @return Represents a deferred commit result without any value but only indication for completion or exception.
      */
@@ -49,6 +53,8 @@ public interface XianTransaction {
     /**
      * Submit a rollback request.
      * Transaction is rollbacked immediately when a rollback request is submitted.
+     * <p>
+     * And finally return the connection to pool immediately.
      *
      * @return Represents a deferred rollback result without any value but only indication for completion or exception.
      */

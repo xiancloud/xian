@@ -2,20 +2,26 @@
 package info.xiancloud.dao.core.model.ddl;
 
 import info.xiancloud.core.util.StringUtil;
+import info.xiancloud.dao.core.sql.ISingleTableSqlDriver;
 
-import java.sql.*;
 import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Created by yhLiu.
  * Moved to xian-dbCommon module by yy @2017-05-08
  * 请不要修改xian-dbCommon module内的TableHeader的类名，它是用来覆盖xian-db_core.jar中的TableHeader类的，所以类名必须完全一致。
  * db_core中的这个TableHeader类主要用于框架本地测试使用。
+ *
+ * @author happyyangyuan
  */
 public interface TableHeader {
-    ;
 
+    /**
+     * get {@link Table} from table name or table name alias
+     *
+     * @param name simple table name( without database prefix) or table name alias
+     * @return table object
+     */
     static Table getTable(String name) {
         if (!StringUtil.isEmpty(name)) {
             //通过name
@@ -35,6 +41,12 @@ public interface TableHeader {
         //throw new RuntimeException(String.format("%s没有配置", name));
     }
 
+    /**
+     * get simple table name ( without database prefix)
+     *
+     * @param name simple table name( without database prefix) or table name alias
+     * @return simple table name without database prefix
+     */
     static String getTableName(String name) {
         Table table = getTable(name);
         if (table != null) {
@@ -43,13 +55,20 @@ public interface TableHeader {
         return name;
     }
 
-    static Map<String, Class<?>> getTableColumnTypeMap(String name, Connection connection) {
+    /**
+     * get the specified table's column name and column type key-value map.
+     *
+     * @param name      simple table name( without database prefix) or table name alias
+     * @param sqlDriver the sql driver instance
+     * @return table column name and type key-value map
+     */
+    static Map<String, Class<?>> getTableColumnTypeMap(String name, ISingleTableSqlDriver sqlDriver) {
         Table table = getTable(name);
         if (table != null) {
             Map<String, Class<?>> columnTypeMap = table.getColumnTypeMap();
             if (columnTypeMap == null || columnTypeMap.size() == 0) {
                 //todo so here if table metadata has changed, we have to restart java application to reload the table metadata.
-                doBuildTable(table, connection);
+                sqlDriver.buildTableMetaData(table).subscribe();
                 return table.getColumnTypeMap();
             }
             return table.getColumnTypeMap();
@@ -57,37 +76,4 @@ public interface TableHeader {
         return null;
     }
 
-    static void doBuildTable(Table table, Connection conn) {
-        String sql = "SELECT * FROM " + table.getName() + " WHERE 1 = 2";
-        Statement stm;
-        try {
-            stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery(sql);
-            ResultSetMetaData rsmd = rs.getMetaData();
-
-            JavaType javaType = new JavaType();
-            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                String colName = rsmd.getColumnName(i);
-                String colClassName = rsmd.getColumnClassName(i);
-
-                Class<?> clazz = javaType.getType(colClassName);
-                if (clazz != null) {
-                    table.setColumnType(colName, clazz);
-                } else {
-                    int type = rsmd.getColumnType(i);
-                    if (type == Types.BINARY || type == Types.VARBINARY || type == Types.BLOB) {
-                        table.setColumnType(colName, byte[].class);
-                    } else if (type == Types.CLOB || type == Types.NCLOB) {
-                        table.setColumnType(colName, String.class);
-                    } else {
-                        table.setColumnType(colName, String.class);
-                    }
-                }
-            }
-            rs.close();
-            stm.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

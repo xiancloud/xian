@@ -1,12 +1,13 @@
-package info.xiancloud.dao.group.unit.base;
+package info.xiancloud.dao.core.units;
 
 import info.xiancloud.core.UnitMeta;
-import info.xiancloud.dao.group.unit.DaoUnit;
-import info.xiancloud.dao.jdbc.sql.Action;
-import info.xiancloud.dao.core.action.select.PaginateSelectAction;
+import info.xiancloud.dao.core.action.SqlAction;
 
 /**
  * 公共查询并分页dao unit
+ *
+ * @author happyyangyuan
+ * @deprecated todo not fully developed
  */
 abstract public class BasePaginateDB extends DaoUnit {
     @Override
@@ -15,10 +16,10 @@ abstract public class BasePaginateDB extends DaoUnit {
     }
 
     @Override
-    public Action[] getActions() {
-        return new Action[]{
-                new PaginateSelectAction() {
-                }
+    public SqlAction[] getActions() {
+        return new SqlAction[]{
+                /*new PaginateSelectAction() {
+                }*/
         };
     }
 

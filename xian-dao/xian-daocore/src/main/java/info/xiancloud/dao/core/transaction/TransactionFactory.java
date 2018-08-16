@@ -12,9 +12,12 @@ import io.reactivex.Single;
 public final class TransactionFactory {
 
     /**
+     * create or get the current xian transaction.
+     * This method is always returning a transaction reference for you.
+     *
      * @param transactionId transaction id
      * @param readOnly      boolean flag indicates that whether this dao operation is read-only
-     * @return the current transaction reference
+     * @return the deferred transaction reference.
      */
     public static Single<XianTransaction> getTransaction(String transactionId, boolean readOnly) {
         if (BaseLocalTransaction.getExistedLocalTrans(transactionId) != null) {
@@ -27,15 +30,17 @@ public final class TransactionFactory {
             return PoolFactory.getPool().getMasterDatasource().getConnection()
                     .map(connection -> connection.createTransaction(transactionId));
         }
-
     }
 
     /**
+     * create or get the current xian transaction
+     *
      * @param transactionId transaction id
      * @return the current transaction reference
      */
     public static Single<XianTransaction> getTransaction(String transactionId) {
         return getTransaction(transactionId, false);
     }
+
 
 }

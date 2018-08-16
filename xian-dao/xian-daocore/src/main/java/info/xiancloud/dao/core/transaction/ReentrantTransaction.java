@@ -36,11 +36,16 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
 
     @Override
     public Completable rollback() {
-        return doRollback().doOnComplete(() -> count.set(0));
+        return doRollback().andThen(clear());
     }
 
     /**
-     * make a garbage cycling.
+     * Clear this transaction.
+     * set count to 0.
+     * clear local transaction cache.
+     * return the connection to the pool.
+     *
+     * @return deferred result
      */
     protected abstract Completable clear();
 
@@ -50,9 +55,10 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
         count.decrementAndGet();
         if (count.intValue() == 0) {
             if (connection != null && !connection.isClosed()) {
-                completable = doCommit();
+                completable = doCommit().concatWith(clear());
             } else {
-                completable = Completable.error(new RuntimeException("database connection is already closed while you are commit a transaction."));
+                completable = Completable.error(new RuntimeException("database connection is already closed while you are commit a transaction."))
+                        .concatWith(clear());
             }
         } else {
             LOG.debug(String.format("嵌套的数据库事务不需要提交,嵌套了%s层", count));
@@ -85,10 +91,25 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
         return completable;
     }*/
 
+    /**
+     * do begin this tranction
+     *
+     * @return deferred transaction beginning result
+     */
     protected abstract Completable doBegin();
 
+    /**
+     * do commit this transaction
+     *
+     * @return deferred transaction commitment result
+     */
     protected abstract Completable doCommit();
 
+    /**
+     * do rollback this transaction
+     *
+     * @return deferred rollback result
+     */
     protected abstract Completable doRollback();
 
     /*protected abstract Completable doClose();*/

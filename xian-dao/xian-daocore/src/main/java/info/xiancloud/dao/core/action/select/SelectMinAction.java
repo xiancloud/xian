@@ -1,33 +1,33 @@
-package info.xiancloud.dao.jdbc.sql;
+package info.xiancloud.dao.core.action.select;
 
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.dao.group.unit.DaoUnit;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Map;
 
 /**
+ * SelectMinAction, eg.
+ * <code>
+ * <p>
+ * select min(col0) from table0 where col1 = 123
+ * group by col2
+ * </p>
+ * </code>
+ *
  * @author happyyangyuan
+ * @deprecated Too many sql action implementations event make things complicated. Use {@link SelectAction select action} instead and write your own sql clause.
  */
 public abstract class SelectMinAction extends SelectAction/*OrderBySelectAction*/ {
 
-    final protected String sqlTail(DaoUnit daoUnit, Map map, Connection connection) {
+    @Override
+    final protected String sqlTail() {
         String groupByClause = StringUtil.isEmpty(groupByClause()) ? " " : " ".concat(groupByClause()).concat(" ");
         return groupByClause.concat(ISelect.minQueryTail(minColumn()));
     }
 
+    /**
+     * get the column name parameter for min function
+     *
+     * @return column name parameter for min function
+     */
     abstract protected String minColumn();
-
-    @Override
-    final protected String sqlHeader(Map map, Connection connection) {
-        return super.sqlHeader(map, connection);
-    }
-
-    @Override
-    final protected String sqlPattern(Map map, Connection connection) throws SQLException {
-        return super.sqlPattern(map, connection);
-    }
 
     /**
      * @return 应当返回完整的group by子句,或者穿空忽略group by

@@ -22,6 +22,12 @@ public interface DaoGroup extends Group {
      */
     DaoGroup singleton = () -> Constant.SYSTEM_DAO_GROUP_NAME;
 
+    /**
+     * Indicates this group is a dao group
+     *
+     * @return always return true
+     */
+    @Override
     default boolean isDao() {
         return true;
     }

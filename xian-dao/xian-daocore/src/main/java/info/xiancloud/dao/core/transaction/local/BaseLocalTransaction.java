@@ -31,11 +31,12 @@ public abstract class BaseLocalTransaction extends ReentrantTransaction implemen
             .expireAfterWrite(TIMEOUT, TimeUnit.MILLISECONDS)
             .removalListener((RemovalListener<String, BaseLocalTransaction>) notification -> {
                 if (notification.getCause() == RemovalCause.EXPIRED) {
+                    //in case of transaction leak
                     BaseLocalTransaction transaction = notification.getValue();
-                    LOG.warn("Timedout transaciton detected: " + transaction.getTransactionId());
-                    transaction.rollback().andThen(transaction.getConnection().close()).subscribe(() -> {
-                        LOG.info("Timedout transaction has been rollbacked: " + transaction.getTransactionId());
-                    });
+                    LOG.warn("Transaction timeout detected: " + transaction.getTransactionId());
+                    transaction.rollback().andThen(transaction.getConnection().close()).subscribe(() ->
+                            LOG.info("Transaction Timeout has been rollbacked: " + transaction.getTransactionId())
+                    );
                 }
             })
             .build();
@@ -62,7 +63,11 @@ public abstract class BaseLocalTransaction extends ReentrantTransaction implemen
 
     @Override
     protected Completable clear() {
-        return Completable.fromAction(() -> LOCAL_TRANS_MAP.invalidate(transactionId));
+        return Completable
+                .fromAction(() -> LOCAL_TRANS_MAP.invalidate(transactionId))
+                .doOnComplete(() -> count.set(0))
+                .andThen(getConnection().close())
+                ;
     }
 
 }

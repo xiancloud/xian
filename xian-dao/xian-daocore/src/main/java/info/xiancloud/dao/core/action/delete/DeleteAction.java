@@ -15,8 +15,10 @@ import io.reactivex.Single;
  */
 public abstract class DeleteAction extends WhereAction implements ISingleTableAction, IDML {
 
+    private String tableName;
+
     @Override
-    protected String sqlHeader() {
+    protected final String sqlHeader() {
         return "delete from ".concat(getTableName());
     }
 
@@ -33,4 +35,14 @@ public abstract class DeleteAction extends WhereAction implements ISingleTableAc
         }
         return SafetyChecker.doCheck(this, getMap());
     }
+
+    @Override
+    public String getTableName() {
+        if (tableName == null) {
+            tableName = tableName();
+        }
+        return tableName;
+    }
+
+    protected abstract String tableName();
 }

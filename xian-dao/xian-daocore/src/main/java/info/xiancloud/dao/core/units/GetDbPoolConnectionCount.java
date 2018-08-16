@@ -1,19 +1,25 @@
-package info.xiancloud.dao.group.unit.monitor;
+package info.xiancloud.dao.core.units;
 
 import com.alibaba.fastjson.JSONArray;
-import info.xiancloud.core.Group;
-import info.xiancloud.core.UnitMeta;
+import info.xiancloud.core.*;
 import info.xiancloud.core.distribution.LocalNodeManager;
-import info.xiancloud.core.distribution.unit.ReceiveAndBroadcast;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.support.falcon.DiyMonitorGroup;
-import info.xiancloud.dao.jdbc.pool.PoolFactory;
+import info.xiancloud.dao.core.model.monitor.DbPoolInfoMonitorBean;
+import info.xiancloud.dao.core.pool.PoolFactory;
 
 /**
+ * For database pooling client monitoring
+ *
  * @author happyyangyuan
  */
-public class GetDbPoolConnectionCount extends ReceiveAndBroadcast {
+public class GetDbPoolConnectionCount implements Unit {
+    @Override
+    public Input getInput() {
+        return null;
+    }
+
     @Override
     public String getName() {
         return "getDbPoolConnectionCount";
@@ -21,12 +27,19 @@ public class GetDbPoolConnectionCount extends ReceiveAndBroadcast {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("Collect all db nodes' connection pool status.")
-                .setDocApi(false);
+        return UnitMeta
+                .createWithDescription("Collect all db nodes' connection pool status.")
+                .setDocApi(false)
+                .setBroadcast()
+                ;
     }
 
     @Override
-    protected UnitResponse execute0(UnitRequest msg) {
+    public void execute(UnitRequest request, Handler<UnitResponse> handler) {
+        handler.handle(execute0(request));
+    }
+
+    private UnitResponse execute0(UnitRequest request) {
         int masterPoolActiveCount = PoolFactory.getPool().getMasterDatasource().getActiveConnectionCount(),
                 masterPoolSize = PoolFactory.getPool().getMasterDatasource().getPoolSize(),
                 slavePoolActiveCount = PoolFactory.getPool().getSlaveDatasource().getActiveConnectionCount(),
@@ -62,16 +75,6 @@ public class GetDbPoolConnectionCount extends ReceiveAndBroadcast {
 //            );
         }};
         return UnitResponse.createSuccess(monitorBeans);
-    }
-
-    @Override
-    protected boolean async() {
-        return false;
-    }
-
-    @Override
-    protected boolean successDataOnly() {
-        return true;
     }
 
     @Override

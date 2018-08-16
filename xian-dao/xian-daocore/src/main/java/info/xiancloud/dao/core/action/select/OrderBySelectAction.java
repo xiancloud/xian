@@ -1,17 +1,16 @@
-package info.xiancloud.dao.jdbc.sql;
+package info.xiancloud.dao.core.action.select;
 
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.dao.group.unit.DaoUnit;
-
-import java.sql.Connection;
-import java.util.Map;
 
 /**
+ * Order by selection action
+ *
  * @author happyyangyuan
  */
 public abstract class OrderBySelectAction extends SelectAction {
 
-    final protected String sqlTail(DaoUnit daoUnit, Map map, Connection connection) {
+    @Override
+    final protected String sqlTail() {
         String groupByClause = StringUtil.isEmpty(groupByClause()) ? " " : " ".concat(groupByClause()).concat(" ");
         return groupByClause.concat(ISelect.orderByPagingQueryTail(ascOrDesc(), orderByColumn(), null, null));
     }

@@ -49,6 +49,7 @@ public abstract class LocalUnitsManager {
     static {
         try {
             unitMap = new HashMap<String, List<Unit>>() {
+                @Override
                 public String toString() {
                     Map<String, List<String>> map = new HashMap<>();
                     for (String serviceName : unitMap.keySet()) {
@@ -70,51 +71,49 @@ public abstract class LocalUnitsManager {
             for (ExtraUnitProvider extraUnitProvider : Reflection.getSubClassInstances(ExtraUnitProvider.class)) {
                 allUnitList.addAll(extraUnitProvider.provideExtraUnits());
             }
-            if (allUnitList != null) {
-                for (Unit unit : allUnitList) {
-                    if (UnitProxy.class == unit.getClass()) {
-                        //UnitProxy is not unit really, it is just a bean used to cache unit definition.
-                        continue;
-                    }
-                    if (unit.getMeta() == null || StringUtil.isEmpty(unit.getName())) {
-                        System.err.println(String.format("unit %s's name is null! Please check! %s is ignored!",
-                                unit.getClass().getSimpleName(),
-                                unit.getClass().getSimpleName()));
-                        continue;
-                    }
-                    if (unit.getName().contains(Unit.SEPARATOR)) {
-                        System.err.println("Unit name can not contain " + Unit.SEPARATOR + " :" + unit.getName());
-                        continue;
-                    }
-                    if (unit.getGroup() == null) {
-                        System.err.println(String.format("No group is specified for the unit with name %s! This unit is ignored!", unit.getName()));
-                        continue;
-                    }
-                    Group group = unit.getGroup();
-                    if (StringUtil.isEmpty(group.getName())) {
-                        System.err.println(String.format("group: %s.getName() returns null! %s.%s is ignored!",
-                                group.getClass().getSimpleName(),
-                                group.getClass().getSimpleName(),
-                                unit.getClass().getSimpleName()));
-                        continue;
-                    }
-                    if (group.getName().contains(Unit.SEPARATOR)) {
-                        System.err.println(Unit.SEPARATOR + " is not allowed in group name: " + group.getName());
-                        continue;
-                    }
-                    if (unitMap.get(group.getName()) != null) {
-                        unitMap.get(group.getName()).add(unit);
-                    } else {
-                        //我们引入了动态aop功能,它会在运行时修改静态全局变量ServiceManager.unitMap,而这个map以及map内的list是被N线程并行读的,因此这最好使用并发安全并且读成本低的CopyOnWriteArrayList
-                        List<Unit> list = new CopyOnWriteArrayList<>();
-                        list.add(unit);
-                        unitMap.put(group.getName(), list);
-                    }
-                    searchUnitMap.put(group.getName() + Unit.SEPARATOR + unit.getName(), unit);
-                    searchGroupByUnitClass.put(unit.getClass(), group);
-                    searchGroupByNameMap.put(group.getName(), group);
-                    searchUnitByClass.put(unit.getClass(), unit);
+            for (Unit unit : allUnitList) {
+                if (UnitProxy.class == unit.getClass()) {
+                    //UnitProxy is not unit really, it is just a bean used to cache unit definition.
+                    continue;
                 }
+                if (unit.getMeta() == null || StringUtil.isEmpty(unit.getName())) {
+                    System.err.println(String.format("unit %s's name is null! Please check! %s is ignored!",
+                            unit.getClass().getSimpleName(),
+                            unit.getClass().getSimpleName()));
+                    continue;
+                }
+                if (unit.getName().contains(Unit.SEPARATOR)) {
+                    System.err.println("Unit name can not contain " + Unit.SEPARATOR + " :" + unit.getName());
+                    continue;
+                }
+                if (unit.getGroup() == null) {
+                    System.err.println(String.format("No group is specified for the unit with name %s! This unit is ignored!", unit.getName()));
+                    continue;
+                }
+                Group group = unit.getGroup();
+                if (StringUtil.isEmpty(group.getName())) {
+                    System.err.println(String.format("group: %s.getName() returns null! %s.%s is ignored!",
+                            group.getClass().getSimpleName(),
+                            group.getClass().getSimpleName(),
+                            unit.getClass().getSimpleName()));
+                    continue;
+                }
+                if (group.getName().contains(Unit.SEPARATOR)) {
+                    System.err.println(Unit.SEPARATOR + " is not allowed in group name: " + group.getName());
+                    continue;
+                }
+                if (unitMap.get(group.getName()) != null) {
+                    unitMap.get(group.getName()).add(unit);
+                } else {
+                    //我们引入了动态aop功能,它会在运行时修改静态全局变量ServiceManager.unitMap,而这个map以及map内的list是被N线程并行读的,因此这最好使用并发安全并且读成本低的CopyOnWriteArrayList
+                    List<Unit> list = new CopyOnWriteArrayList<>();
+                    list.add(unit);
+                    unitMap.put(group.getName(), list);
+                }
+                searchUnitMap.put(group.getName() + Unit.SEPARATOR + unit.getName(), unit);
+                searchGroupByUnitClass.put(unit.getClass(), group);
+                searchGroupByNameMap.put(group.getName(), group);
+                searchUnitByClass.put(unit.getClass(), unit);
             }
             System.out.println(LocalUnitsManager.class.getSimpleName() + " has finished to scan all the units:  " + unitMap.toString());
         } catch (Exception e) {

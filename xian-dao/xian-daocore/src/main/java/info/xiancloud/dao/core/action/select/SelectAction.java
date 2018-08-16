@@ -67,7 +67,7 @@ public abstract class SelectAction extends WhereAction implements ISelect {
     protected abstract Object sourceTable();
 
     @Override
-    protected String sqlHeader() {
+    protected final String sqlHeader() {
         StringBuilder select = new StringBuilder("select * from ");
         if (getSelectList() != null) {
             if (getSelectList() instanceof String && !StringUtil.isEmpty(getSelectList())) {

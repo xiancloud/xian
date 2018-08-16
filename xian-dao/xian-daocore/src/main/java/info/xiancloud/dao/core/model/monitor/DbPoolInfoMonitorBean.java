@@ -1,21 +1,18 @@
-package info.xiancloud.dao.group.unit.monitor;
+package info.xiancloud.dao.core.model.monitor;
 
 import info.xiancloud.core.Bean;
 
 /**
+ * database pool monitor bean.
+ *
  * @author happyyangyuan
  */
-@SuppressWarnings("all")
 public class DbPoolInfoMonitorBean implements Bean {
     private String title;
     private String datasource;
     private int value;
     private String name;
     private String nodeId;
-    /**
-     * @deprecated 增加这个tag反而让grafana配置更加麻烦
-     */
-    private String nodeStartDate;
 
     public String getTitle() {
         return title;
@@ -62,12 +59,12 @@ public class DbPoolInfoMonitorBean implements Bean {
         return this;
     }
 
-    public String getNodeStartDate() {
-        return nodeStartDate;
-    }
+//    public String getNodeStartDate() {
+//        return nodeStartDate;
+//    }
 
-    public DbPoolInfoMonitorBean setNodeStartDate(String nodeStartDate) {
-        this.nodeStartDate = nodeStartDate;
-        return this;
-    }
+//    public DbPoolInfoMonitorBean setNodeStartDate(String nodeStartDate) {
+//        this.nodeStartDate = nodeStartDate;
+//        return this;
+//    }
 }

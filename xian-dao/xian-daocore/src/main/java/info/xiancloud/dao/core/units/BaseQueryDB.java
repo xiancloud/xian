@@ -6,6 +6,9 @@ import info.xiancloud.dao.core.action.select.InternalSelectionAction;
 
 /**
  * 公共查询 dao unit
+ *
+ * @author happyyangyuan
+ * @deprecated todo not fully developed
  */
 abstract public class BaseQueryDB extends DaoUnit {
     @Override
@@ -16,8 +19,8 @@ abstract public class BaseQueryDB extends DaoUnit {
     @Override
     public SqlAction[] getActions() {
         return new SqlAction[]{
-                new InternalSelectionAction() {
-                }
+                /*new InternalSelectionAction() {
+                }*/
         };
     }
 
