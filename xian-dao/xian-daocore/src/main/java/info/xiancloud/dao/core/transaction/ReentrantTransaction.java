@@ -41,13 +41,28 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
 
     /**
      * Clear this transaction.
-     * set count to 0.
-     * clear local transaction cache.
-     * return the connection to the pool.
+     * Clearing transaction does the following steps:<br/>
+     * 1. clear cache   <br/>
+     * 2. close the connection  <br/>
+     * 3. set counter to 0.
+     * <p>
+     * This method must be implemented to be reentrant to make calling this method more than once to be safe .
+     * </p>
      *
      * @return deferred result
      */
-    protected abstract Completable clear();
+    private Completable clear() {
+        return Completable.fromAction(() -> count.set(0))
+                .andThen(getConnection().close())
+                .andThen(doClear());
+    }
+
+    /**
+     * do custom transaction clear
+     *
+     * @return deferred result
+     */
+    protected abstract Completable doClear();
 
     @Override
     public Completable commit() {
@@ -55,10 +70,10 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
         count.decrementAndGet();
         if (count.intValue() == 0) {
             if (connection != null && !connection.isClosed()) {
-                completable = doCommit().concatWith(clear());
+                completable = doCommit().andThen(clear());
             } else {
-                completable = Completable.error(new RuntimeException("database connection is already closed while you are commit a transaction."))
-                        .concatWith(clear());
+                LOG.error("database connection is already closed while you are commit a transaction.");
+                completable = clear();
             }
         } else {
             LOG.debug(String.format("嵌套的数据库事务不需要提交,嵌套了%s层", count));
@@ -67,32 +82,36 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
         return completable;
     }
 
-    /*@Override
+    /**
+     * @deprecated transaction has no close operation
+     */
     public Completable close() {
-        Completable completable;
-        if (count.intValue() == 0) {
-            try {
-                if (connection != null && !connection.isClosed()) {
-                    completable = doClose();
-                } else {
-                    LOG.warn("No connection for you to close");
-                    completable = Completable.complete();
-                }
-            } catch (Throwable e) {
-                LOG.error("关闭数据库连接时发生错误", e);
-                completable = Completable.error(e);
-            } finally {
-                clear();
-            }
-        } else {
-            LOG.warn(new RuntimeException("外层事务还存在,现在还不是关闭数据库连接的时候...,如果想强制关闭数据库连接,请先回滚/提交事务..."));
-            completable = Completable.complete();
-        }
-        return completable;
-    }*/
+///close method is not used anymore.
+//        Completable completable;
+//        if (count.intValue() == 0) {
+//            try {
+//                if (connection != null && !connection.isClosed()) {
+//                    completable = doClose();
+//                } else {
+//                    LOG.warn("No connection for you to close");
+//                    completable = Completable.complete();
+//                }
+//            } catch (Throwable e) {
+//                LOG.error("关闭数据库连接时发生错误", e);
+//                completable = Completable.error(e);
+//            } finally {
+//                clear();
+//            }
+//        } else {
+//            LOG.warn(new RuntimeException("外层事务还存在,现在还不是关闭数据库连接的时候...,如果想强制关闭数据库连接,请先回滚/提交事务..."));
+//            completable = Completable.complete();
+//        }
+//        return completable;
+        return Completable.fromAction(() -> LOG.warn("transaction close method now does nothing."));
+    }
 
     /**
-     * do begin this tranction
+     * Do begin this traction
      *
      * @return deferred transaction beginning result
      */

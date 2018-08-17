@@ -44,17 +44,25 @@ public interface XianTransaction {
     /**
      * Submit a commit request.
      * Note that the transaction will only be committed until all nested transaction commitment requests are submitted.
-     * And finally return the connection to pool immediately.
+     * And then clear everything of this transaction including returning the connection to database pool immediately.
+     * <p>
+     * Explanation<br/>
+     * It is the right time to clear this transaction when count come to 0 and the graceful time to trigger transaction clearing is the last commit request.
+     * So we put clearing invocation at the end of this commit method.
+     * </p>
      *
      * @return Represents a deferred commit result without any value but only indication for completion or exception.
      */
     Completable commit();
 
     /**
-     * Submit a rollback request.
-     * Transaction is rollbacked immediately when a rollback request is submitted.
+     * Submit a rollback request immediately to the database.
+     * And then clear everything of this transaction including returning the connection to database pool immediately.
      * <p>
-     * And finally return the connection to pool immediately.
+     * Explanation<br/>
+     * It is the right time to clear this transaction when count come to 0 and the graceful time to trigger transaction clearing is right after rollback request.
+     * So we put clearing invocation at the end of this rollback method.
+     * </p>
      *
      * @return Represents a deferred rollback result without any value but only indication for completion or exception.
      */

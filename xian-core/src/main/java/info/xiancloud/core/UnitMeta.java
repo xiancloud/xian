@@ -90,6 +90,21 @@ public final class UnitMeta {
         return create().setDescription(description);
     }
 
+    /**
+     * Append a description string to the end of current description
+     *
+     * @param descriptionToBeAppended description string you want to append
+     * @return this unit meta data
+     */
+    public UnitMeta appendDescription(String descriptionToBeAppended) {
+        if (getDescription() != null) {
+            setDescription(getDescription().concat(descriptionToBeAppended));
+        } else {
+            setDescription(descriptionToBeAppended);
+        }
+        return this;
+    }
+
     private UnitMeta() {
     }
 

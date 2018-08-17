@@ -62,11 +62,9 @@ public abstract class BaseLocalTransaction extends ReentrantTransaction implemen
     }
 
     @Override
-    protected Completable clear() {
+    protected Completable doClear() {
         return Completable
                 .fromAction(() -> LOCAL_TRANS_MAP.invalidate(transactionId))
-                .doOnComplete(() -> count.set(0))
-                .andThen(getConnection().close())
                 ;
     }
 

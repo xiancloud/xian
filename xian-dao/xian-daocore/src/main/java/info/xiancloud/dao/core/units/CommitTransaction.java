@@ -8,10 +8,12 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.thread.MsgIdHolder;
 import info.xiancloud.dao.core.DaoGroup;
+import info.xiancloud.dao.core.transaction.XianTransaction;
 import info.xiancloud.dao.core.transaction.local.BaseLocalTransaction;
 
 /**
  * Commit the transaction in the context.
+ * Note that transaction commitment must be called sequentially in the "finally" way to make sure it is called no matter any exception is thrown.
  *
  * @author happyyangyuan
  */
@@ -19,7 +21,10 @@ public abstract class CommitTransaction implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.createWithDescription("提交事务").setDocApi(false);
+        return UnitMeta
+                .createWithDescription("Commit current transaction.")
+                .appendDescription("If current transaction is already ended then do nothing.")
+                .setDocApi(false);
     }
 
     @Override
@@ -29,10 +34,12 @@ public abstract class CommitTransaction implements Unit {
 
     @Override
     public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
-        if (BaseLocalTransaction.getExistedLocalTrans(MsgIdHolder.get()) == null) {
-            handler.handle(UnitResponse.createError(DaoGroup.CODE_UNKNOWN_ERROR, MsgIdHolder.get(), String.format("Transaction with id=%s does not exist.", MsgIdHolder.get())));
+        XianTransaction transaction = BaseLocalTransaction.getExistedLocalTrans(MsgIdHolder.get());
+        if (transaction == null) {
+            handler.handle(UnitResponse.createError(DaoGroup.CODE_TRANSACTION_ALREADY_ENDS, MsgIdHolder.get(),
+                    String.format("Transaction with id=%s does not exist.", MsgIdHolder.get())));
         } else {
-            BaseLocalTransaction.getExistedLocalTrans(MsgIdHolder.get())
+            transaction
                     .commit()
                     .subscribe(() -> handler.handle(UnitResponse.createSuccess("Commit Transaction OK! transId=   " + MsgIdHolder.get())));
         }

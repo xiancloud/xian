@@ -18,7 +18,7 @@ public class DaoUnitProvider implements ExtraUnitProvider {
     @Override
     public List<Unit> provideExtraUnits() {
         List<Unit> baseDaoUnits = new ArrayList<>();
-        for (DaoGroup daoGroup : DaoGroup.groupList) {
+        for (DaoGroup daoGroup : DaoGroup.GROUP_LIST) {
             baseDaoUnits.add(new BaseAddDB() {
                 @Override
                 public Group getGroup() {

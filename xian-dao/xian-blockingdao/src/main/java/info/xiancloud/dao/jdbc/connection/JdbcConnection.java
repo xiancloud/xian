@@ -18,7 +18,7 @@ public class JdbcConnection extends BaseXianConnection {
     private Connection connection0;
 
     @Override
-    public Completable close() {
+    public Completable doClose() {
         return Completable.fromAction(() -> connection0.close());
     }
 

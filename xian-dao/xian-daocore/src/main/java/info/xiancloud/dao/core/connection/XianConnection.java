@@ -30,6 +30,7 @@ public interface XianConnection {
 
     /**
      * return the connection to the pool.
+     * This method must be implemented to be reentrant, we can close a xian connection more than one time. And latter close operation does nothing.
      *
      * @return Represents a deferred computation without any value but only indication for completion or exception.
      */

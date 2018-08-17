@@ -46,6 +46,12 @@ public class DatasourceConfigReader {
         return XianConfig.getIntValue("readonly_db_pool_size");
     }
 
+    /**
+     * Read configuration from xian config to get the global transaction timeout in milliseconds.
+     * The configuration key is "db_transaction_timeout"
+     *
+     * @return global transaction timeout in milliseconds.
+     */
     public static long getTransactionTimeout() {
         return XianConfig.getLongValue("db_transaction_timeout", 1000 * 60 * 5);
     }

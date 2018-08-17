@@ -5,12 +5,14 @@ import io.reactivex.Completable;
 
 /**
  * Utility for transaction commitment and rollback
+ *
+ * @author happyyangyuan
  */
 public class TransactionUtil {
 
-
     /**
-     * begin the give transaction
+     * Begin the given dao group's node's transaction. If currently the transaction is not existed then create one.
+     * This method is reentrant and must be paired with {@link #commit(String daoGroup)} method.
      *
      * @param daoGroup dao group name. This helps to locate which dao application node to sent this request.
      * @return deferred transaction beginning result
@@ -26,7 +28,10 @@ public class TransactionUtil {
     }
 
     /**
-     * commit the give transaction
+     * Commit the give transaction.
+     * Note that if you have rollbacked the transaction, then commitment of this transaction will do nothing.
+     * You don't worry about transaction closing, the frame will clear anything for you after the transaction is commited
+     * or exception obscures.
      *
      * @param daoGroup dao group name. This helps to locate which dao application node to sent this request.
      * @return deferred transaction commitment result
@@ -42,7 +47,9 @@ public class TransactionUtil {
     }
 
     /**
-     * rollback the transaction in current context
+     * Rollback the transaction in current context.
+     * Note that once a transaction is rollbacked its lifecycle ends.
+     * Any later transaction commitment will do nothing.
      *
      * @param daoGroup dao group name. This helps to locate which dao application node to sent this request.
      * @return deferred transaction rollback result

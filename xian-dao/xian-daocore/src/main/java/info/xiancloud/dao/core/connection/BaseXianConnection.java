@@ -3,6 +3,7 @@ package info.xiancloud.dao.core.connection;
 import info.xiancloud.core.util.Reflection;
 import info.xiancloud.dao.core.transaction.XianTransaction;
 import info.xiancloud.dao.core.transaction.local.BaseLocalTransaction;
+import io.reactivex.Completable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,6 +44,22 @@ public abstract class BaseXianConnection implements XianConnection {
         return closed;
     }
 
+    @Override
+    public final Completable close() {
+        if (!closed) {
+            return doClose();
+        }
+        //already closed, nothing to do
+        return Completable.complete();
+    }
+
+    /**
+     * do a connection close operation.
+     * Usually this is returning the connection to the pool
+     *
+     * @return deferred result
+     */
+    protected abstract Completable doClose();
 
     private static Constructor<? extends BaseLocalTransaction> localTransactionConstructor;
 
