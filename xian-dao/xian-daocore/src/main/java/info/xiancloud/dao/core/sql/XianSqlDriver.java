@@ -4,6 +4,7 @@ import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.insert.BatchInsertAction;
+import info.xiancloud.dao.core.connection.XianConnection;
 
 import java.util.List;
 import java.util.Map;
@@ -27,14 +28,14 @@ public interface XianSqlDriver extends SqlDriverInsertion, SalDriverUpdating, Sq
     Object[] preparedParams(String sqlPattern, Map<String, Object> map);
 
     /**
-     * produce a prepared sql from xian pattern sql.
+     * Produce a prepared sql from xian pattern sql.
      * This method is reentrant.
      * This method is not suitable for batch insertion because prepared batch insertion does not use pattern sql.
      *
-     * @param xianPatternSql xian sql pattern
+     * @param patternSql xian sql pattern
      * @return converted prepared sql.
      */
-    String preparedSql(String xianPatternSql);
+    String preparedSql(String patternSql);
 
     /**
      * produces a batch prepared insertion sql and its prepared parameter array.
@@ -65,5 +66,12 @@ public interface XianSqlDriver extends SqlDriverInsertion, SalDriverUpdating, Sq
      * @return the transferred unit response
      */
     UnitResponse handleException(Throwable exception, SqlAction sqlAction);
+
+    /**
+     * set the xian connection property
+     *
+     * @param connection the xian connection
+     */
+    XianSqlDriver setConnection(XianConnection connection);
 
 }

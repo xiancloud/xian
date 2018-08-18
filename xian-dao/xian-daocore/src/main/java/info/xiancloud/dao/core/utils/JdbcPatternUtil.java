@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author happyyangyuan
  */
-public class PatternUtil {
+public class JdbcPatternUtil {
 
     /**
      * 得到sql模式串中的原模原样的key
@@ -96,7 +96,7 @@ public class PatternUtil {
      * 根据sqlPattern,获取其对应的preparedSql的参数
      */
     public static Object[] getSqlParams(String sqlPattern, Map map) {
-        Object[] sqlParams = PatternUtil.getValues(PatternUtil.getCamelKeys(sqlPattern), map).toArray();
+        Object[] sqlParams = JdbcPatternUtil.getValues(JdbcPatternUtil.getCamelKeys(sqlPattern), map).toArray();
         for (int i = 0; i < sqlParams.length; i++) {
             if (sqlParams[i] instanceof Calendar) {//因为prepared statement不支持calendar类型,所以需要将其其中的calendar转为date
                 sqlParams[i] = ((Calendar) sqlParams[i]).getTime();

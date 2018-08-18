@@ -55,6 +55,11 @@ final public class UnitResponse {
      */
     private Context context = Context.create();
 
+    /**
+     * singleton instance of a succeeded unit response
+     */
+    private static final UnitResponse SUCCEEDED_SINGLETON = createSuccess();
+
     public UnitResponse setContext(Context context) {
         this.context = context;
         return this;
@@ -84,6 +89,10 @@ final public class UnitResponse {
 
     public Context getContext() {
         return context;
+    }
+
+    public static UnitResponse succeededSingleton() {
+        return SUCCEEDED_SINGLETON;
     }
 
     /**

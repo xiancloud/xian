@@ -82,4 +82,11 @@ public interface XianTransaction {
      */
     Date getCreateDate();
 
+    /**
+     * whether or not this transaction is begun
+     *
+     * @return true or false
+     */
+    boolean isBegun();
+
 }

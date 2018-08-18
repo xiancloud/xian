@@ -3,20 +3,25 @@ package info.xiancloud.dao.core.units;
 import info.xiancloud.core.Handler;
 import info.xiancloud.core.Input;
 import info.xiancloud.core.Unit;
+import info.xiancloud.core.message.ExceptionWithUnitResponse;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.dao.core.DaoGroup;
 import info.xiancloud.dao.core.action.AbstractSqlAction;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.select.ISelect;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.pool.PoolFactory;
 import info.xiancloud.dao.core.transaction.TransactionFactory;
-import io.reactivex.Observable;
+import info.xiancloud.dao.core.transaction.XianTransaction;
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Dao unit template.
@@ -40,30 +45,52 @@ public abstract class DaoUnit implements Unit {
      */
     @Override
     public final void execute(UnitRequest request, Handler<UnitResponse> handler) {
-        SqlAction[] sqlActions = getActions();
+
+        Object[] objectWrapper = new Object[]{null};
+
+
+        final SqlAction[] sqlActions = getActions();
         bareError(request);
-        boolean readOnly = readOnly(sqlActions, request) || request.getContext().isReadyOnly();
-        UnitResponse[] lastResponse = {null};
-        TransactionFactory.getTransaction(request.getContext().getMsgId(), readOnly)
-                .subscribe(transaction -> Observable.fromArray(sqlActions)
-                        .doOnNext(action ->
-                                action.execute(DaoUnit.this, request.getArgMap(), transaction.getConnection())
-                                        .doOnSuccess(unitResponse -> {
-                                            if (!unitResponse.succeeded()) {
-                                                //deal with sql failure
-                                                LOG.error(unitResponse);
-                                                throw new Exception("sql execution failure: " + unitResponse.getMessage());
-                                                //fixme it is bad to throw exception to end the loop.
-                                            } else {
-                                                lastResponse[0] = unitResponse;
-                                            }
-                                        }))
-                        .doOnComplete(() -> transaction.commit().subscribe(() -> handler.handle(lastResponse[0])))
-                        .doOnError(error -> transaction.rollback().subscribe(
-                                () -> handler.handle(UnitResponse.createError(DaoGroup.CODE_DB_ERROR, error, null))
-                        ))
-                        .subscribe())
-        ;
+        final boolean readOnly = readOnly(sqlActions, request) || request.getContext().isReadyOnly();
+        final AtomicBoolean transactional = new AtomicBoolean(false);
+        TransactionFactory
+                .getTransaction(request.getContext().getMsgId(), readOnly)
+                .flatMap(transaction -> {
+                    transactional.set(isTransactional(sqlActions, transaction));
+                    if (transactional.get()) {
+                        //business layer has begun the transaction, here we reentrant it.
+                        return transaction.begin().toSingle(() -> transaction);
+                    } else {
+                        //if transaction is not begun by business layer, here we do not begin the transaction
+                        return Single.just(transaction);
+                    }
+                })
+                .flatMap(transaction -> Flowable.fromArray(sqlActions)
+                        .flatMapSingle(action -> action.execute(this, request.getArgMap(), transaction.getConnection()))
+                        .reduce(UnitResponse.succeededSingleton()
+                                , (unitResponse, unitResponse2) -> {
+                                    if (unitResponse2.succeeded()) {
+                                        return unitResponse2;
+                                    } else {
+                                        throw new ExceptionWithUnitResponse(unitResponse2);
+                                    }
+                                })
+                        .takeUntil(((Callable<Completable>) () -> {
+                            if (transactional.get()) {
+                                return transaction.commit();
+                            } else {
+                                return Completable.complete();
+                            }
+                        }).call())
+                        .onErrorResumeNext(error -> {
+                            ExceptionWithUnitResponse exceptionWithUnitResponse = (ExceptionWithUnitResponse) error;
+                            if (transactional.get()) {
+                                return transaction.rollback().andThen(Single.just(exceptionWithUnitResponse.getUnitResponse()));
+                            } else {
+                                return Single.just(exceptionWithUnitResponse.getUnitResponse());
+                            }
+                        }))
+                .subscribe(handler::handle);
     }
 
     /**
@@ -72,6 +99,18 @@ public abstract class DaoUnit implements Unit {
      * @return sql actions array
      */
     abstract public SqlAction[] getActions();
+
+    /**
+     * judge whether we need to begin the transaction
+     */
+    private boolean isTransactional(SqlAction[] sqlActions, XianTransaction transaction) {
+        for (SqlAction sqlAction : sqlActions) {
+            if (!(sqlAction instanceof ISelect)) {
+                return true;
+            }
+        }
+        return transaction.isBegun();
+    }
 
     private boolean readOnly(SqlAction[] sqlActions, UnitRequest request) {
         //优先级   !SelectAction > request.readonly() > meta.isReadonly()

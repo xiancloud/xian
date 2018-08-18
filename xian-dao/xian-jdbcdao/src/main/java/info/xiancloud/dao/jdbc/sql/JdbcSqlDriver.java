@@ -8,13 +8,15 @@ import info.xiancloud.dao.core.DaoGroup;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.insert.BatchInsertAction;
 import info.xiancloud.dao.core.action.select.CustomSelectAction;
+import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.model.ddl.JavaType;
 import info.xiancloud.dao.core.model.ddl.Table;
 import info.xiancloud.dao.core.model.sqlresult.*;
 import info.xiancloud.dao.core.sql.BaseSqlDriver;
 import info.xiancloud.dao.core.utils.BasicSqlBuilder;
-import info.xiancloud.dao.core.utils.PatternUtil;
+import info.xiancloud.dao.core.utils.JdbcPatternUtil;
 import info.xiancloud.dao.core.utils.SqlUtils;
+import info.xiancloud.dao.jdbc.connection.JdbcConnection;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
@@ -31,14 +33,15 @@ import java.util.Map;
 public class JdbcSqlDriver extends BaseSqlDriver {
 
     /**
-     * the jdbc inner connection
+     * the jdbc internal connection.
+     * {@link #setConnection(XianConnection)} must be invoked before using this property
      */
     private Connection connection0;
 
     @Override
-    public String preparedSql(String xianPatternSql) {
+    public String preparedSql(String patternSql) {
         if (preparedSql == null) {
-            preparedSql = PatternUtil.getPreparedSql(xianPatternSql);
+            preparedSql = JdbcPatternUtil.getPreparedSql(patternSql);
         }
         return preparedSql;
     }
@@ -61,7 +64,7 @@ public class JdbcSqlDriver extends BaseSqlDriver {
     @Override
     public Pair<String, Object[]> preparedBatchInsertionSql(BatchInsertAction batchInsertAction) {
         if (preparedSql == null) {
-            Pair<String, Object[]> preparedSqlAndValues = BasicSqlBuilder.buildBatchInsertPreparedSQL(
+            Pair<String, Object[]> preparedSqlAndValues = BasicSqlBuilder.buildJdbcBatchInsertPreparedSQL(
                     batchInsertAction.getTableName(), batchInsertAction.getCols(), batchInsertAction.getValues());
             preparedSql = preparedSqlAndValues.fst;
             preparedParams = preparedSqlAndValues.snd;
@@ -230,6 +233,13 @@ public class JdbcSqlDriver extends BaseSqlDriver {
     }
 
     @Override
+    public BaseSqlDriver setConnection0(XianConnection connection) {
+        JdbcConnection jdbcConnection = (JdbcConnection) connection;
+        connection0 = jdbcConnection.getConnection0();
+        return this;
+    }
+
+    @Override
     public Single<RecordsListSelectionResult> select(String patternSql, Map<String, Object> map) {
         return Single.fromCallable(() -> {
             String sql = preparedSql(patternSql);
@@ -266,4 +276,5 @@ public class JdbcSqlDriver extends BaseSqlDriver {
             return new DeletionResult().setCount(count);
         });
     }
+
 }

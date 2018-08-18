@@ -7,7 +7,7 @@ import info.xiancloud.dao.core.action.IUnique;
 import info.xiancloud.dao.core.action.SafetyChecker;
 import info.xiancloud.dao.core.action.WhereAction;
 import info.xiancloud.dao.core.model.sqlresult.UpdatingResult;
-import info.xiancloud.dao.core.utils.PatternUtil;
+import info.xiancloud.dao.core.utils.JdbcPatternUtil;
 import io.reactivex.Single;
 
 import java.util.HashMap;
@@ -83,8 +83,8 @@ public abstract class UpdateAction extends WhereAction implements IUnique, IDML 
         Map<String, Object> data = new HashMap<>(map.size());
         data.putAll(map);
         for (Object camelKey : map.keySet()) {
-            for (String where : where()) {
-                if (PatternUtil.getCamelKeys(where).contains(camelKey.toString())) {
+            for (String where : searchConditions()) {
+                if (JdbcPatternUtil.getCamelKeys(where).contains(camelKey.toString())) {
                     data.remove(camelKey.toString());
                 }
             }

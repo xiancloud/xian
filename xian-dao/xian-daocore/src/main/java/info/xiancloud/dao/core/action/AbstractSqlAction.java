@@ -12,7 +12,7 @@ import info.xiancloud.dao.core.sql.BaseSqlDriver;
 import info.xiancloud.dao.core.sql.XianSqlDriver;
 import info.xiancloud.dao.core.units.DaoUnit;
 import info.xiancloud.dao.core.utils.MapFormat;
-import info.xiancloud.dao.core.utils.PatternUtil;
+import info.xiancloud.dao.core.utils.JdbcPatternUtil;
 import info.xiancloud.dao.core.utils.SqlUtils;
 import io.reactivex.Single;
 
@@ -128,7 +128,7 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     @Override
     public final String getPatternSql() {
         if (patternSql == null) {
-            patternSql = adjustInClause(PatternUtil.bareError(patternSql()));
+            patternSql = adjustInClause(JdbcPatternUtil.bareError(patternSql()));
         }
         return patternSql;
     }
@@ -164,7 +164,7 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
         Matcher matcher = pattern.matcher(sqlPattern);
         while (matcher.find()) {
             String matched = matcher.group();
-            for (String key : PatternUtil.getCamelKeys(matched)) {
+            for (String key : JdbcPatternUtil.getCamelKeys(matched)) {
                 // 处理集合
                 if (getMap().get(key) instanceof Collection) {
                     Collection collection = (Collection) getMap().get(key);

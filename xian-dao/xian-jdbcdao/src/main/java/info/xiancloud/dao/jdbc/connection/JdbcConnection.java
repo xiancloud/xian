@@ -25,4 +25,13 @@ public class JdbcConnection extends BaseXianConnection {
     public void setConnection0(Connection connection0) {
         this.connection0 = connection0;
     }
+
+    /**
+     * get internal connection0
+     *
+     * @return internal jdbc connection0
+     */
+    public Connection getConnection0() {
+        return connection0;
+    }
 }

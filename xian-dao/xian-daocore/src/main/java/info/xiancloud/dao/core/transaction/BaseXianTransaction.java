@@ -14,6 +14,7 @@ public abstract class BaseXianTransaction implements XianTransaction {
     final protected XianConnection connection;
     final protected String transactionId;
     final protected Date createDate = new Date();
+    protected boolean begun = false;
 
     public BaseXianTransaction(String transactionId, XianConnection xianConnection) {
         connection = xianConnection;
@@ -33,5 +34,14 @@ public abstract class BaseXianTransaction implements XianTransaction {
     @Override
     public Date getCreateDate() {
         return createDate;
+    }
+
+    @Override
+    public boolean isBegun() {
+        return begun;
+    }
+
+    public void setBegun(boolean begun) {
+        this.begun = begun;
     }
 }

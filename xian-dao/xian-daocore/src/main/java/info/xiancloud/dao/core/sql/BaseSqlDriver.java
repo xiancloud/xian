@@ -3,7 +3,7 @@ package info.xiancloud.dao.core.sql;
 import info.xiancloud.core.util.Reflection;
 import info.xiancloud.dao.core.action.insert.BatchInsertAction;
 import info.xiancloud.dao.core.connection.XianConnection;
-import info.xiancloud.dao.core.utils.PatternUtil;
+import info.xiancloud.dao.core.utils.JdbcPatternUtil;
 
 import java.util.Calendar;
 import java.util.List;
@@ -48,7 +48,7 @@ public abstract class BaseSqlDriver implements XianSqlDriver {
     @Override
     public Object[] preparedParams(String patternSql, Map<String, Object> map) {
         if (preparedParams == null) {
-            preparedParams = PatternUtil.getValues(patternKeys(patternSql), map).toArray();
+            preparedParams = JdbcPatternUtil.getValues(patternKeys(patternSql), map).toArray();
             for (int i = 0; i < preparedParams.length; i++) {
                 if (preparedParams[i] instanceof Calendar) {
                     // 因为prepared statement不支持calendar类型,所以需要将其其中的calendar转为date
@@ -62,8 +62,23 @@ public abstract class BaseSqlDriver implements XianSqlDriver {
     @Override
     public List<String> patternKeys(String sqlPattern) {
         if (patternKeys == null) {
-            patternKeys = PatternUtil.getCamelKeys(sqlPattern);
+            patternKeys = JdbcPatternUtil.getCamelKeys(sqlPattern);
         }
         return patternKeys;
     }
+
+    @Override
+    public final XianSqlDriver setConnection(XianConnection connection) {
+        this.connection = connection;
+        setConnection0(connection);
+        return this;
+    }
+
+    /**
+     * set internal connection0
+     *
+     * @param connection xian connection
+     * @return this
+     */
+    protected abstract BaseSqlDriver setConnection0(XianConnection connection);
 }

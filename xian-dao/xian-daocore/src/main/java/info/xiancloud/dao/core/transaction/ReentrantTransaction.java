@@ -21,6 +21,7 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
 
     @Override
     public Completable begin() {
+        setBegun(true);
         Completable completable;
         if (count.get() == 0) {
             completable = doBegin();

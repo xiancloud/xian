@@ -8,5 +8,5 @@ dependencies {
     compile group: 'io.netty', name: 'netty-all', version: '4.1.9.Final'
     compile group: 'com.google.guava', name: 'guava', version: '21.0'
     compile group: 'com.alibaba', name: 'fastjson', version: '1.2.38'
-    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.12'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.0'
 }

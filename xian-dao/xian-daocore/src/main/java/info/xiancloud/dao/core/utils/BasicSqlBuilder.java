@@ -68,11 +68,10 @@ public class BasicSqlBuilder {
 
 
     private static String selectSQL(String sqlHeader, Map whereData, String[] cols) {
-        StringBuffer sqlSb = new StringBuffer();
+        StringBuilder sqlSb = new StringBuilder();
         sqlSb.append(sqlHeader);
-        StringBuffer dataSb = new StringBuffer();
-        StringBuffer whereSb = new StringBuffer();
-        List<Object> da = new ArrayList<Object>();
+        StringBuilder whereSb = new StringBuilder();
+        List<Object> da = new ArrayList<>();
 
 
         for (int i = 0; i < cols.length; i++) {
@@ -80,14 +79,14 @@ public class BasicSqlBuilder {
             if (ob != null) {
                 da.add(ob);
                 if (i == cols.length - 1) {
-                    whereSb.append(cols[i] + "=".concat(getCurlyBracedCamalPattern(cols[i])));
+                    whereSb.append(cols[i]).append("=".concat(getCurlyBracedCamalPattern(cols[i])));
                 } else {
                     whereSb.append(cols[i] + "=".concat(getCurlyBracedCamalPattern(cols[i])).concat(" and "));
                 }
             }
 
         }//end for
-        sqlSb.append(dataSb.toString());
+        sqlSb.append("");
         sqlSb.append(" where ");
         sqlSb.append(whereSb.toString());
         String sql = sqlSb.toString().trim();
@@ -120,14 +119,17 @@ public class BasicSqlBuilder {
     }
 
     /**
-     * build the batch insertion prepared sql.
+     * build the batch insertion prepared sql for jdbc standard.
+     * Jdbc standard prepared sql is with "?" to represents the arguments, eg.<p>
+     * <code>INSERT INTO TABLE0 VALUES (?,?,?),(?,?,?)</code>
+     * </p>
      *
      * @param tableName table name
      * @param cols      table columns array
      * @param dataList  values for the batch insertion sql
      * @return A pair with prepared sql as the first element and the prepared parameter array as the second.
      */
-    public static Pair<String, Object[]> buildBatchInsertPreparedSQL(String tableName, String[] cols, List<Map<String, Object>> dataList) {
+    public static Pair<String, Object[]> buildJdbcBatchInsertPreparedSQL(String tableName, String[] cols, List<Map<String, Object>> dataList) {
         Set<String> validCols = findValidCols(cols, dataList);
         List<Object> valuesArray = new ArrayList<>();
         StringBuilder sqlSb = new StringBuilder();
@@ -161,6 +163,56 @@ public class BasicSqlBuilder {
         String sql = sqlSb.toString();
         return new Pair<>(sql, valuesArray.toArray());
     }
+
+    /**
+     * Build the batch insertion prepared sql for reactive postgresql standard.
+     * Jdbc standard prepared sql is with "$i" to represents the arguments. "i" starts with 1. eg.
+     * <p>
+     * <code>INSERT INTO TABLE0 VALUES ($1,$2,$3),($4,$5,$6)</code>
+     * </p>
+     *
+     * @param tableName table name
+     * @param cols      table columns array
+     * @param dataList  values for the batch insertion sql
+     * @return A pair with prepared sql as the first element and the prepared parameter array as the second.
+     */
+    public static Pair<String, Object[]> buildPgBatchInsertPreparedSQL(String tableName, String[] cols, List<Map<String, Object>> dataList) {
+        Set<String> validCols = findValidCols(cols, dataList);
+        List<Object> valuesArray = new ArrayList<>();
+        StringBuilder sqlSb = new StringBuilder();
+        sqlSb.append("INSERT INTO ").append(tableName).append("(");
+        StringBuilder colParamB = new StringBuilder();
+        StringBuilder qmSb = new StringBuilder();
+        Iterator<String> it = validCols.iterator();
+        while (it.hasNext()) {
+            String col = it.next();
+            if (!it.hasNext()) {
+                colParamB.append(col);
+            } else {
+                colParamB.append(col).append(",");
+            }
+        }
+        sqlSb.append(colParamB.toString());
+        sqlSb.append(") VALUES ");
+
+        //pg arg index starts with 1
+        int i = 1;
+        for (Map<String, Object> map : dataList) {
+            qmSb.append("(");
+            for (String col : validCols) {
+                Object value = map.get(StringUtil.underlineToCamel(col));
+                valuesArray.add(value);
+                qmSb.append("$").append(i).append(",");
+                i++;
+            }
+            deleteLastCommaIfNecessary(qmSb);
+            qmSb.append("),");
+        }
+        deleteLastCommaIfNecessary(qmSb);
+        sqlSb.append(qmSb.toString());
+        return new Pair<>(sqlSb.toString(), valuesArray.toArray());
+    }
+
 
     private static void deleteLastCommaIfNecessary(StringBuilder qmSb) {
         if (qmSb.length() > 0 && qmSb.charAt(qmSb.length() - 1) == ',') {

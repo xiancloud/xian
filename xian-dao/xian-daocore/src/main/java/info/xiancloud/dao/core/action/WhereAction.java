@@ -1,7 +1,7 @@
 package info.xiancloud.dao.core.action;
 
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.dao.core.utils.PatternUtil;
+import info.xiancloud.dao.core.utils.JdbcPatternUtil;
 
 import java.util.Collection;
 import java.util.Map;
@@ -66,12 +66,12 @@ public abstract class WhereAction extends AbstractSqlAction {
         if (!former.endsWith(" and") && !former.endsWith(" or") && !former.endsWith("where")) {
             fragment = lower.startsWith("and ") || lower.startsWith("or ") ? fragment : " and ".concat(fragment);
         }
-        PatternUtil.adjustLikeClause(fragment, getMap());
+        JdbcPatternUtil.adjustLikeClause(fragment, getMap());
         return fragment;
     }
 
     final boolean ignoreWhereFragment(String whereFragment, Map<String, Object> map) {
-        for (Object value : PatternUtil.getValues(whereFragment, map)) {
+        for (Object value : JdbcPatternUtil.getValues(whereFragment, map)) {
             if (value == null) {
                 return true;
             }
