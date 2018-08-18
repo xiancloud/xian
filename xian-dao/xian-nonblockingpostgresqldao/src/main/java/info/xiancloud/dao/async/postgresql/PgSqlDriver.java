@@ -10,10 +10,14 @@ import info.xiancloud.dao.core.model.sqlresult.*;
 import info.xiancloud.dao.core.sql.BaseSqlDriver;
 import info.xiancloud.dao.core.utils.BasicSqlBuilder;
 import info.xiancloud.dao.core.utils.PgPatternUtil;
+import io.reactiverse.reactivex.pgclient.PgIterator;
+import io.reactiverse.reactivex.pgclient.Row;
 import io.reactiverse.reactivex.pgclient.Tuple;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,16 +120,40 @@ public class PgSqlDriver extends BaseSqlDriver {
 
     @Override
     public Single<String> getIdCol(String tableName) {
-        return null;
+        final String primaryKeyNameAlias = "primarykey";
+        return pgConnection0
+                .rxPreparedQuery(
+                        " SELECT a.attname AS " + primaryKeyNameAlias +
+                                " FROM   pg_index i " +
+                                " JOIN   pg_attribute a ON a.attrelid = i.indrelid " +
+                                "                      AND a.attnum = ANY(i.indkey) " +
+                                " WHERE  i.indrelid = $1::regclass " +
+                                " AND    i.indisprimary; ", Tuple.of(tableName))
+                .map(pgRowSet -> pgRowSet.iterator().next().getString(primaryKeyNameAlias));
     }
 
     @Override
     public Completable buildTableMetaData(Table table) {
-        return null;
+        //fixme not supported
+        throw new RuntimeException("not supported yet.");
     }
 
     @Override
     public Single<RecordsListSelectionResult> select(String patternSql, Map<String, Object> map) {
-        return null;
+        return pgConnection0.rxPreparedQuery(preparedSql(patternSql), Tuple.of(preparedParams(patternSql, map)))
+                .map(pgRowSet -> {
+                    List<String> cols = pgRowSet.columnsNames();
+                    PgIterator iterator = pgRowSet.iterator();
+                    RecordsListSelectionResult selectionResult = new RecordsListSelectionResult().setCount(pgRowSet.rowCount()).setRecords(new ArrayList<>());
+                    while (iterator.hasNext()) {
+                        Row row = iterator.next();
+                        Map<String, Object> record = new HashMap<>();
+                        for (String col : cols) {
+                            record.put(col, row.getValue(col));
+                        }
+                        selectionResult.getRecords().add(record);
+                    }
+                    return selectionResult;
+                });
     }
 }
