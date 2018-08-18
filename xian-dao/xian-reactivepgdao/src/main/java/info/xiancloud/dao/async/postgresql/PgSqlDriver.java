@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * postgresql sql executor implementation
  *
+ * @author happyyangyuan
  */
 public class PgSqlDriver extends BaseSqlDriver {
     private io.reactiverse.reactivex.pgclient.PgConnection pgConnection0;
