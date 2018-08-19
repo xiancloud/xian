@@ -2,4 +2,5 @@ dependencies {
     runtime project(':xian-dao:xian-reactivepgdao')
     runtime project(':xian-httpserver:xian-httpserver-core')
     runtime project(':xian-httpserver:xian-nettyhttpserver')
+    runtime project(':test:server_runtime_reactivepgdao_test')
 }

@@ -84,7 +84,11 @@ public abstract class XianDataSource {
     public String getDatabase() {
         int indexSlash = url.indexOf("/", url.indexOf("://") + 3);
         int questionMarkIndex = url.indexOf("?");
-        return url.substring(indexSlash + 1, questionMarkIndex);
+        if (questionMarkIndex != -1) {
+            return url.substring(indexSlash + 1, questionMarkIndex);
+        } else {
+            return url.substring(indexSlash + 1);
+        }
     }
 
     /**
