@@ -4,7 +4,6 @@ import info.xiancloud.core.conf.IPropertiesReader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.function.Function;
@@ -18,25 +17,27 @@ import java.util.function.Function;
 public class ApplicationConfig implements IPropertiesReader {
 
     private static final String PATH = "conf/application.properties";
-    /*private static final String CLASS_PATH = "application.properties"; using of class path application.properties may cause
-    * configuration confusing.*/
-    public static final ApplicationConfig singleton = new ApplicationConfig();
+    public static final ApplicationConfig SINGLETON = new ApplicationConfig();
 
-    private static final Properties cache = new Properties();
+    private static final Properties CACHE = new Properties();
 
     static {
-        try (InputStream inputStream = new File(PATH).exists() ?
-                new FileInputStream(PATH) : null
-                /*PlainFileUtil.readClasspathFileIntoStream(CLASS_PATH)*/) {
-            if (inputStream != null) cache.load(inputStream);
-        } catch (IOException e) {
+        try (InputStream inputStream =
+                     new File(PATH).exists() ?
+                             // we look for configuration in conf/application.properties
+                             new FileInputStream(PATH) :
+                             null) {
+            if (inputStream != null) {
+                CACHE.load(inputStream);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public Function<String, String> _reader() {
-        return cache::getProperty;
+        return CACHE::getProperty;
     }
 
     @Override

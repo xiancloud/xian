@@ -4,10 +4,8 @@ import info.xiancloud.core.conf.application.ApplicationConfig;
 import info.xiancloud.core.conf.sysproperty.SystemProperty;
 import info.xiancloud.core.conf.IPropertiesReader;
 import info.xiancloud.core.conf.XianConfig;
-import info.xiancloud.core.conf.application.ApplicationConfig;
 import info.xiancloud.core.conf.plugin.PluginConfigHolder;
 import info.xiancloud.core.conf.sysenv.SystemEnv;
-import info.xiancloud.core.conf.sysproperty.SystemProperty;
 
 import java.util.function.Function;
 
@@ -30,7 +28,7 @@ public class CompositeConfigReader implements IPropertiesReader {
         }
         String value = PluginConfigHolder.singleton.get0(key);
         if (value != null) return value;
-        value = ApplicationConfig.singleton.get0(key);
+        value = ApplicationConfig.SINGLETON.get0(key);
         if (value != null) return value;
         value = SystemProperty.singleton.get0(key);
         if (value != null) return value;

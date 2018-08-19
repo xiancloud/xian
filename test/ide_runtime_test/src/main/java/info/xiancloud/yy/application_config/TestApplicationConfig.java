@@ -7,6 +7,6 @@ import info.xiancloud.core.conf.application.ApplicationConfig;
  */
 public class TestApplicationConfig {
     public static void main(String[] args) {
-        System.out.println(ApplicationConfig.singleton.get0("api_gateway_port"));
+        System.out.println(ApplicationConfig.SINGLETON.get0("api_gateway_port"));
     }
 }

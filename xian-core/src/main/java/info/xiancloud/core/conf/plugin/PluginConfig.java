@@ -1,11 +1,8 @@
 package info.xiancloud.core.conf.plugin;
 
-import info.xiancloud.core.conf.composite.CompositeConfigReader;
-import info.xiancloud.core.util.EnvUtil;
-import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.conf.IEnvPrefixed;
 import info.xiancloud.core.conf.IPropertiesReader;
+import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.conf.composite.CompositeConfigReader;
 import info.xiancloud.core.util.EnvUtil;
 import info.xiancloud.core.util.StringUtil;
@@ -28,9 +25,12 @@ import java.util.function.Function;
 public abstract class PluginConfig implements IPropertiesReader {
 
     private static Map<String, IPluginConfigReader> readersMap = new ConcurrentHashMap<>();
-    private static final Object lock = new Object();
+    private static final Object LOCK = new Object();
     private static final String XIAN_CORE_LOCATION = PluginConfig.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
-    public static final String[] CONFIG_FILES = new String[]{"plugin.properties", "config.properties", "config.txt"/*config.properties, config.txt are for downward compatibility only, not recommended*/};
+    /**
+     * plugins.properties, config.properties, config.txt are for downward compatibility only, not recommended
+     */
+    public static final String[] CONFIG_FILES = new String[]{"plugin.properties", "plugins.properties", "config.properties", "config.txt"};
     private static Method SUN_REFLECTION_GETCALLERCLASS_METHOD;
 
     static {
@@ -46,8 +46,9 @@ public abstract class PluginConfig implements IPropertiesReader {
     public String get0(String key) {
         Class caller = /*getCaller*/getCallerUsingSunReflection();
         String value = getByCaller(addPrefixIfNot(key), caller);
-        if (!StringUtil.isEmpty(value))
+        if (!StringUtil.isEmpty(value)) {
             return value;
+        }
         value = getByCaller(key, caller);
         return StringUtil.isEmpty(value) ? null : value;
     }
@@ -78,9 +79,10 @@ public abstract class PluginConfig implements IPropertiesReader {
 
     private static Class getCallerUsingSunReflection() {
         Class caller;
-        int i = 5;//depth=5 by experimental.
+        //depth=5 by experimental.
+        int i = 5;
         do {
-            /**
+            /*
              sun reflection api is used, maybe some future jdk release won't support.
              performance：
              Log4j2StackLocatorUtil: 649.568976 ms.
@@ -91,7 +93,8 @@ public abstract class PluginConfig implements IPropertiesReader {
              @see ：TestGetCallerClassName.java
              */
             try {
-                caller = (Class) SUN_REFLECTION_GETCALLERCLASS_METHOD.invoke(null, i) /*Reflection.getCallerClass(i)*/;
+                /*Reflection.getCallerClass(i)*/
+                caller = (Class) SUN_REFLECTION_GETCALLERCLASS_METHOD.invoke(null, i);
                 /*System.out.println(caller);*/
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
@@ -108,7 +111,7 @@ public abstract class PluginConfig implements IPropertiesReader {
         URL moduleLocation = caller.getProtectionDomain().getCodeSource().getLocation();
         String moduleLocationStr = moduleLocation.toExternalForm();
         if (readersMap.get(moduleLocationStr) == null) {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 if (!readersMap.containsKey(moduleLocationStr)) {
                     IPluginConfigReader reader = new PluginCompositeConfigReader(new HashSet<IPluginConfigReader>() {{
                         for (String configFile : CONFIG_FILES) {
@@ -116,8 +119,8 @@ public abstract class PluginConfig implements IPropertiesReader {
                         }
                     }});
                     readersMap.put(moduleLocationStr, reader);
-                    /*singleton().writeToZk(moduleLocationStr, reader.properties());
-                    不再在这里写入到配置注册中心内*/
+                    /// singleton().writeToZk(moduleLocationStr, reader.properties());
+                    //  不再在这里写入到配置注册中心内
                 }
             }
         }
