@@ -23,7 +23,7 @@ public class SystemOutLogger implements Logger {
 
     @Override
     public void info(Object message, Throwable optional, String ignored) {
-        System.err.println(prepareMessage(message, LOG.Level.INFO));
+        System.out.println(prepareMessage(message, LOG.Level.INFO));
         if (optional != null) {
             optional.printStackTrace();
         }
@@ -31,7 +31,7 @@ public class SystemOutLogger implements Logger {
 
     @Override
     public void debug(Object message, Throwable optional, String ignored) {
-        System.err.println(prepareMessage(message, LOG.Level.DEBUG));
+        System.out.println(prepareMessage(message, LOG.Level.DEBUG));
         if (optional != null) {
             optional.printStackTrace();
         }
@@ -54,7 +54,11 @@ public class SystemOutLogger implements Logger {
     }
 
     private String prepareMessage(Object originalMessage, LOG.Level level) {
-        return "[" + level.name() + "] " + originalMessage + " [msgId=" + MsgIdHolder.get() + "]";
+        String fullMsg = "[" + level.name() + "] " + originalMessage;
+        if (PRINT_MSG_ID) {
+            fullMsg += " [msgId=" + MsgIdHolder.get() + "]";
+        }
+        return fullMsg;
     }
 
 }
