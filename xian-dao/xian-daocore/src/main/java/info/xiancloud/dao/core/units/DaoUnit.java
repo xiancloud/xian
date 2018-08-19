@@ -19,7 +19,6 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 

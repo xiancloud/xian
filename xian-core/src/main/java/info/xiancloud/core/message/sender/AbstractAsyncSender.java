@@ -55,10 +55,11 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
             callback.callback(UnitResponse.createException(exception));
         } finally {
             if (newTransIdGenerated) {
-                //退出时清空msgId:生没带来,死不带走
-                //内部发起了unit调用,而且没有提供$msgId,因此这里清空
-                unitRequest.getContext().setMsgId(null);
+                //unit invocation without message id so we have produced one and clear thread local message id when invocation ends: 生没带来,死不带走
                 MsgIdHolder.clear();
+                /// unit invocation without message id so we have produced one, but invocation is asynchronous we
+                //  can not clear unit request context's message id.
+                //  unitRequest.getContext().setMsgId(null);
             }
         }
         return senderFuture;
