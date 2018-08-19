@@ -25,7 +25,7 @@ public abstract class XianConfig {
      * @return the value
      */
     public static String get(String key) {
-        return CompositeConfigReader.singleton.get0(key);
+        return CompositeConfigReader.SINGLETON.get0(key);
     }
 
     /**
@@ -35,7 +35,7 @@ public abstract class XianConfig {
      * @see #get(String)
      */
     public static String get(String key, String defaultIfNull) {
-        return CompositeConfigReader.singleton.get0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.get0(key, defaultIfNull);
     }
 
     /**
@@ -45,7 +45,7 @@ public abstract class XianConfig {
      * @return an spitted string array
      */
     public static String[] getStringArray(String key) {
-        return CompositeConfigReader.singleton.getStringArray0(key);
+        return CompositeConfigReader.SINGLETON.getStringArray0(key);
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class XianConfig {
      * @see #getStringArray(String)
      */
     public static String[] getStringArray(String key, String[] defaultIfNull) {
-        return CompositeConfigReader.singleton.getStringArray0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.getStringArray0(key, defaultIfNull);
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class XianConfig {
      * @return the configured string value converted into integer object or null.
      */
     public static Integer getInteger(String key) {
-        return CompositeConfigReader.singleton.getInteger0(key);
+        return CompositeConfigReader.SINGLETON.getInteger0(key);
     }
 
     /**
@@ -69,7 +69,7 @@ public abstract class XianConfig {
      * @see #getInteger(String)
      */
     public static Integer getInteger(String key, Integer defaultIfNull) {
-        return CompositeConfigReader.singleton.getInteger0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.getInteger0(key, defaultIfNull);
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class XianConfig {
      * @return the int value or 0 if not configured
      */
     public static int getIntValue(String key) {
-        return CompositeConfigReader.singleton.getIntValue0(key);
+        return CompositeConfigReader.SINGLETON.getIntValue0(key);
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class XianConfig {
      * @see #getIntValue(String)
      */
     public static int getIntValue(String key, int defaultIfNull) {
-        return CompositeConfigReader.singleton.getIntValue0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.getIntValue0(key, defaultIfNull);
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class XianConfig {
      * @return the configured string value converted into Long object or null.
      */
     public static Long getLong(String key) {
-        return CompositeConfigReader.singleton.getLong0(key);
+        return CompositeConfigReader.SINGLETON.getLong0(key);
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class XianConfig {
      * @see #getLong(String)
      */
     public static Long getLong(String key, Long defaultIfNull) {
-        return CompositeConfigReader.singleton.getLong0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.getLong0(key, defaultIfNull);
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class XianConfig {
      * @return the long value or 0 if not configured
      */
     public static long getLongValue(String key) {
-        return CompositeConfigReader.singleton.getLongValue0(key);
+        return CompositeConfigReader.SINGLETON.getLongValue0(key);
     }
 
     /**
@@ -117,7 +117,7 @@ public abstract class XianConfig {
      * @see #getLongValue(String)
      */
     public static long getLongValue(String key, long defaultIfNull) {
-        return CompositeConfigReader.singleton.getLongValue0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.getLongValue0(key, defaultIfNull);
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class XianConfig {
      * @return true if the configured value equals ignore case 'true', otherwise false.
      */
     public static boolean getBoolValue(String key) {
-        return CompositeConfigReader.singleton.getBoolValue0(key);
+        return CompositeConfigReader.SINGLETON.getBoolValue0(key);
     }
 
     /**
@@ -134,7 +134,7 @@ public abstract class XianConfig {
      * @see #get(String)
      */
     public static boolean getBoolValue(String key, boolean defaultIfNull) {
-        return CompositeConfigReader.singleton.getBoolValue0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.getBoolValue0(key, defaultIfNull);
     }
 
     /**
@@ -145,7 +145,7 @@ public abstract class XianConfig {
      * @see #get(String)
      */
     public static Boolean getBoolean(String key) {
-        return CompositeConfigReader.singleton.getBoolean0(key);
+        return CompositeConfigReader.SINGLETON.getBoolean0(key);
     }
 
     /**
@@ -154,7 +154,7 @@ public abstract class XianConfig {
      * @see #getBoolean(String)
      */
     public static Boolean getBoolean(String key, Boolean defaultIfNull) {
-        return CompositeConfigReader.singleton.getBoolean0(key, defaultIfNull);
+        return CompositeConfigReader.SINGLETON.getBoolean0(key, defaultIfNull);
     }
 
 }

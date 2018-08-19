@@ -137,21 +137,22 @@ public class ThreadPoolManager {
     /**
      * @throws RejectedExecutionException
      */
-    public static Future<?> execute(Runnable runnable, String $msgId) throws RejectedExecutionException {
-        return getValidExecutor().submit(wrapRunnable(runnable, $msgId));
+    public static Future<?> execute(Runnable runnable, String msgId) throws RejectedExecutionException {
+        return getValidExecutor().submit(wrapRunnable(runnable, msgId));
     }
 
     /**
-     * @param $msgId 如果传入null，则会新分配一个$msgId；
+     * @param msgId 如果传入null，则会新分配一个$msgId；
      * @return 代理对象
      * @deprecated 弄AOP反而复杂化，请使用{@link #wrapRunnable(Runnable, String)}
      */
-    private static Runnable getTrackerProxy(Runnable runnable, String $msgId) {
+    private static Runnable getTrackerProxy(Runnable runnable, String msgId) {
         return new ProxyBuilder<Runnable>(runnable) {
+            @Override
             public Object before(Method method, Object[] args) {
-                if (method.getName().equals("run")) {
-                    if (!StringUtil.isEmpty($msgId)) {
-                        MsgIdHolder.set($msgId);
+                if ("run".equals(method.getName())) {
+                    if (!StringUtil.isEmpty(msgId)) {
+                        MsgIdHolder.set(msgId);
                     } else {
                         LOG.debug("如果传入空的msgId那么新建一个给任务独享");
                         MsgIdHolder.init();
@@ -160,6 +161,7 @@ public class ThreadPoolManager {
                 return null;
             }
 
+            @Override
             public void after(Method method, Object[] args, Object methodReturn, Object beforeReturn) {
                 if (method.getName().equals("run")) {
                     if (methodReturn instanceof Throwable) {
@@ -172,13 +174,13 @@ public class ThreadPoolManager {
     }
 
     /**
-     * @param $msgId 如果传入null，则会新分配一个$msgId；
+     * @param msgId 如果传入null，则会新分配一个$msgId；
      * @return 加入了一些底层处理的runnable
      */
-    public static Runnable wrapRunnable(Runnable runnable, String $msgId) {
+    public static Runnable wrapRunnable(Runnable runnable, String msgId) {
         return () -> {
-            if (!StringUtil.isEmpty($msgId)) {
-                MsgIdHolder.set($msgId);
+            if (!StringUtil.isEmpty(msgId)) {
+                MsgIdHolder.set(msgId);
             } else {
                 LOG.debug("如果传入空的msgId那么新建一个给任务独享");
                 MsgIdHolder.init();
@@ -194,15 +196,15 @@ public class ThreadPoolManager {
     }
 
     /**
-     * @param $msgId 如果传入null，则会新分配一个$msgId；
+     * @param msgId 如果传入null，则会新分配一个$msgId；
      * @return 加入了一些底层处理的runnable
      */
-    public static <Return> Callable<Return> wrapCallable(final Callable<Return> callable, final String $msgId) {
+    public static <Return> Callable<Return> wrapCallable(final Callable<Return> callable, final String msgId) {
         return new Callable<Return>() {
             @Override
-            public Return call() throws Exception {
-                if (!StringUtil.isEmpty($msgId)) {
-                    MsgIdHolder.set($msgId);
+            public Return call() {
+                if (!StringUtil.isEmpty(msgId)) {
+                    MsgIdHolder.set(msgId);
                 } else {
                     LOG.debug("如果传入空的msgId那么新建一个给任务独享");
                     MsgIdHolder.init();

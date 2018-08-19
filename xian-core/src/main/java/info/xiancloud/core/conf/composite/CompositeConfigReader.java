@@ -17,7 +17,7 @@ import java.util.function.Function;
  */
 public class CompositeConfigReader implements IPropertiesReader {
 
-    public static final CompositeConfigReader singleton = new CompositeConfigReader();
+    public static final CompositeConfigReader SINGLETON = new CompositeConfigReader();
 
     @Override
     public String get0(String key) {

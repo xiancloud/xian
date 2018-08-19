@@ -11,6 +11,7 @@ import info.xiancloud.core.message.sender.AbstractAsyncSender;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
+import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +63,7 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
                 ThreadPoolManager.execute(() -> {
                     // we don't know whether the unit execution is asynchronous or blocking
                     // so here we submit the task to the thread pool for execution to make it 100% asynchronous.
+                    // And let the caller to decide whether or not to block.
                     try {
                         unit.execute(unitRequest, unitResponse -> {
                             if (unitResponse == null) {
