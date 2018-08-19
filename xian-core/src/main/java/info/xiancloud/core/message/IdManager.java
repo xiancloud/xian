@@ -1,8 +1,6 @@
 package info.xiancloud.core.message;
 
 import com.alibaba.fastjson.JSONObject;
-import info.xiancloud.core.distribution.MessageType;
-import info.xiancloud.core.message.id.NodeIdBean;
 import info.xiancloud.core.Constant;
 import info.xiancloud.core.distribution.MessageType;
 import info.xiancloud.core.message.id.NodeIdBean;
@@ -23,8 +21,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class IdManager {
 
-    private static final AtomicLong msgIdSequence = new AtomicLong(0);
-    private static final AtomicLong ssidSequence = new AtomicLong(0);
+    private static final AtomicLong MSG_ID_SEQUENCE = new AtomicLong(0);
+    private static final AtomicLong SSID_SEQUENCE = new AtomicLong(0);
     public static final String LOCAL_NODE_ID;
     public static final String CONTEXT_KEY = MessageType.CONTEXT_KEY;
     public static final String MESSAGE_ID_KEY = "msgId";
@@ -47,11 +45,11 @@ public class IdManager {
      * @return LOCAL_NODE_ID + currentTimeMillis + sequence序号
      */
     public static String nextMsgId() {
-        return LOCAL_NODE_ID.concat("_") + System.currentTimeMillis() + "_" + msgIdSequence.incrementAndGet();
+        return LOCAL_NODE_ID.concat("_") + System.currentTimeMillis() + "_" + MSG_ID_SEQUENCE.incrementAndGet();
     }
 
     public static String nextSsid() {
-        return LOCAL_NODE_ID.concat("_") + System.currentTimeMillis() + "_" + ssidSequence.incrementAndGet();
+        return LOCAL_NODE_ID.concat("_") + System.currentTimeMillis() + "_" + SSID_SEQUENCE.incrementAndGet();
     }
 
     private static String generateClientId(String application) {
@@ -102,7 +100,7 @@ public class IdManager {
      * @return newMsgIdGenerated 若初始化了一个新的$msgId，那么返回true
      * @deprecated We use message context to transmit the msg id now, "$" var in map is deprecated.
      */
-    public static boolean makeSureMsgId(Map map) {
+    public static boolean makeSureMsgId(Map<String, Object> map) {
         boolean newMsgIdGenerated = false;
         if (StringUtil.isEmpty(map.get("$msgId"))) {
             if (MsgIdHolder.get() == null) {

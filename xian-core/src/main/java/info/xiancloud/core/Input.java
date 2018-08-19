@@ -39,9 +39,12 @@ public class Input {
         private String name;
         private Class clazz;
         private String description;
-        private boolean required = false;// defaults to not required.
-        private boolean xhash = false;//whether or not to use the consistent hash algorithm while sending messages.
-        private boolean sequential = false;//whether or not to honor the sequence while dealing with received messages.
+        // defaults to not required.
+        private boolean required = false;
+        //whether or not to use the consistent hash algorithm while sending messages.
+        private boolean xhash = false;
+        //whether or not to honor the sequence while dealing with received messages.
+        private boolean sequential = false;
 
         public String getName() {
             return name;

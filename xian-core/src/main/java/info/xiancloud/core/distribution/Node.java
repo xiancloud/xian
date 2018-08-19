@@ -71,6 +71,7 @@ public class Node implements INode {
         return nodeId;
     }
 
+    @Override
     public void send(UnitRequest request, NotifyHandler handler) {
         String ssid = IdManager.nextSsid();
         request.getContext().setSsid(ssid);
@@ -80,6 +81,7 @@ public class Node implements INode {
         publisher.p2pPublish(request.getContext().getDestinationNodeId(), payload);
     }
 
+    @Override
     public UnitResponse send(UnitRequest request) {
         String ssid = IdManager.nextSsid();
         request.getContext().setSsid(ssid);
@@ -87,6 +89,7 @@ public class Node implements INode {
         UnitResponse unitResponse = UnitResponse.create(true);
         final CountDownLatch latch = new CountDownLatch(1);
         NotifyHandler handler = new NotifyHandler() {
+            @Override
             public void handle(UnitResponse output) {
                 UnitResponse.copy(output, output);
                 latch.countDown();
@@ -107,6 +110,7 @@ public class Node implements INode {
         return unitResponse;
     }
 
+    @Override
     public void sendBack(UnitResponse unitResponse, Consumer<String> onFailure) {
         InputStream inputStream = null;
         if (unitResponse.getData() != null && unitResponse.getData() instanceof File) {
@@ -133,15 +137,16 @@ public class Node implements INode {
             String payload = JSON.toJSONStringWithDateFormat(unitResponse, Constant.DATE_SERIALIZE_FORMAT);
             if (!publisher.p2pPublish(unitResponse.getContext().getDestinationNodeId(), payload)) {
                 LOG.info("反向发送响应结果失败，因此做回调处理");
-                if (onFailure != null)
+                if (onFailure != null) {
                     onFailure.accept(payload);
-                else
+                } else {
                     LOG.error(new JSONObject() {{
                         put("type", "sendBackFailure");
                         put("description", "消息回送失败！！！");
                         put("ssid", unitResponse.getContext().getSsid());
                         put("destinationNodeId", unitResponse.getContext().getDestinationNodeId());
                     }});
+                }
             }
             /*
                 publisher.p2pPublish(targetId, payload);
@@ -151,6 +156,7 @@ public class Node implements INode {
         }
     }
 
+    @Override
     public void sendBack(UnitResponse unitResponseObject) {
         sendBack(unitResponseObject, null);
     }
@@ -175,6 +181,7 @@ public class Node implements INode {
     /**
      * 生成一个服务注册json对象
      */
+    @Override
     public NodeStatus getFullStatus() {
         NodeStatus nodeStatus = getSimpleStatus();
         LocalUnitsManager.searchUnitMap(searchUnitMap -> nodeStatus.setUnits(searchUnitMap.keySet()));
@@ -192,6 +199,7 @@ public class Node implements INode {
                 .setInitTime(initDate.getTime());
     }
 
+    @Override
     public void destroy() {
         //nothing need to do.
     }

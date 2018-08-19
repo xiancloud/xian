@@ -3,7 +3,6 @@ package info.xiancloud.core.conf.plugin;
 import com.alibaba.fastjson.JSON;
 import info.xiancloud.core.util.file.PlainFileUtil;
 import info.xiancloud.core.log.SystemOutLogger;
-import info.xiancloud.core.util.file.PlainFileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +26,7 @@ class PluginBaseConfigReader extends AbstractPluginConfigReader {
         this.resource = resource;
     }
 
+    @Override
     synchronized public void reload() {
         properties = new Properties();
         InputStream in = null;
@@ -49,14 +49,14 @@ class PluginBaseConfigReader extends AbstractPluginConfigReader {
                 properties = jarResReader.properties();
             }
         } catch (Exception e) {
-            SystemOutLogger.singleton.error("加载配置文件[" + resource + "]失败", e, getClass().getName());
+            SystemOutLogger.SINGLETON.error("加载配置文件[" + resource + "]失败", e, getClass().getName());
         } finally {
             try {
                 if (in != null) {
                     in.close();
                 }
             } catch (IOException ignored) {
-                SystemOutLogger.singleton.error("", ignored, getClass().getName());
+                SystemOutLogger.SINGLETON.error("", ignored, getClass().getName());
             }
             loadedTime = System.currentTimeMillis();
         }

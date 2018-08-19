@@ -2,7 +2,6 @@ package info.xiancloud.core.conf.plugin;
 
 import info.xiancloud.core.util.file.PlainFileUtil;
 import info.xiancloud.core.log.SystemOutLogger;
-import info.xiancloud.core.util.file.PlainFileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +63,7 @@ public class PluginJarResReader extends AbstractPluginConfigReader {
                     in.close();
                 }
             } catch (IOException ignored) {
-                SystemOutLogger.singleton.error(null, ignored, getClass().getName());
+                SystemOutLogger.SINGLETON.error(null, ignored, getClass().getName());
             }
             loadedTime = System.currentTimeMillis();
         }

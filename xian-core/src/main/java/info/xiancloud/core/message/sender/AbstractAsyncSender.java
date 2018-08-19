@@ -25,17 +25,20 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
         senderFuture = new SenderFuture();
         unitRequest = request;
         callback = handler == null ? new NotifyHandler() {
+            @Override
             protected void handle(UnitResponse unitResponse) {
                 //既然你不需要callback,那么这里什么也不用做啰
             }
         } : handler;
         callback.addBefore(new NotifyHandler.Action() {
+            @Override
             protected void run(UnitResponse asyncUnitResponse) {
                 senderFuture.setUnitResponse(asyncUnitResponse);
             }
         });
     }
 
+    @Override
     public SenderFuture send() {
         final boolean newTransIdGenerated = IdManager.makeSureMsgId(unitRequest.getContext());
         try {

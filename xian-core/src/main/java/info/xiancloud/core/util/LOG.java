@@ -26,11 +26,13 @@ public abstract class LOG {
         try {
             List<Logger> loggerList = Reflection.getSubClassInstances(Logger.class);
             for (Logger logger : loggerList) {
-                if (!(logger instanceof SystemOutLogger))
+                if (!(logger instanceof SystemOutLogger)) {
                     singleton = logger;
+                }
             }
-            if (singleton == null)
+            if (singleton == null) {
                 singleton = loggerList.get(0);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
             System.exit(-1);
@@ -44,8 +46,9 @@ public abstract class LOG {
     private static Level level = Level.valueOf(XianConfig.get("xianLogLevel", Level.INFO.name()));
 
     public static void debug(Object message) {
-        if (level.ordinal() >= Level.DEBUG.ordinal())
+        if (level.ordinal() >= Level.DEBUG.ordinal()) {
             singleton.debug(message, null, loggerName());
+        }
     }
 
     public static void debug(Object message, Throwable e) {

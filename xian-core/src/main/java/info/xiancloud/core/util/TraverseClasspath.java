@@ -36,7 +36,7 @@ public class TraverseClasspath {
                 Class subClass = it.next();
                 if (!Reflection.canInitiate(subClass)) {
                     //here is in danger of class loading deadlock if you use LOG.java to print the log.
-                    SystemOutLogger.singleton.warn(subClass + " can not be initiated, ignored!", null, TraverseClasspath.class.getSimpleName());
+                    SystemOutLogger.SINGLETON.warn(subClass + " can not be initiated, ignored!", null, TraverseClasspath.class.getSimpleName());
                     it.remove();
                 }
             }
