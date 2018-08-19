@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class GroovyRuleController extends RuleController {
 
+    @Override
     protected void callNext() {
         try {
             getMethod().invoke(this);
@@ -28,6 +29,7 @@ public abstract class GroovyRuleController extends RuleController {
     }
 
     //懒加载
+    @Override
     protected String getFirst() {
         if (!rules_first.containsKey(getClass())) {
             for (Method method : getClass().getDeclaredMethods()) {
@@ -42,6 +44,7 @@ public abstract class GroovyRuleController extends RuleController {
     }
 
     //懒加载
+    @Override
     protected String getParams() {
         rules_params.putIfAbsent(getClass(), new ConcurrentHashMap<>());//使用并发安全的map,避免系统启动后突然同一个规则被高并发访问出现并发问题
         Map<String, String> methodName_paramsString = rules_params.get(getClass());
@@ -55,6 +58,7 @@ public abstract class GroovyRuleController extends RuleController {
     }
 
     //懒加载
+    @Override
     protected String getReturnParams() {
         rules_returnParams.putIfAbsent(getClass(), new ConcurrentHashMap<>());
         Map<String, String> methodName_returnParams = rules_returnParams.get(getClass());

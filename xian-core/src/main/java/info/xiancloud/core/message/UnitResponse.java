@@ -395,6 +395,7 @@ final public class UnitResponse {
     /**
      * The same as {@link #toVoJSONString()} ()}
      */
+    @Override
     public String toString() {
         return toVoJSONString();
     }
@@ -403,10 +404,11 @@ final public class UnitResponse {
      * Standard json formation without data lost.
      */
     public String toJSONString() {
-        if (context.isPretty())
+        if (context.isPretty()) {
             return JSON.toJSONStringWithDateFormat(this, Constant.DATE_SERIALIZE_FORMAT, SerializerFeature.PrettyFormat);
-        else
+        } else {
             return JSONObject.toJSONStringWithDateFormat(this, Constant.DATE_SERIALIZE_FORMAT);
+        }
     }
 
     /**
@@ -416,10 +418,11 @@ final public class UnitResponse {
      * @return json string with sensitive properties(the context property) hidden.
      */
     public String toVoJSONString() {
-        if (context.isPretty())
+        if (context.isPretty()) {
             return JSON.toJSONStringWithDateFormat(toVoJSONObject(), Constant.DATE_SERIALIZE_FORMAT, SerializerFeature.PrettyFormat);
-        else
+        } else {
             return JSONObject.toJSONStringWithDateFormat(toVoJSONObject(), Constant.DATE_SERIALIZE_FORMAT);
+        }
     }
 
     /**
@@ -429,10 +432,11 @@ final public class UnitResponse {
      * @return formatted json string.
      */
     public String toVoJSONString(boolean pretty) {
-        if (pretty)
+        if (pretty) {
             return JSON.toJSONStringWithDateFormat(toVoJSONObject(), Constant.DATE_SERIALIZE_FORMAT, SerializerFeature.PrettyFormat);
-        else
+        } else {
             return JSONObject.toJSONStringWithDateFormat(toVoJSONObject(), Constant.DATE_SERIALIZE_FORMAT);
+        }
     }
 
     /**

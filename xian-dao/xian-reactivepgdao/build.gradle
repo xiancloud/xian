@@ -1,4 +1,5 @@
 dependencies {
     compile 'io.reactiverse:reactive-pg-client:0.10.0'
+    compile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.3'
     compile project(':xian-dao:xian-daocore')
 }

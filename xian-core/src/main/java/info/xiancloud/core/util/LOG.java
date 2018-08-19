@@ -49,13 +49,15 @@ public abstract class LOG {
     }
 
     public static void debug(Object message, Throwable e) {
-        if (level.ordinal() >= Level.DEBUG.ordinal())
+        if (level.ordinal() >= Level.DEBUG.ordinal()) {
             singleton.debug(message, e, loggerName());
+        }
     }
 
     public static void info(Object message) {
-        if (level.ordinal() >= Level.INFO.ordinal())
+        if (level.ordinal() >= Level.INFO.ordinal()) {
             singleton.info(message, null, loggerName());
+        }
     }
 
     /**

@@ -4,33 +4,58 @@ import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.util.LOG;
 
 /**
- * Datasource configuration reader
+ * Datasource configuration reader. Datasource configuration property file demo: <br/>
+ * <p>
+ * <code>
+ * db_url=
+ * db_user=
+ * db_pwd=
+ * db_pool_size=
+ * readonly_db_url=
+ * readonly_db_user=
+ * readonly_db_pwd=
+ * readonly_db_pool_size=
+ * db_transaction_timeout=1000*60*60
+ * </code>
+ * </p>
  *
  * @author happyyangyuan
  */
 public class DatasourceConfigReader {
 
+    /**
+     * read master datasource configuration from xian config.
+     * please refer to {@link XianDataSource#url}  to see database configuration format
+     *
+     * @return datasource configuration url
+     */
     public static String getWriteUrl() {
         String writeUrl = XianConfig.get("db_url");
-        LOG.info("db_write = " + writeUrl);
+        LOG.info("db_url = " + writeUrl);
         return writeUrl;
-    }
-
-    public static String getWritePwd() {
-        return XianConfig.get("db_pwd");
     }
 
     public static String getWriteUser() {
         return XianConfig.get("db_user");
     }
 
+    public static String getWritePwd() {
+        return XianConfig.get("db_pwd");
+    }
+
     public static int getWritePoolSize() {
         return XianConfig.getIntValue("db_pool_size");
     }
 
+    /**
+     * read slave datasource configuration from xian config.
+     * please refer to {@link XianDataSource#url}  to see database configuration format
+     *
+     * @return datasource configuration url
+     */
     public static String getReadUrl() {
         String readUrl = XianConfig.get("readonly_db_url");
-        LOG.info("db_read = " + readUrl);
+        LOG.info("readonly_db_url = " + readUrl);
         return readUrl;
     }
 
@@ -54,12 +79,6 @@ public class DatasourceConfigReader {
      */
     public static long getTransactionTimeout() {
         return XianConfig.getLongValue("db_transaction_timeout", 1000 * 60 * 5);
-    }
-
-    public static void main(String... args) {
-        LOG.info(getReadPwd());
-        LOG.info(getWriteUrl());
-        LOG.error(getTransactionTimeout());
     }
 
 }

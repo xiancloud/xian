@@ -34,6 +34,7 @@ public abstract class RuleController extends BaseController {
         next = getFirst();
     }
 
+    @Override
     protected void atomicAsyncRun() {
         work();
     }

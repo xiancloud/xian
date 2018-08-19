@@ -71,7 +71,9 @@ public interface Group {
      *
      * @return Group name
      */
-    String getName();
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 
     /**
      * group description. Defaults to the group name.

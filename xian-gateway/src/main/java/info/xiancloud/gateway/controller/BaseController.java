@@ -3,8 +3,8 @@ package info.xiancloud.gateway.controller;
 import info.xiancloud.core.Group;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.support.transaction.TransactionalCache;
 import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.TransactionUtil;
 import info.xiancloud.gateway.access_token_validation.ValidateAccessToken;
 import info.xiancloud.gateway.handle.TransactionalNotifyHandler;
 
@@ -32,7 +32,7 @@ public abstract class BaseController implements Runnable {
                         handler.callback(UnitResponse.createError(Group.CODE_BAD_REQUEST, null, "请求不合法！"));
                     } else {
                         if (handler.isTransactional()) {
-                            TransactionalCache.beginDistributedTrans();
+                            LOG.error("global transaction is not supported by now.");
                         }
                         atomicAsyncRun();
                     }
