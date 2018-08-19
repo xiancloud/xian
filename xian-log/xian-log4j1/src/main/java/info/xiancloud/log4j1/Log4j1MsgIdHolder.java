@@ -12,7 +12,7 @@ import org.apache.log4j.MDC;
 public class Log4j1MsgIdHolder extends MsgIdHolder {
     @Override
     protected String get0() {
-        return MDC.get(MSG_ID) == null ? null : MDC.get(MSG_ID).toString();
+        return MDC.get(MSG_ID_KEY) == null ? null : MDC.get(MSG_ID_KEY).toString();
     }
 
     @Override
@@ -22,6 +22,6 @@ public class Log4j1MsgIdHolder extends MsgIdHolder {
 
     @Override
     protected void set0(String value) {
-        MDC.put(MSG_ID, value);
+        MDC.put(MSG_ID_KEY, value);
     }
 }

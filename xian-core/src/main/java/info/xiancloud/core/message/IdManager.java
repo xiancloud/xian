@@ -125,7 +125,7 @@ public class IdManager {
             if (MsgIdHolder.get() == null) {
                 MsgIdHolder.init();
                 newMsgIdGenerated = true;
-                LOG.debug("没有提供msgId,因此这里初始化一个!");
+                //没有提供msgId,因此这里初始化一个
             }
             context.setMsgId(MsgIdHolder.get());
         } else {

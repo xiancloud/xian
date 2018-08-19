@@ -12,16 +12,16 @@ import org.apache.logging.log4j.ThreadContext;
 public class Log4j2MsgIdHolder extends MsgIdHolder {
     @Override
     protected String get0() {
-        return ThreadContext.get(MSG_ID);
+        return ThreadContext.get(MSG_ID_KEY);
     }
 
     @Override
     protected void clear0() {
-        ThreadContext.remove(MSG_ID);
+        ThreadContext.remove(MSG_ID_KEY);
     }
 
     @Override
     protected void set0(String value) {
-        ThreadContext.put(MSG_ID, value);
+        ThreadContext.put(MSG_ID_KEY, value);
     }
 }

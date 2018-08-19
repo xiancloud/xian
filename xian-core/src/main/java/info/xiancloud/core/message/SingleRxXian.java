@@ -98,9 +98,9 @@ public class SingleRxXian {
             NotifyHandler handler = new NotifyHandler() {
                 @Override
                 protected void handle(UnitResponse unitResponse) {
-                    if (unitResponse != null)
+                    if (unitResponse != null) {
                         emitter.onSuccess(unitResponse);
-                    else {
+                    } else {
                         emitter.onError(new Exception("unit response is null"));
                     }
                 }
