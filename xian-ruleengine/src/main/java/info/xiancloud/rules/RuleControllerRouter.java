@@ -6,7 +6,7 @@ import info.xiancloud.core.util.TraverseClasspath;
 import info.xiancloud.gateway.controller.BaseController;
 import info.xiancloud.gateway.controller.URIBean;
 import info.xiancloud.gateway.handle.TransactionalNotifyHandler;
-import info.xiancloud.gateway.rule_engine.IControllerMapping;
+import info.xiancloud.gateway.rule_engine.IControllerMapper;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * RuleControllerRouter, this is the implementation of {@link IControllerMapping}
+ * RuleControllerRouter, this is the implementation of {@link IControllerMapper}
  *
  * @author happyyangyuan
  */
-public class RuleControllerRouter implements IControllerMapping {
+public class RuleControllerRouter implements IControllerMapper {
     private static volatile Map<String, Class<? extends RuleController>> ruleMap;
-    private static final Object lockForLazyInitialization = new Object();
+    private static final Object LOCK_FOR_LAZY_INITIALIZATION = new Object();
 
     private static void loadRules() {
         ruleMap = new HashMap<>();
@@ -45,7 +45,7 @@ public class RuleControllerRouter implements IControllerMapping {
      */
     private static RuleController getRule(String baseUri, UnitRequest controllerRequest, TransactionalNotifyHandler handler) {
         if (ruleMap == null) {
-            synchronized (lockForLazyInitialization) {
+            synchronized (LOCK_FOR_LAZY_INITIALIZATION) {
                 if (ruleMap == null) {
                     loadRules();
                 }

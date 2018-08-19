@@ -21,7 +21,7 @@ public interface DaoGroup extends Group {
     /**
      * @deprecated Do not use common group name. Group name is demanded to be unique globally.
      */
-    DaoGroup SINGLETON = () -> Constant.SYSTEM_DAO_GROUP_NAME;
+    DaoGroup SINGLETON = new DaoGroupSingletonClass();
 
     /**
      * Indicates this group is a dao group
@@ -31,5 +31,12 @@ public interface DaoGroup extends Group {
     @Override
     default boolean isDao() {
         return true;
+    }
+
+    class DaoGroupSingletonClass implements DaoGroup {
+        @Override
+        public String getName() {
+            return Constant.SYSTEM_DAO_GROUP_NAME;
+        }
     }
 }

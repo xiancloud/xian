@@ -10,14 +10,18 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * request uri mappingRuleController for a  {@link BaseController task}
+ * Controller mapper maps request uri to RuleController for a {@link BaseController}
  *
  * @author happyyangyuan
  */
-public interface IControllerMapping {
+public interface IControllerMapper {
 
-    List<IControllerMapping> uriMappings = Collections.unmodifiableList(Reflection.getSubClassInstances(IControllerMapping.class));
-    IControllerMapping singleton = uriMappings.isEmpty() ? null : uriMappings.get(0);
+    List<IControllerMapper> URI_MAPPINGS = Collections.unmodifiableList(Reflection.getSubClassInstances(IControllerMapper.class));
+    /**
+     * controller mapping singleton instance.
+     * This can be null if no rule mapper plugin is installed to classpath.
+     */
+    IControllerMapper SINGLETON = URI_MAPPINGS.isEmpty() ? null : URI_MAPPINGS.get(0);
 
     /**
      * Create a runnable controller instance mapping the uri. This is a factory method.
@@ -30,9 +34,13 @@ public interface IControllerMapping {
     static BaseController getController(UnitRequest unitRequest, TransactionalNotifyHandler handler) {
         try {
             //uriBean.getBasePath()
-            BaseController runnable = singleton.mappingRuleController(unitRequest, handler);
-            if (runnable == null)
+            BaseController runnable = null;
+            if (SINGLETON != null) {
+                runnable = SINGLETON.mappingRuleController(unitRequest, handler);
+            }
+            if (runnable == null) {
                 runnable = new UnitController(unitRequest, handler);
+            }
             return runnable;
         } catch (Throwable e) {
             throw new RuntimeException(e);

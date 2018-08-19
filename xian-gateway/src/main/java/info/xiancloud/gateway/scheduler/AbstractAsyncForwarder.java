@@ -12,7 +12,7 @@ import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.gateway.controller.BaseController;
 import info.xiancloud.gateway.controller.URIBean;
 import info.xiancloud.gateway.handle.TransactionalNotifyHandler;
-import info.xiancloud.gateway.rule_engine.IControllerMapping;
+import info.xiancloud.gateway.rule_engine.IControllerMapper;
 import info.xiancloud.gateway.server.IServerResponder;
 import info.xiancloud.gateway.server.ServerRequestBean;
 import info.xiancloud.gateway.server.ServerResponseBean;
@@ -62,7 +62,7 @@ public abstract class AbstractAsyncForwarder implements IAsyncForwarder, IRespon
                 .setMsgId(msgId)
                 .setUriParameters(uriBean.getUriParameters());
         controllerRequest.getArgMap().putAll(uriBean.getUriParameters());//uri parameters overwrite body parameters.
-        BaseController controller = IControllerMapping.getController(controllerRequest, new TransactionalNotifyHandler() {
+        BaseController controller = IControllerMapper.getController(controllerRequest, new TransactionalNotifyHandler() {
             protected void handle(UnitResponse unitResponse) {
                 if (unitResponse == null) {
                     Throwable emptyOutputException = new RuntimeException("UnitResponse is not allowed to be null.");
