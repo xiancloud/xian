@@ -1,5 +1,6 @@
 package info.xiancloud.dao.async.postgresql;
 
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.pool.XianDataSource;
 import io.reactiverse.pgclient.PgPoolOptions;
@@ -31,6 +32,7 @@ public class PgXianDatasource extends XianDataSource {
         this.url = connectionStr;
         this.user = username;
         this.pwd = password;
+        LOG.info("=============="+getHost());
         datasourceOptions = new PgPoolOptions()
                 .setPort(getPort())
                 .setHost(getHost())

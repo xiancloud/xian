@@ -1,6 +1,5 @@
 package info.xiancloud.dao.async.postgresql;
 
-import info.xiancloud.dao.async.postgresql.PgConnection;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.transaction.local.BaseLocalTransaction;
 import io.reactiverse.reactivex.pgclient.PgTransaction;
