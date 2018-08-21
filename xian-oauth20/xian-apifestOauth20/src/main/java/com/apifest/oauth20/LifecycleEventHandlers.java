@@ -43,10 +43,10 @@ public class LifecycleEventHandlers {
 
     //懒加载,并发安全的
     public static void loadLifecycleHandlers() {
-        if (!loadedLock.get())
+        if (!loadedLock.get()) {
             synchronized (loadedLock) {
                 if (!loadedLock.get()) {
-                    Set<Class<? extends LifecycleHandler>> subClasses = TraverseClasspath.getNonAbstractSubclasses(LifecycleHandler.class);
+                    Set<Class<? extends LifecycleHandler>> subClasses = TraverseClasspath.getNonAbstractSubClasses(LifecycleHandler.class);
                     for (Class<? extends LifecycleHandler> clazz : subClasses) {
                         if (clazz.isAnnotationPresent(OnRequest.class)) {
                             private_requestEventHandlers.add(clazz);
@@ -57,7 +57,7 @@ public class LifecycleEventHandlers {
                             LOG.info(String.format("postIssueTokenHandler added {%s}", clazz));
                         }
                     }
-                    Set<Class<? extends ExceptionEventHandler>> exceptionHandlerClasses = TraverseClasspath.getNonAbstractSubclasses(ExceptionEventHandler.class);
+                    Set<Class<? extends ExceptionEventHandler>> exceptionHandlerClasses = TraverseClasspath.getNonAbstractSubClasses(ExceptionEventHandler.class);
                     for (Class<? extends ExceptionEventHandler> clazz : exceptionHandlerClasses) {
                         if (clazz.isAnnotationPresent(OnException.class)) {
                             private_exceptionHandlers.add(clazz);
@@ -67,6 +67,7 @@ public class LifecycleEventHandlers {
                     loadedLock.set(true);
                 }
             }
+        }
     }
 
 }

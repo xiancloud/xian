@@ -35,6 +35,7 @@ public class TestGraylogClientUnit implements Unit {
     }
 
     //返回的是执行的ms数
+    @Override
     public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         handler.handle(UnitResponse.createSuccess(test(msg.get("count", int.class), msg.get("tCount", int.class))));
     }

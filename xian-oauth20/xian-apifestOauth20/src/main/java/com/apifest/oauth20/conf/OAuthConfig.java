@@ -73,7 +73,7 @@ public final class OAuthConfig {
         if (userAuthenticationClass == null) {
             synchronized (lock) {
                 if (userAuthenticationClass == null) {
-                    Set<Class<? extends IUserAuthentication>> classes = TraverseClasspath.getNonAbstractSubclasses(IUserAuthentication.class);
+                    Set<Class<? extends IUserAuthentication>> classes = TraverseClasspath.getNonAbstractSubClasses(IUserAuthentication.class);
                     if (classes == null || classes.isEmpty()) {
                         LOG.warn("No IUserAuthentication implementations found! User authentication will always pass successfully", new Exception());
                     } else {
@@ -92,7 +92,7 @@ public final class OAuthConfig {
         if (customGrantTypeHandler == null) {
             synchronized (lock) {
                 if (customGrantTypeHandler == null) {
-                    Set<Class<? extends ICustomGrantTypeHandler>> classes = TraverseClasspath.getNonAbstractSubclasses(ICustomGrantTypeHandler.class);
+                    Set<Class<? extends ICustomGrantTypeHandler>> classes = TraverseClasspath.getNonAbstractSubClasses(ICustomGrantTypeHandler.class);
                     if (classes == null || classes.isEmpty()) {
                         throw new RuntimeException(String.format("No ICustomGrantTypeHandler implementation found for custom.grant_type={%s}", customGrantType));
                     } else {

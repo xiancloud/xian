@@ -44,4 +44,5 @@ public abstract class BaseXianTransaction implements XianTransaction {
     public void setBegun(boolean begun) {
         this.begun = begun;
     }
+
 }

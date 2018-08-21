@@ -37,7 +37,8 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
 
     @Override
     public Completable rollback() {
-        return doRollback().andThen(clear());
+        return doRollback();
+        /*.andThen(clear())  let dao unit close this transaction*/
     }
 
     /**
@@ -54,6 +55,7 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
      */
     private Completable clear() {
         return Completable.fromAction(() -> count.set(0))
+                //xian connection's close method is reentrant
                 .andThen(getConnection().close())
                 .andThen(doClear());
     }
@@ -71,10 +73,12 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
         count.decrementAndGet();
         if (count.intValue() == 0) {
             if (connection != null && !connection.isClosed()) {
-                completable = doCommit().andThen(clear());
+                completable = doCommit();
+                /*.andThen(clear())  let dao unit close this transaction*/
             } else {
                 LOG.error("database connection is already closed while you are commit a transaction.");
-                completable = clear();
+                /*.andThen(clear())  let dao unit close this transaction*/
+                completable = Completable.complete();
             }
         } else {
             LOG.debug(String.format("嵌套的数据库事务不需要提交,嵌套了%s层", count));
@@ -83,32 +87,23 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
         return completable;
     }
 
-    /**
-     * @deprecated transaction has no close operation
-     */
+    @Override
     public Completable close() {
-///close method is not used anymore.
-//        Completable completable;
-//        if (count.intValue() == 0) {
-//            try {
-//                if (connection != null && !connection.isClosed()) {
-//                    completable = doClose();
-//                } else {
-//                    LOG.warn("No connection for you to close");
-//                    completable = Completable.complete();
-//                }
-//            } catch (Throwable e) {
-//                LOG.error("关闭数据库连接时发生错误", e);
-//                completable = Completable.error(e);
-//            } finally {
-//                clear();
-//            }
-//        } else {
-//            LOG.warn(new RuntimeException("外层事务还存在,现在还不是关闭数据库连接的时候...,如果想强制关闭数据库连接,请先回滚/提交事务..."));
-//            completable = Completable.complete();
-//        }
-//        return completable;
-        return Completable.fromAction(() -> LOG.warn("transaction close method now does nothing."));
+        Completable completable;
+        if (count.intValue() == 0) {
+            if (connection != null && !connection.isClosed()) {
+                completable = doClose();
+            } else {
+                LOG.warn("Connection is already closed or no connection for you to close");
+                completable = Completable.complete();
+            }
+            //close and clear transaction
+            completable.concatWith(clear());
+        } else {
+            LOG.warn(new RuntimeException("外层事务还存在,现在还不是关闭数据库连接的时候...,如果想强制关闭数据库连接,请先回滚/提交事务..."));
+            completable = Completable.complete();
+        }
+        return completable;
     }
 
     /**
@@ -132,6 +127,11 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
      */
     protected abstract Completable doRollback();
 
-    /*protected abstract Completable doClose();*/
+    /**
+     * do a transaction close
+     *
+     * @return deferred result
+     */
+    protected abstract Completable doClose();
 
 }

@@ -41,6 +41,8 @@ public abstract class CommitTransaction implements Unit {
         } else {
             transaction
                     .commit()
+                    //close the transaction asynchronously is ok and better
+                    .doFinally(() -> transaction.close().subscribe())
                     .subscribe(() -> handler.handle(UnitResponse.createSuccess("Commit Transaction OK! transId=   " + MsgIdHolder.get())));
         }
     }

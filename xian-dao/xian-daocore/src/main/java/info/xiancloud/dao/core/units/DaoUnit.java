@@ -43,18 +43,16 @@ public abstract class DaoUnit implements Unit {
      */
     @Override
     public final void execute(UnitRequest request, Handler<UnitResponse> handler) {
-
-        Object[] objectWrapper = new Object[]{null};
-
-
         final SqlAction[] sqlActions = getActions();
         bareError(request);
         final boolean readOnly = readOnly(sqlActions, request) || request.getContext().isReadyOnly();
         final AtomicBoolean transactional = new AtomicBoolean(false);
         final UnitResponse[] tempUnitResponse = new UnitResponse[]{null};
+        final XianTransaction[] tempTransaction = new XianTransaction[]{null};
         TransactionFactory
                 .getTransaction(request.getContext().getMsgId(), readOnly)
                 .flatMap(transaction -> {
+                    tempTransaction[0] = transaction;
                     transactional.set(isTransactional(sqlActions, transaction));
                     if (transactional.get()) {
                         //business layer has begun the transaction, here we reentrant it.
@@ -98,6 +96,8 @@ public abstract class DaoUnit implements Unit {
                                 return Single.just(exceptionWithUnitResponse.getUnitResponse());
                             }
                         }))
+                //close the transaction asynchronously is ok and better
+                .doFinally(() -> tempTransaction[0].close().subscribe())
                 .subscribe(handler::handle);
     }
 

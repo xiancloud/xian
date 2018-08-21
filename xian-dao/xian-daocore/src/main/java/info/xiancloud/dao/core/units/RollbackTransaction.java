@@ -8,6 +8,7 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.thread.MsgIdHolder;
 import info.xiancloud.dao.core.DaoGroup;
+import info.xiancloud.dao.core.transaction.XianTransaction;
 import info.xiancloud.dao.core.transaction.local.BaseLocalTransaction;
 
 /**
@@ -36,11 +37,14 @@ public abstract class RollbackTransaction implements Unit {
 
     @Override
     public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
-        if (BaseLocalTransaction.getExistedLocalTrans(MsgIdHolder.get()) == null) {
+        XianTransaction transaction = BaseLocalTransaction.getExistedLocalTrans(MsgIdHolder.get());
+        if (transaction == null) {
             handler.handle(UnitResponse.createError(DaoGroup.CODE_UNKNOWN_ERROR, MsgIdHolder.get(), String.format("Transaction with id=%s does not exist.", MsgIdHolder.get())));
         } else {
-            BaseLocalTransaction.getExistedLocalTrans(MsgIdHolder.get())
+            transaction
                     .rollback()
+                    //close the transaction asynchronously is ok and better
+                    .doFinally(() -> transaction.close().subscribe())
                     .subscribe(() -> handler.handle(UnitResponse.createSuccess("Rollback transaction OK! transId=   " + MsgIdHolder.get())));
         }
     }

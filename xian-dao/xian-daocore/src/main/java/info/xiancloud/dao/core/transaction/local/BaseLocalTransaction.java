@@ -68,5 +68,9 @@ public abstract class BaseLocalTransaction extends ReentrantTransaction implemen
                 ;
     }
 
+    @Override
+    protected Completable doClose() {
+        return getConnection().close();
+    }
 }
 

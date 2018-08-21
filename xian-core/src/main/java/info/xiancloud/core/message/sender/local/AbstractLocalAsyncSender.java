@@ -11,7 +11,6 @@ import info.xiancloud.core.message.sender.AbstractAsyncSender;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -113,7 +112,7 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
                 fluentPut("unitRequest", unitRequest).
                 fluentPut("unitResponse", unitResponse).
                 fluentPut("type", "unit");
-        LOG.info(logJson/*.toJSONString() maybe json object is better for performance? */);
+        LOG.info(logJson);
         callback.callback(unitResponse);
     }
 

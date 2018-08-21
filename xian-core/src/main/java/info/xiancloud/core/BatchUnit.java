@@ -39,6 +39,7 @@ public abstract class BatchUnit implements ShutdownHook, Unit {
      *
      * @param msg 具体的消息
      */
+    @Override
     public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         Single<UnitResponse> result;
         boolean flush = msg.get(FLUSH, Boolean.class, false);//是否马上提交
