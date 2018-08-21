@@ -32,7 +32,6 @@ public class PgXianDatasource extends XianDataSource {
         this.url = connectionStr;
         this.user = username;
         this.pwd = password;
-        LOG.info("=============="+getHost());
         datasourceOptions = new PgPoolOptions()
                 .setPort(getPort())
                 .setHost(getHost())

@@ -19,7 +19,6 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -52,6 +51,7 @@ public abstract class DaoUnit implements Unit {
         bareError(request);
         final boolean readOnly = readOnly(sqlActions, request) || request.getContext().isReadyOnly();
         final AtomicBoolean transactional = new AtomicBoolean(false);
+        final UnitResponse[] tempUnitResponse = new UnitResponse[]{null};
         TransactionFactory
                 .getTransaction(request.getContext().getMsgId(), readOnly)
                 .flatMap(transaction -> {
@@ -74,18 +74,27 @@ public abstract class DaoUnit implements Unit {
                                         throw new ExceptionWithUnitResponse(unitResponse2);
                                     }
                                 })
-                        .takeUntil(((Callable<Completable>) () -> {
+                        .flatMapCompletable(unitResponse -> {
+                            tempUnitResponse[0] = unitResponse;
                             if (transactional.get()) {
                                 return transaction.commit();
                             } else {
                                 return Completable.complete();
                             }
-                        }).call())
+                        })
+                        .toSingle(() -> tempUnitResponse[0])
                         .onErrorResumeNext(error -> {
-                            ExceptionWithUnitResponse exceptionWithUnitResponse = (ExceptionWithUnitResponse) error;
+                            ExceptionWithUnitResponse exceptionWithUnitResponse;
+                            if (error instanceof ExceptionWithUnitResponse) {
+                                exceptionWithUnitResponse = (ExceptionWithUnitResponse) error;
+                            } else {
+                                exceptionWithUnitResponse = new ExceptionWithUnitResponse(UnitResponse.createException(error));
+                            }
                             if (transactional.get()) {
+                                //if transaction is begun then rollback here
                                 return transaction.rollback().andThen(Single.just(exceptionWithUnitResponse.getUnitResponse()));
                             } else {
+                                //if no transaction is begun, no need transaction rollback.
                                 return Single.just(exceptionWithUnitResponse.getUnitResponse());
                             }
                         }))

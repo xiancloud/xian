@@ -8,13 +8,16 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 /**
  * scan classpath;<br>
- * Warning: xianframe's log is forbidden here, else you will get a class loading dead lock.
+ * Warning:
+ * <p>
+ * Here is in danger of class loading deadlock if you use xian framework's {@link LOG} or {@link SystemOutLogger subclass loggers} to print the log.
  *
  * @author happyyangyuan
  */
@@ -25,6 +28,9 @@ public class TraverseClasspath {
      * must be synchronized otherwise a "java.lang.IllegalStateException: zip file closed" is thrown.
      */
     synchronized public static <T> Set<Class<? extends T>> getNonAbstractSubClasses(Class<T> parentClass, String... packages) {
+        if (packages == null || packages.length == 0) {
+            packages = defaultPackages();
+        }
         try {
             Reflections reflections = new Reflections(new ConfigurationBuilder()
                     .forPackages(packages)
@@ -34,9 +40,8 @@ public class TraverseClasspath {
             Iterator<Class<? extends T>> it = subClasses.iterator();
             while (it.hasNext()) {
                 Class subClass = it.next();
-                if (!Reflection.canInitiate(subClass)) {
-                    //here is in danger of class loading deadlock if you use LOG.java to print the log.
-                    SystemOutLogger.SINGLETON.warn(subClass + " can not be initiated, ignored!", null, TraverseClasspath.class.getSimpleName());
+                if (Modifier.isAbstract(subClass.getModifiers())) {
+                    System.out.println(subClass + " is abstract class, ignored!");
                     it.remove();
                 }
             }
@@ -46,10 +51,13 @@ public class TraverseClasspath {
         }
     }
 
-    public static Set<Class<?>> getWithAnnotatedClass(Class<? extends Annotation> annotationClass, String... packages) {
+    public synchronized static Set<Class<?>> getWithAnnotatedClass(Class<? extends Annotation> annotationClass, String... packageNames) {
+        if (packageNames == null || packageNames.length == 0) {
+            packageNames = defaultPackages();
+        }
         try {
             Reflections reflections = new Reflections(new ConfigurationBuilder()
-                    .forPackages(packages)
+                    .forPackages(packageNames)
                     .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner())
             );
             return reflections.getTypesAnnotatedWith(annotationClass);
@@ -58,35 +66,38 @@ public class TraverseClasspath {
         }
     }
 
-    public static <T> Set<T> getSubclassInstances(Class<T> clazz, String... packageNames) {
+    /**
+     * search and create new instances of concrete subclasses, 1 for each.
+     * Note that we only initiate subclasses which are with default constructor, those without default constructors
+     * we judge them as canInitiate=false.
+     *
+     * @param parentClass        parent class
+     * @param packageNames package name prefix
+     * @param <T>          class generic type
+     * @return a set of subclass instances
+     */
+    public synchronized static <T> Set<T> getSubclassInstances(Class<T> parentClass, String... packageNames) {
+        if (packageNames == null || packageNames.length == 0) {
+            packageNames = defaultPackages();
+        }
         Set<T> set = new HashSet<>();
-        for (Class<? extends T> tClass : getNonAbstractSubClasses(clazz, packageNames)) {
-            try {
-                set.add(tClass.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+        for (Class<? extends T> subclass : getNonAbstractSubClasses(parentClass, packageNames)) {
+            if (Reflection.canInitiate(subclass)) {
+                try {
+                    set.add(subclass.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println(subclass + " can not be initiated, ignored.");
             }
         }
         return set;
     }
 
-    /**
-     * 获取所有的子类class
-     */
-    public static <T> Set<Class<? extends T>> getNonAbstractSubclasses(Class<T> clazz) {
-        return getNonAbstractSubClasses(clazz, defaultPackages());
-    }
-
-    /**
-     * Get all subclass initiatable instances.
-     */
-    public static <T> Set<T> getSubclassInstances(Class<T> clazz) {
-        return getSubclassInstances(clazz, defaultPackages());
-    }
-
     private static String[] defaultPackages() {
-        String[] packagesToScan = XianConfig.getStringArray("packagesToScan", new String[]{"com.", "info."});
-        return ArrayUtil.concat(new String[]{"info.xiancloud"}, packagesToScan);
+        String[] packagesToScan = XianConfig.getStringArray("packagesToScan", new String[]{"com."});
+        return ArrayUtil.concat(new String[]{"info.xiancloud."}, packagesToScan);
     }
 
 }

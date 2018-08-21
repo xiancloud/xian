@@ -30,26 +30,26 @@ public class SystemOutLogger implements Logger {
     }
 
     @Override
-    public void debug(Object message, Throwable optional, String ignored) {
+    public void debug(Object message, Throwable optionalException, String ignored) {
         System.out.println(prepareMessage(message, LOG.Level.DEBUG));
-        if (optional != null) {
-            optional.printStackTrace();
+        if (optionalException != null) {
+            optionalException.printStackTrace();
         }
     }
 
     @Override
-    public void warn(Object message, Throwable optional, String ignored) {
+    public void warn(Object message, Throwable optionalException, String ignored) {
         System.err.println(prepareMessage(message, LOG.Level.WARN));
-        if (optional != null) {
-            optional.printStackTrace();
+        if (optionalException != null) {
+            optionalException.printStackTrace();
         }
     }
 
     @Override
-    public void error(Object message, Throwable optional, String ignored) {
+    public void error(Object message, Throwable optionalException, String ignored) {
         System.err.println(prepareMessage(message, LOG.Level.ERROR));
-        if (optional != null) {
-            optional.printStackTrace();
+        if (optionalException != null) {
+            optionalException.printStackTrace();
         }
     }
 

@@ -192,31 +192,34 @@ public class Reflection {
      */
     @SuppressWarnings("unchecked")
     private static <T> T cast(Object obj, Class<T> clazz) {
-        if (obj == null)
+        if (obj == null) {
             return null;
-        if (clazz == null)
+        }
+        if (clazz == null) {
             throw new IllegalArgumentException("parameter 'Class<T> clazz' is not allowed to be null.");
+        }
         if (clazz.isEnum() && obj instanceof String) {
             Class<Enum> enumClazz = (Class<Enum>) clazz;
             return (T) Enum.valueOf(enumClazz, obj.toString());
         }
         if (clazz.isPrimitive()) {
-            if (clazz == Integer.TYPE)
+            if (clazz == Integer.TYPE) {
                 clazz = (Class<T>) Integer.class;
-            else if (clazz == Long.TYPE)
+            } else if (clazz == Long.TYPE) {
                 clazz = (Class<T>) Long.class;
-            else if (clazz == Short.TYPE)
+            } else if (clazz == Short.TYPE) {
                 clazz = (Class<T>) Short.class;
-            else if (clazz == Double.TYPE)
+            } else if (clazz == Double.TYPE) {
                 clazz = (Class<T>) Double.class;
-            else if (clazz == Float.TYPE)
+            } else if (clazz == Float.TYPE) {
                 clazz = (Class<T>) Float.class;
-            else if (clazz == Character.TYPE)
+            } else if (clazz == Character.TYPE) {
                 clazz = (Class<T>) Character.class;
-            else if (clazz == Byte.TYPE)
+            } else if (clazz == Byte.TYPE) {
                 clazz = (Class<T>) Byte.class;
-            else if (clazz == Boolean.TYPE)
+            } else if (clazz == Boolean.TYPE) {
                 clazz = (Class<T>) Boolean.class;
+            }
         }
         return clazz.cast(obj);
     }
@@ -385,8 +388,9 @@ public class Reflection {
             return null;
         } else if (data.getClass().isArray()) {
             if (data.getClass().getComponentType().isPrimitive()) {
-                if (componentType.isPrimitive())
+                if (componentType.isPrimitive()) {
                     return (T) data;
+                }
                 arrayObject = ArrayUtil.toObjectArray(data);
             } else {
                 Object[] tmp = (Object[]) data;
@@ -635,7 +639,7 @@ public class Reflection {
         return e;
     }
 
-    private static final LoadingCache<Class<?>, Boolean> map = CacheBuilder.newBuilder()
+    private static final LoadingCache<Class<?>, Boolean> MAP = CacheBuilder.newBuilder()
             .expireAfterAccess(60, TimeUnit.MINUTES)
             .maximumSize(100000)
             .removalListener((RemovalListener<Class, Boolean>) notification -> LOG.info(new JSONObject() {{
@@ -643,34 +647,34 @@ public class Reflection {
                 put("data", notification);
             }}))
             .build(new CacheLoader<Class<?>, Boolean>() {
+                @Override
                 public Boolean load(Class<?> type) {
-                    Boolean can = null;
+                    Boolean can = true;
                     if (Modifier.isAbstract(type.getModifiers()) || type.isInterface()) {
                         can = false;
                     } else {
                         try {
                             Constructor<?> constructor = type.getDeclaredConstructor();
+                            /* We Suit the Fastjson deserialization. Private declared default constructor is ok here.*/
                             constructor.setAccessible(true);
                             constructor.newInstance();
-                            /*
-                            We Suit the Fastjson deserialization. Private declared default constructor is ok here.
-                            */
                         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
                             can = false;
                         }
-                    }
-                    if (can == null) {
-                        can = true;
                     }
                     return can;
                 }
             });
 
     /**
-     * 检查指定的类是否可以实例化
+     * Check the given class can be initiated or not.
+     * This method is fast, it is using lazy-init with local cache.
+     * a class can initiate means that it is a concrete class with a defaut public constructor.
+     *
+     * @return true or false
      */
-    public static boolean canInitiate(Class type) {
-        return map.getUnchecked(type);
+    public static boolean canInitiate(Class<?> type) {
+        return MAP.getUnchecked(type);
     }
 
     @SuppressWarnings("ALL")
@@ -784,8 +788,9 @@ public class Reflection {
                 throws ClassNotFoundException {
             final Class<?> prim = PRIM.get(name);
 
-            if (prim != null)
+            if (prim != null) {
                 return prim;
+            }
 
             return Class.forName(name);
         }

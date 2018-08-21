@@ -7,6 +7,7 @@ import io.reactivex.Completable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 
 /**
  * Base xian connection
@@ -65,7 +66,8 @@ public abstract class BaseXianConnection implements XianConnection {
 
     static {
         try {
-            Class<? extends BaseLocalTransaction> localTransactionClass = Reflection.getNonAbstractSubclasses(BaseLocalTransaction.class).iterator().next();
+            Set<Class<? extends BaseLocalTransaction>> localTransactionClasses = Reflection.getNonAbstractSubclasses(BaseLocalTransaction.class);
+            Class<? extends BaseLocalTransaction> localTransactionClass = localTransactionClasses.iterator().next();
             localTransactionConstructor = localTransactionClass.getConstructor(String.class, XianConnection.class);
         } catch (Throwable e) {
             e.printStackTrace();
