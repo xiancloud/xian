@@ -44,7 +44,7 @@ public class TransferManager implements IStartService, ShutdownHook {
         scheduledFuture = ThreadPoolManager.scheduleWithFixedDelay(() -> {
             for (String unitFullName : UnitDiscovery.singleton.queryForNames()) {
                 try {
-                    UnitProxy unitProxy = UnitRouter.singleton.newestDefinition(unitFullName);
+                    UnitProxy unitProxy = UnitRouter.SINGLETON.newestDefinition(unitFullName);
                     String group = Unit.parseFullName(unitFullName).fst;
                     if (unitProxy.getMeta().isTransferable()) {
                         startIfNotStarted(group);

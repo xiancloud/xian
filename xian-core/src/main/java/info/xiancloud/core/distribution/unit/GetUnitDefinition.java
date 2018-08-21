@@ -39,7 +39,7 @@ public class GetUnitDefinition implements Unit {
     public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         String fullName = Unit.fullName(msg.getString("group"), msg.getString("unit"));
         try {
-            handler.handle(UnitResponse.createSuccess(UnitRouter.singleton.newestDefinition(fullName)));
+            handler.handle(UnitResponse.createSuccess(UnitRouter.SINGLETON.newestDefinition(fullName)));
         } catch (UnitUndefinedException e) {
             handler.handle(UnitResponse.createError(e.getCode(), fullName, e.getLocalizedMessage()));
         }

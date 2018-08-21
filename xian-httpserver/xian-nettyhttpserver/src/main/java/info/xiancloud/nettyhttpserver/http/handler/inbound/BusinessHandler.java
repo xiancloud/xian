@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
 public class BusinessHandler extends ChannelInboundHandlerAdapter {
 
     @Override
-    public void channelRead(final ChannelHandlerContext ctx, final Object request0) throws Exception {
+    public void channelRead(final ChannelHandlerContext ctx, final Object request0) {
         Request request = (Request) request0;
         request.setChannelHandlerContext(ctx);
         forUseCase(ctx, request);
@@ -28,7 +28,8 @@ public class BusinessHandler extends ChannelInboundHandlerAdapter {
 
     private void forUseCase(ChannelHandlerContext ctx, Request request) {
         HttpSessionLocalCache.cacheSession(request.getMsgId(), request);
-        String ip = request.getHttpRequest().headers().get("X-Real-IP");//from nginx or some other lb (qcloud/aliyun/aws)
+        //from nginx or some other lb (tencentCloud/aliyun/aws)
+        String ip = request.getHttpRequest().headers().get("X-Real-IP");
         if (StringUtil.isEmpty(ip)) {
             InetSocketAddress address = (InetSocketAddress) (ctx.channel().remoteAddress());
             ip = address.getAddress().getHostAddress();

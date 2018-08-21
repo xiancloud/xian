@@ -48,15 +48,16 @@ public interface IAsyncForwarder {
     static IAsyncForwarder getForwarder(String uri) {
         URIBean uriBean = URIBean.create(uri);
         try {
-            UnitMeta unitMeta = UnitRouter.singleton.newestDefinition(Unit.fullName(uriBean.getGroup(), uriBean.getUnit())).getMeta();
-            if (unitMeta.isBodyRequired() && unitMeta.isDataOnly())
+            UnitMeta unitMeta = UnitRouter.SINGLETON.newestDefinition(Unit.fullName(uriBean.getGroup(), uriBean.getUnit())).getMeta();
+            if (unitMeta.isBodyRequired() && unitMeta.isDataOnly()) {
                 return BodyRequiredAndResponseDataOnlyAsyncForwarder.singleton;
-            else if (unitMeta.isBodyRequired() && !unitMeta.isDataOnly())
+            } else if (unitMeta.isBodyRequired() && !unitMeta.isDataOnly()) {
                 return BodyRequiredAsyncForwarder.singleton;
-            else if (!unitMeta.isBodyRequired() && unitMeta.isDataOnly())
+            } else if (!unitMeta.isBodyRequired() && unitMeta.isDataOnly()) {
                 return RequestBodyNotRequiredAndDataOnlyResponseAsyncForwarder.singleton;
-            else
+            } else {
                 return DefaultAsyncForwarder.singleton;
+            }
         } catch (UnitUndefinedException ignored) {
             // we return default processor for unmapped uri request.
             return DefaultAsyncForwarder.singleton;

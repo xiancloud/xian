@@ -4,10 +4,6 @@ import info.xiancloud.core.distribution.exception.UnitUndefinedException;
 import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.core.distribution.exception.UnitUndefinedException;
-import info.xiancloud.core.distribution.loadbalance.UnitRouter;
-import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.StringUtil;
 
 /**
  * A scope is a label for units.
@@ -30,7 +26,7 @@ public class Scope {
             return true;
         } else {
             try {
-                Unit unit = UnitRouter.singleton.newestDefinition(Unit.fullName(groupName, unitName));
+                Unit unit = UnitRouter.SINGLETON.newestDefinition(Unit.fullName(groupName, unitName));
                 return unit.getMeta().getScopes().contains(scope);
             } catch (UnitUndefinedException e) {
                 LOG.warn(String.format("%s.%s验证scope不通过", groupName, unitName), e);

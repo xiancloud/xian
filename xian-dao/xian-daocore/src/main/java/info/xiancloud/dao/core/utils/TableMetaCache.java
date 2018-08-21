@@ -23,7 +23,9 @@ public class TableMetaCache {
             .build(new CacheLoader<String, String[]>() {
                 @Override
                 public String[] load(String tableName) throws Exception {
-                    return BaseSqlDriver.XIAN_SQL_DRIVER_CLASS.newInstance().setConnection(PoolFactory.getPool().getSlaveDatasource().getConnection().blockingGet()).queryCols(tableName).blockingGet();
+                    return BaseSqlDriver.XIAN_SQL_DRIVER_CLASS.newInstance()
+                            .setConnection(PoolFactory.getPool().getSlaveDatasource().getConnection().blockingGet())
+                            .queryCols(tableName).blockingGet();
                 }
             });
 
@@ -35,7 +37,9 @@ public class TableMetaCache {
             .build(new CacheLoader<String, String>() {
                 @Override
                 public String load(String tableName) throws Exception {
-                    return BaseSqlDriver.XIAN_SQL_DRIVER_CLASS.newInstance().getIdCol(tableName).blockingGet();
+                    return BaseSqlDriver.XIAN_SQL_DRIVER_CLASS.newInstance()
+                            .setConnection(PoolFactory.getPool().getSlaveDatasource().getConnection().blockingGet())
+                            .getIdCol(tableName).blockingGet();
                 }
             });
 }

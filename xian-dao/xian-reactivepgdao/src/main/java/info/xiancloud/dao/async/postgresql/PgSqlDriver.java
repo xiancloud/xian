@@ -142,7 +142,14 @@ public class PgSqlDriver extends BaseSqlDriver {
 
     @Override
     public Single<RecordsListSelectionResult> select(String patternSql, Map<String, Object> map) {
-        return pgConnection0.rxPreparedQuery(preparedSql(patternSql), Tuple.of(preparedParams(patternSql, map)))
+        return Single.fromCallable(() -> preparedParams(patternSql, map).length > 0)
+                .flatMap(prepared -> {
+                    if (prepared) {
+                        return pgConnection0.rxPreparedQuery(preparedSql(patternSql), Tuple.of(preparedParams(patternSql, map)));
+                    } else {
+                        return pgConnection0.rxQuery(patternSql);
+                    }
+                })
                 .map(pgRowSet -> {
                     List<String> cols = pgRowSet.columnsNames();
                     PgIterator iterator = pgRowSet.iterator();

@@ -35,7 +35,7 @@ public class BroadcastSender extends AbstractAsyncSender {
 
     @Override
     protected void asyncSend() throws UnitOfflineException, UnitUndefinedException {
-        List<UnitInstance> list = UnitRouter.singleton.allInstances(Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
+        List<UnitInstance> list = UnitRouter.SINGLETON.allInstances(Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
         UnitMeta.Broadcast broadcast = list.get(0).getPayload().getMeta().getBroadcast();
         final ListenableCountDownLatch latch = new ListenableCountDownLatch(list.size());
         ConcurrentLinkedQueue<Object> piledUpOutput = new ConcurrentLinkedQueue<>();

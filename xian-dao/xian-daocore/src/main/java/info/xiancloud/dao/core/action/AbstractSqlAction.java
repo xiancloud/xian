@@ -11,8 +11,8 @@ import info.xiancloud.dao.core.model.sqlresult.SqlExecutionResult;
 import info.xiancloud.dao.core.sql.BaseSqlDriver;
 import info.xiancloud.dao.core.sql.XianSqlDriver;
 import info.xiancloud.dao.core.units.DaoUnit;
-import info.xiancloud.dao.core.utils.MapFormat;
 import info.xiancloud.dao.core.utils.JdbcPatternUtil;
+import info.xiancloud.dao.core.utils.MapFormat;
 import info.xiancloud.dao.core.utils.SqlUtils;
 import io.reactivex.Single;
 
@@ -64,13 +64,13 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
                 return Single.just(response);
             }
         }
-        if (XianConfig.getBoolean(LOG_DETAILED_SQL, false)) {
+        if (XianConfig.getBoolean(LOG_DETAILED_SQL, true)) {
             logSql(map);
         }
         return executeSql()
                 .flatMap(sqlExecutionResult ->
                         Single.just(UnitResponse.createSuccess(sqlExecutionResult)))
-                .doOnSuccess(unitResponse -> after(System.currentTimeMillis()))
+                .doOnSuccess(unitResponse -> after(System.nanoTime()))
                 .onErrorReturn(error -> {
                     LOG.error(error);
                     return getSqlDriver().handleException(error, this);
@@ -89,7 +89,7 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     public XianSqlDriver getSqlDriver() {
         if (sqlDriver == null) {
             try {
-                sqlDriver = BaseSqlDriver.XIAN_SQL_DRIVER_CLASS.newInstance();
+                sqlDriver = BaseSqlDriver.XIAN_SQL_DRIVER_CLASS.newInstance().setConnection(getConnection());
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -159,7 +159,7 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     }
 
     private String adjustInClause(String sqlPattern) {
-        String regex = " +[i|I][n|N] *\\{[^}]*\\}";
+        String regex = " +[i|I][n|N] *\\{[^}]*}";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(sqlPattern);
         while (matcher.find()) {

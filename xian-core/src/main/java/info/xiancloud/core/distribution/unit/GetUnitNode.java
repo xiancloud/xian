@@ -42,7 +42,7 @@ public class GetUnitNode implements Unit {
         String group = msg.getString("group");
         String unit = msg.getString("unit");
         try {
-            handler.handle(UnitResponse.createSuccess(UnitRouter.singleton.allInstances(Unit.fullName(group, unit))));
+            handler.handle(UnitResponse.createSuccess(UnitRouter.SINGLETON.allInstances(Unit.fullName(group, unit))));
         } catch (UnitOfflineException | UnitUndefinedException e) {
             handler.handle(UnitResponse.createUnknownError(null, e.getLocalizedMessage()));
         }

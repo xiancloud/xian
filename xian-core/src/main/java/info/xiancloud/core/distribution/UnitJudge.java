@@ -5,9 +5,6 @@ import info.xiancloud.core.distribution.loadbalance.UnitRouter;
 import info.xiancloud.core.distribution.service_discovery.UnitDiscovery;
 import info.xiancloud.core.LocalUnitsManager;
 import info.xiancloud.core.Unit;
-import info.xiancloud.core.distribution.exception.UnitUndefinedException;
-import info.xiancloud.core.distribution.loadbalance.UnitRouter;
-import info.xiancloud.core.distribution.service_discovery.UnitDiscovery;
 
 /**
  * Unit judge, a convenient helper class for the {@link UnitRouter}
@@ -42,7 +39,7 @@ public class UnitJudge {
      */
     public static boolean isBroadcast(String groupName, String unitName) {
         try {
-            return UnitRouter.singleton.newestDefinition(Unit.fullName(groupName, unitName)).getMeta().getBroadcast() != null;
+            return UnitRouter.SINGLETON.newestDefinition(Unit.fullName(groupName, unitName)).getMeta().getBroadcast() != null;
         } catch (UnitUndefinedException e) {
             throw new RuntimeException("Please call UnitJudge.defined() first.", e);
         }
@@ -54,7 +51,7 @@ public class UnitJudge {
      */
     public static String[] getXhash(String groupName, String unitName) {
         try {
-            return UnitRouter.singleton.newestDefinition(Unit.fullName(groupName, unitName)).getInput().getXhashNames();
+            return UnitRouter.SINGLETON.newestDefinition(Unit.fullName(groupName, unitName)).getInput().getXhashNames();
         } catch (UnitUndefinedException e) {
             throw new RuntimeException("Please call UnitJudge.defined() first.", e);
         }
@@ -67,7 +64,7 @@ public class UnitJudge {
      */
     public static boolean isXhash(String group, String unit) {
         try {
-            return UnitRouter.singleton.newestDefinition(Unit.fullName(group, unit)).getInput().isXhash();
+            return UnitRouter.SINGLETON.newestDefinition(Unit.fullName(group, unit)).getInput().isXhash();
         } catch (UnitUndefinedException e) {
             throw new RuntimeException("Please call UnitJudge.defined() first.", e);
         }
@@ -78,7 +75,7 @@ public class UnitJudge {
      */
     public static String[] getSequential(String group, String unit) {
         try {
-            return UnitRouter.singleton.newestDefinition(Unit.fullName(group, unit)).getInput().getSequentialNames();
+            return UnitRouter.SINGLETON.newestDefinition(Unit.fullName(group, unit)).getInput().getSequentialNames();
         } catch (UnitUndefinedException e) {
             throw new RuntimeException("Please call UnitJudge.defined() first.", e);
         }
@@ -89,7 +86,7 @@ public class UnitJudge {
      */
     public static boolean isSequential(String group, String unit) {
         try {
-            return UnitRouter.singleton.newestDefinition(Unit.fullName(group, unit)).getInput().isSequential();
+            return UnitRouter.SINGLETON.newestDefinition(Unit.fullName(group, unit)).getInput().isSequential();
         } catch (UnitUndefinedException e) {
             throw new RuntimeException("Please call UnitJudge.defined() first.", e);
         }
@@ -101,7 +98,7 @@ public class UnitJudge {
      */
     public static boolean isTransferable(String group, String unit) {
         try {
-            return UnitRouter.singleton.newestDefinition(Unit.fullName(group, unit)).getMeta().isTransferable();
+            return UnitRouter.SINGLETON.newestDefinition(Unit.fullName(group, unit)).getMeta().isTransferable();
         } catch (UnitUndefinedException e) {
             throw new RuntimeException("Please call UnitJudge.defined() first.", e);
         }

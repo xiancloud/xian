@@ -35,6 +35,10 @@ public class PgPatternUtil {
             preparedSql.append(patternSql.substring(start, matcher.start())).append(" $").append(i).append(" ");
             start = matcher.end();
         }
+        if (preparedSql.length() == 0) {
+            // no pattern elements in the pattern sql, return the pattern sql directly as prepared sql.
+            return patternSql;
+        }
         return preparedSql.toString();
     }
 

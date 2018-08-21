@@ -35,7 +35,7 @@ public class XhashSender extends AbstractAsyncSender {
         String group = unitRequest.getContext().getGroup(),
                 unit = unitRequest.getContext().getUnit();
         try {
-            List<UnitInstance> unitInstances = UnitRouter.singleton.allInstances(Unit.fullName(group, unit));
+            List<UnitInstance> unitInstances = UnitRouter.SINGLETON.allInstances(Unit.fullName(group, unit));
             List<String> clientIds = new ArrayList<>();
             for (UnitInstance clientInfo : unitInstances) {
                 clientIds.add(clientInfo.getNodeId());

@@ -2,7 +2,6 @@ package info.xiancloud.core.conf;
 
 import com.fathzer.soft.javaluator.DoubleEvaluator;
 import info.xiancloud.core.util.StringUtil;
-import info.xiancloud.core.util.StringUtil;
 
 import java.util.function.Function;
 
@@ -19,8 +18,9 @@ public interface IPropertiesReader extends IEnvPrefixed {
      */
     default String get0(String key) {
         String value = _reader().apply(addPrefixIfNot(key));
-        if (!StringUtil.isEmpty(value))
+        if (!StringUtil.isEmpty(value)) {
             return value;
+        }
         value = _reader().apply(key);
         return StringUtil.isEmpty(value) ? null : value;
     }
@@ -97,12 +97,16 @@ public interface IPropertiesReader extends IEnvPrefixed {
         return getLong0(key, defaultIfNull);
     }
 
-
     /**
      * @see Boolean#valueOf(String)
      */
     default Boolean getBoolean0(String key) {
-        return Boolean.valueOf(get0(key));
+        String value0 = get0(key);
+        if (value0 == null) {
+            return null;
+        }
+        //Boolean.valueOf(null) is false
+        return Boolean.valueOf(value0);
     }
 
     default Boolean getBoolean0(String key, Boolean defaultIfNull) {

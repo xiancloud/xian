@@ -42,7 +42,7 @@ public abstract class ReceiveAndBroadcast implements Unit {
             String application = msg.get("application", String.class);
             List<UnitInstance> unitInstances;
             try {
-                unitInstances = UnitRouter.singleton.allInstances(Unit.fullName(getGroupName(), getUnitName()));
+                unitInstances = UnitRouter.SINGLETON.allInstances(Unit.fullName(getGroupName(), getUnitName()));
             } catch (UnitOfflineException | UnitUndefinedException e) {
                 throw new RuntimeException(e);
             }

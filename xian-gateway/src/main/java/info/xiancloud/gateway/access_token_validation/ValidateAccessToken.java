@@ -46,7 +46,7 @@ public class ValidateAccessToken {
         }
         URIBean uriBean = URIBean.create(uri);
         try {
-            if (!UnitRouter.singleton.newestDefinition(Unit.fullName(uriBean.getGroup(), uriBean.getUnit())).getMeta().isSecure()) {
+            if (!UnitRouter.SINGLETON.newestDefinition(Unit.fullName(uriBean.getGroup(), uriBean.getUnit())).getMeta().isSecure()) {
                 return false;
             }
         } catch (UnitUndefinedException ignored) {
