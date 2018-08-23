@@ -18,26 +18,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ThreadPoolManager {
 
-    private static final ThreadPoolExecutor executor;
+    private static final ThreadPoolExecutor EXECUTOR;
 
     static {
-        executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        executor.setKeepAliveTime(5, TimeUnit.SECONDS);
-        executor.allowCoreThreadTimeOut(true);
+        EXECUTOR = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        EXECUTOR.setKeepAliveTime(5, TimeUnit.SECONDS);
+        EXECUTOR.allowCoreThreadTimeOut(true);
     }
 
-    private static final List<ExecutorService> executors = new CopyOnWriteArrayList<ExecutorService>() {{
-        add(executor);
+    private static final List<ExecutorService> EXECUTORS = new CopyOnWriteArrayList<ExecutorService>() {{
+        add(EXECUTOR);
     }};
     private static final ScheduledExecutorService scheduledExecutorService = newScheduledExecutor(2);
 
     /**
      * 由业务层自行维护的线程池，这里只是对其进行监控而已；
      */
-    private static final Set<ExecutorService> explicitExecutors = new CopyOnWriteArraySet<>();
+    private static final Set<ExecutorService> EXPLICIT_EXECUTORS = new CopyOnWriteArraySet<>();
 
     public static ThreadFactory threadFactory() {
-        return executor.getThreadFactory();
+        return EXECUTOR.getThreadFactory();
     }
 
     /**
@@ -45,12 +45,12 @@ public class ThreadPoolManager {
      */
     public static int poolSize() {
         int poolSize = 0;
-        for (ExecutorService pool : executors) {
+        for (ExecutorService pool : EXECUTORS) {
             if (pool instanceof ThreadPoolExecutor) {
                 poolSize += ((ThreadPoolExecutor) pool).getPoolSize();
             }
         }
-        for (ExecutorService pool : explicitExecutors) {
+        for (ExecutorService pool : EXPLICIT_EXECUTORS) {
             if (pool instanceof ThreadPoolExecutor) {
                 poolSize += ((ThreadPoolExecutor) pool).getPoolSize();
             }
@@ -63,12 +63,12 @@ public class ThreadPoolManager {
      */
     public static int queueSize() {
         int queueSize = 0;
-        for (ExecutorService pool : executors) {
+        for (ExecutorService pool : EXECUTORS) {
             if (pool instanceof ThreadPoolExecutor) {
                 queueSize += ((ThreadPoolExecutor) pool).getQueue().size();
             }
         }
-        for (ExecutorService pool : explicitExecutors) {
+        for (ExecutorService pool : EXPLICIT_EXECUTORS) {
             if (pool instanceof ThreadPoolExecutor) {
                 queueSize += ((ThreadPoolExecutor) pool).getQueue().size();
             }
@@ -81,12 +81,12 @@ public class ThreadPoolManager {
      */
     public static int activeCount() {
         int activeCount = 0;
-        for (ExecutorService pool : executors) {
+        for (ExecutorService pool : EXECUTORS) {
             if (pool instanceof ThreadPoolExecutor) {
                 activeCount += ((ThreadPoolExecutor) pool).getActiveCount();
             }
         }
-        for (ExecutorService pool : explicitExecutors) {
+        for (ExecutorService pool : EXPLICIT_EXECUTORS) {
             if (pool instanceof ThreadPoolExecutor) {
                 activeCount += ((ThreadPoolExecutor) pool).getActiveCount();
             }
@@ -126,11 +126,12 @@ public class ThreadPoolManager {
      */
     public static ExecutorService getValidExecutor() {
         ExecutorService executorToUse;
-        if (executor.isTerminating() || executor.isShutdown() || executor.isTerminated()) {
+        if (EXECUTOR.isTerminating() || EXECUTOR.isShutdown() || EXECUTOR.isTerminated()) {
             executorToUse = Executors.newSingleThreadExecutor();
             LOG.info("由于线程池" + ThreadPoolManager.class.getSimpleName() + "不可用，因此使用临时线程提交此任务");
-        } else
-            executorToUse = executor;
+        } else {
+            executorToUse = EXECUTOR;
+        }
         return executorToUse;
     }
 
@@ -163,7 +164,7 @@ public class ThreadPoolManager {
 
             @Override
             public void after(Method method, Object[] args, Object methodReturn, Object beforeReturn) {
-                if (method.getName().equals("run")) {
+                if ("run".equals(method.getName())) {
                     if (methodReturn instanceof Throwable) {
                         LOG.error((Throwable) methodReturn);
                     }
@@ -261,7 +262,7 @@ public class ThreadPoolManager {
      * @param delayInMilli 前一个任务结束后多久开始进行下一个任务，单位毫秒
      */
     public static ScheduledFuture scheduleWithFixedDelay(Runnable runnable, long delayInMilli) {
-        /** 我们默认设定一个runnable生命周期与一个msgId一一对应 */
+        /* 我们默认设定一个runnable生命周期与一个msgId一一对应 */
         Runnable proxy = wrapRunnable(runnable, null);
         return newSingleThreadScheduler().scheduleWithFixedDelay(proxy, 0, delayInMilli, TimeUnit.MILLISECONDS);
     }
@@ -286,21 +287,21 @@ public class ThreadPoolManager {
      */
     public static ScheduledExecutorService newScheduledExecutor(int corePoolSize) {
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(corePoolSize);
-        executors.add(scheduledExecutorService);
+        EXECUTORS.add(scheduledExecutorService);
         return scheduledExecutorService;
     }
 
     // 新建一个executor并管理起来
     private static ScheduledExecutorService newSingleThreadScheduler() {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        executors.add(scheduledExecutorService);
+        EXECUTORS.add(scheduledExecutorService);
         return scheduledExecutorService;
     }
 
     public static SingleThreadExecutorGroup newSingleTreadExecutorGroup(int size) {
         SingleThreadExecutorGroup group = new SingleThreadExecutorGroup(size);
         // 所有新创建的线程池都要管理起来的
-        executors.addAll(group.map.values());
+        EXECUTORS.addAll(group.map.values());
         return group;
     }
 
@@ -343,7 +344,7 @@ public class ThreadPoolManager {
      */
     public static ExecutorService newSingleThreadPoolExecutor() {
         ExecutorService singleThreadPoolExecutor = Executors.newSingleThreadExecutor();
-        executors.add(singleThreadPoolExecutor);
+        EXECUTORS.add(singleThreadPoolExecutor);
         return singleThreadPoolExecutor;
     }
 
@@ -354,7 +355,7 @@ public class ThreadPoolManager {
      * @param explicitThreadPool 由插件自行维护的外部线程池
      */
     public static void addExplicitThreadPool(ExecutorService explicitThreadPool) {
-        explicitExecutors.add(explicitThreadPool);
+        EXPLICIT_EXECUTORS.add(explicitThreadPool);
     }
 
     // =======================================ShutdownHook======================
@@ -373,8 +374,8 @@ public class ThreadPoolManager {
      */
     public static boolean destroy(long timeoutInMillis) {
         final AtomicBoolean success = new AtomicBoolean(true);
-        CountDownLatch latch = new CountDownLatch(executors.size());
-        for (ExecutorService exe : executors) {
+        CountDownLatch latch = new CountDownLatch(EXECUTORS.size());
+        for (ExecutorService exe : EXECUTORS) {
             new Thread(() -> {
                 try {
                     exe.shutdown();
@@ -394,8 +395,8 @@ public class ThreadPoolManager {
         } catch (InterruptedException e) {
             LOG.error(e);
         }
-        executors.clear();
-        explicitExecutors.clear();
+        EXECUTORS.clear();
+        EXPLICIT_EXECUTORS.clear();
         return success.get();
     }
 

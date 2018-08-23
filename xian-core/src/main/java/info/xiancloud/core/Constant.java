@@ -1,5 +1,10 @@
 package info.xiancloud.core;
 
+/**
+ * xian frame constants
+ *
+ * @author happyyangyuan
+ */
 public class Constant {
 
     public static String DEFAULT_ENCODING = "UTF-8";

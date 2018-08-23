@@ -2,6 +2,7 @@ package info.xiancloud.core;
 
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,8 +16,9 @@ public abstract class NotifyHandler {
     /**
      * Boolean object, 'null' means not yet, 'true' for timeout, 'false' if already called back.
      * Defaults to null.
+     * This parameter is read by multiple threads must be volatile to be safe.
      */
-    private Boolean timeout = null;
+    private volatile Boolean timeout = null;
     private List<Action> beforeActions = new ArrayList<>();
     private List<Action> afterActions = new ArrayList<>();
 
@@ -35,6 +37,13 @@ public abstract class NotifyHandler {
                 handle(unitResponseObject);
             } catch (Throwable e) {
                 LOG.error("回调执行失败", e);
+            } finally {
+                /**
+                 * this is the default value once callback is called.
+                 * the frame has set the custom timeout value explicitly.
+                 * @see info.xiancloud.core.message.sender.local.AbstractLocalAsyncSender#timeoutAfter(long, long)
+                 */
+                timeout = false;
             }
         }
         for (Action afterAction : afterActions) {

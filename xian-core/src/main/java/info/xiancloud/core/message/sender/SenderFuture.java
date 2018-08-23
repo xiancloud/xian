@@ -76,8 +76,9 @@ public class SenderFuture implements Future<UnitResponse> {
     void setUnitResponse(UnitResponse unitResponse) {
         synchronized (responseLock) {
             this.unitResponse = unitResponse;
-            if (unitResponse != null)
+            if (unitResponse != null) {
                 responseLock.notifyAll();
+            }
         }
     }
 
