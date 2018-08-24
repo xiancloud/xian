@@ -69,11 +69,13 @@ public interface Unit {
      * 否则日后无论哪个业务unit只要有意外的getter定义就会被触发调用而出风险
      */
     default String toJSONString() {
-        return JSON.toJSONString(this, filter);
+        return JSON.toJSONString(this, FILTER);
     }
 
-    //同上，用于限制unit对象只序列化指定属性，规避未知业务unit的意外getter被触发调用
-    SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Unit.class, "name", "group", "meta", "input", "version");
+    /**
+     * 同上，用于限制unit对象只序列化指定属性，规避未知业务unit的意外getter被触发调用
+     */
+    SimplePropertyPreFilter FILTER = new SimplePropertyPreFilter(Unit.class, "name", "group", "meta", "input", "version");
 
     /**
      * Unified unit full name. The full name is the combination of group name and unit name.
@@ -92,6 +94,7 @@ public interface Unit {
     /**
      * split full unit name into a pair of group and unit name.
      *
+     * @param fullName full unit name. eg groupA.unitB
      * @return Pair. the fst is group name, the snd is unit name.
      */
     static Pair<String, String> parseFullName(String fullName) {

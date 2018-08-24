@@ -11,6 +11,7 @@ import info.xiancloud.core.message.sender.AbstractAsyncSender;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
+import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,17 +62,21 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
             } else {
                 ScheduledFuture future = timeoutAfter(unitRequest.getContext().getTimeOutInMilli(), start);
                 ThreadPoolManager.execute(() -> {
+                    //fixme. Use thread pool to commit the async unit unless/until you can make sure all unit is asynchronously executed.
                     // we don't know whether the unit execution is asynchronous or blocking
                     // so here we submit the task to the thread pool for execution to make it 100% asynchronous.
                     // And let the caller to decide whether or not to block.
                     try {
                         unit.execute(unitRequest, unitResponse -> {
-                            future.cancel(true);
-                            if (unitResponse == null) {
-                                unitResponse = UnitResponse.createUnknownError(null, "Null response is returned from: " + Unit.fullName(unitRequest.getContext().getGroup(), unitRequest.getContext().getUnit()));
-                                LOG.error(unitResponse);
+                            boolean msgIdWritten = MsgIdHolder.set(unitResponse.getContext().getMsgId());
+                            try {
+                                future.cancel(true);
+                                responseCallback(unitResponse, start);
+                            } finally {
+                                if (msgIdWritten) {
+                                    MsgIdHolder.clear();
+                                }
                             }
-                            responseCallback(unitResponse, start);
                         });
                     } catch (Throwable e) {
                         future.cancel(true);
@@ -89,7 +94,7 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
                 // If the stateful callback object's timeout property is empty which means it is not called back nor timed out either.
                 callback.setTimeout(true);
             }
-        }, timeoutInMilli);
+        }, timeoutInMilli, MsgIdHolder.get());
     }
 
     private static Set<Input.Obj> getRequired(Unit recipient, UnitRequest unitRequest) {
@@ -118,7 +123,9 @@ class AbstractLocalAsyncSender extends AbstractAsyncSender {
         callback.callback(unitResponse);
     }
 
-    //note that context data is full-filled step by step, not at once.
+    /**
+     * note that context data is full-filled step by step, not at once.
+     */
     private void fillResponseContext(UnitResponse.Context context) {
         context.setDestinationNodeId(unitRequest.getContext().getSourceNodeId());
         context.setSourceNodeId(LocalNodeManager.LOCAL_NODE_ID);

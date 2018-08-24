@@ -2,14 +2,15 @@ package info.xiancloud.core;
 
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * @author 钟俊伟, happyyangyuan
+ * Internal handler for the xian framework to handle callbacks from rpc etc.
+ *
+ * @author happyyangyuan
  */
 public abstract class NotifyHandler {
 

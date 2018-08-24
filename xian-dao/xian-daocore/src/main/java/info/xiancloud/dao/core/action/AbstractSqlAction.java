@@ -6,6 +6,7 @@ import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.ArrayUtil;
 import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.thread.MsgIdHolder;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.model.sqlresult.SqlExecutionResult;
 import info.xiancloud.dao.core.sql.BaseSqlDriver;
@@ -34,6 +35,7 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     private Map<String, Object> map;
     private XianConnection connection;
     private DaoUnit daoUnit;
+    private String msgId;
 
     /**
      * stateful sql driver, non-singleton, lazy-init
@@ -44,38 +46,47 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
      * 取值必须小于{@link MapFormat#BUFSIZE}
      */
     private static final int MAX_PATTERN_PARAM_COUNT = 100 < MapFormat.BUFSIZE ? 100 : MapFormat.BUFSIZE;
-    private static final String LOG_DETAILED_SQL = "logDetailedSql";
+    private static final String CONFIG_LOG_DETAILED_SQL = "logDetailedSql";
     private static final long SLOW_QUERY_IN_MILLIS = 5 * 1000;
 
     @Override
-    public Single<UnitResponse> execute(Unit daoUnit, Map<String, Object> map, XianConnection connection) {
-        this.map = map;
-        this.connection = connection;
-        this.daoUnit = (DaoUnit) daoUnit;
-        sqlDriver = getSqlDriver();
-        if (ignore()) {
-            return Single.just(UnitResponse.createSuccess(
-                    String.format("This sql action '%s.%s' is ignored for execution.",
-                            this.daoUnit.getName(), getClass().getSimpleName())
-            ));
-        } else {
-            UnitResponse response = check();
-            if (!response.succeeded()) {
-                return Single.just(response);
+    public final Single<UnitResponse> execute(Unit daoUnit, Map<String, Object> map, XianConnection connection, String msgId) {
+        //set msgId in order make sure compatibility of synchronous and asynchronous dao.
+        boolean msgIdWritten = MsgIdHolder.set(msgId);
+        try {
+            this.msgId = msgId;
+            this.map = map;
+            this.connection = connection;
+            this.daoUnit = (DaoUnit) daoUnit;
+            sqlDriver = getSqlDriver();
+            if (ignore()) {
+                return Single.just(UnitResponse.createSuccess(
+                        String.format("This sql action '%s.%s' is ignored for execution.",
+                                this.daoUnit.getName(), getClass().getSimpleName())
+                ));
+            } else {
+                UnitResponse response = check();
+                if (!response.succeeded()) {
+                    return Single.just(response);
+                }
+            }
+            if (XianConfig.getBoolean(CONFIG_LOG_DETAILED_SQL, true)) {
+                logSql(map);
+            }
+            return executeSql()
+                    .flatMap(sqlExecutionResult ->
+                            Single.just(UnitResponse.createSuccess(sqlExecutionResult)))
+                    .doOnSuccess(unitResponse -> after(System.nanoTime()))
+                    .onErrorReturn(error -> {
+                        LOG.error(error);
+                        return getSqlDriver().handleException(error, this);
+                    })
+                    ;
+        } finally {
+            if (msgIdWritten) {
+                MsgIdHolder.clear();
             }
         }
-        if (XianConfig.getBoolean(LOG_DETAILED_SQL, true)) {
-            logSql(map);
-        }
-        return executeSql()
-                .flatMap(sqlExecutionResult ->
-                        Single.just(UnitResponse.createSuccess(sqlExecutionResult)))
-                .doOnSuccess(unitResponse -> after(System.nanoTime()))
-                .onErrorReturn(error -> {
-                    LOG.error(error);
-                    return getSqlDriver().handleException(error, this);
-                })
-                ;
     }
 
     /**
@@ -98,26 +109,40 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     }
 
     private void after(long before) {
-        Long howLong = ((System.nanoTime() - before)) / 1000000;
-        JSONObject sqlLog = new JSONObject() {{
-            put("type", "sql");
-            put("cost", howLong);
-            put("sql", patternSql);
-            put("description", "执行SQL耗时 ".concat(howLong.toString()).concat(" ms"));
-        }};
-        if (howLong > SLOW_QUERY_IN_MILLIS) {
-            sqlLog.put("description", String.format("超过%sms的慢查询", SLOW_QUERY_IN_MILLIS));
-            LOG.error(sqlLog.toJSONString());
-        } else {
-            LOG.info(sqlLog.toJSONString());
+        boolean msgIdWritten = MsgIdHolder.set(msgId);
+        try {
+            Long howLong = ((System.nanoTime() - before)) / 1000000;
+            JSONObject sqlLog = new JSONObject() {{
+                put("type", "sql");
+                put("cost", howLong);
+                put("sql", patternSql);
+                put("description", "执行SQL耗时 ".concat(howLong.toString()).concat(" ms"));
+            }};
+            if (howLong > SLOW_QUERY_IN_MILLIS) {
+                sqlLog.put("description", String.format("超过%sms的慢查询", SLOW_QUERY_IN_MILLIS));
+                LOG.error(sqlLog.toJSONString());
+            } else {
+                LOG.info(sqlLog.toJSONString());
+            }
+        } finally {
+            if (msgIdWritten) {
+                MsgIdHolder.clear();
+            }
         }
     }
 
     @Override
     public void logSql(Map<String, Object> map) {
-        LOG.info("XianPatternSQL ：" + getPatternSql());
-        LOG.info("Prepared SQL：" + getSqlDriver().preparedSql(getPatternSql()));
-        LOG.info("Full SQL：" + getFullSql());
+        boolean msgIdWritten = MsgIdHolder.set(msgId);
+        try {
+            LOG.info("XianPatternSQL ：" + getPatternSql());
+            LOG.info("Prepared SQL：" + getSqlDriver().preparedSql(getPatternSql()));
+            LOG.info("Full SQL：" + getFullSql());
+        } finally {
+            if (msgIdWritten) {
+                MsgIdHolder.clear();
+            }
+        }
     }
 
     @Override

@@ -175,7 +175,8 @@ public class ThreadPoolManager {
     }
 
     /**
-     * @param msgId 如果传入null，则会新分配一个$msgId；
+     * @param runnable Java runnable object.
+     * @param msgId    如果传入null，则会新分配一个$msgId；
      * @return 加入了一些底层处理的runnable
      */
     public static Runnable wrapRunnable(Runnable runnable, String msgId) {
@@ -270,12 +271,16 @@ public class ThreadPoolManager {
     /**
      * Creates and executes a one-shot action that becomes enabled after the given delay.
      *
-     * @param runnable     the runnable
+     * @param runnable     a java runnable object you want to submit
      * @param delayInMilli the delay in milliseconds
+     * @param msgId        the message id. Not null.
      * @return the future
      */
-    public static ScheduledFuture schedule(Runnable runnable, long delayInMilli) {
-        Runnable proxy = wrapRunnable(runnable, null);
+    public static ScheduledFuture schedule(Runnable runnable, long delayInMilli, String msgId) {
+        if (StringUtil.isEmpty(msgId)) {
+            throw new IllegalArgumentException("You must specify a $msgId for the the one-shot action.");
+        }
+        Runnable proxy = wrapRunnable(runnable, msgId);
         return scheduledExecutorService.schedule(proxy, delayInMilli, TimeUnit.MILLISECONDS);
     }
 

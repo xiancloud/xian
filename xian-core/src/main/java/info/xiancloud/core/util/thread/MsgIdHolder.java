@@ -2,8 +2,10 @@ package info.xiancloud.core.util.thread;
 
 import info.xiancloud.core.message.IdManager;
 import info.xiancloud.core.util.Reflection;
+import info.xiancloud.core.util.StringUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * msgId holder, for log tracing and transaction tracing
@@ -47,8 +49,24 @@ public abstract class MsgIdHolder {
         return get();
     }
 
-    public static void set(String value) {
-        singleton.set0(value);
+    /**
+     * Set the msg id of current context
+     *
+     * @param value the msg id, can not be null
+     * @return false if old value is the same as new value, true otherwise.
+     */
+    public static boolean set(String value) {
+        if (StringUtil.isEmpty(value)) {
+            throw new IllegalArgumentException("Can not set an empty msgId. If you want to clear msgId of current context, use clear() instead.");
+        }
+        if (Objects.equals(value, MsgIdHolder.get())) {
+            //no need make sure, return false
+            return false;
+        } else {
+            //overwrite the old value
+            singleton.set0(value);
+            return true;
+        }
     }
 
     protected abstract String get0();

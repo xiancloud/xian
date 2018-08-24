@@ -42,14 +42,14 @@ public class IdManager {
     }
 
     /**
-     * @return LOCAL_NODE_ID + currentTimeMillis + sequence序号
+     * @return LOCAL_NODE_ID <S>+ currentTimeMillis</S> + sequence序号
      */
     public static String nextMsgId() {
-        return LOCAL_NODE_ID.concat("_") + System.currentTimeMillis() + "_" + MSG_ID_SEQUENCE.incrementAndGet();
+        return LOCAL_NODE_ID.concat("_")/* + System.nanoTime() + "_"*/ + MSG_ID_SEQUENCE.incrementAndGet();
     }
 
     public static String nextSsid() {
-        return LOCAL_NODE_ID.concat("_") + System.currentTimeMillis() + "_" + SSID_SEQUENCE.incrementAndGet();
+        return LOCAL_NODE_ID.concat("_")/* + System.nanoTime() + "_"*/ + SSID_SEQUENCE.incrementAndGet();
     }
 
     private static String generateClientId(String application) {

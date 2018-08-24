@@ -63,7 +63,7 @@ public abstract class DaoUnit implements Unit {
                     }
                 })
                 .flatMap(transaction -> Flowable.fromArray(sqlActions)
-                        .flatMapSingle(action -> action.execute(this, request.getArgMap(), transaction.getConnection()))
+                        .flatMapSingle(action -> action.execute(this, request.getArgMap(), transaction.getConnection(), request.getContext().getMsgId()))
                         .reduce(UnitResponse.succeededSingleton()
                                 , (unitResponse, unitResponse2) -> {
                                     if (unitResponse2.succeeded()) {
@@ -98,7 +98,10 @@ public abstract class DaoUnit implements Unit {
                         }))
                 //close the transaction asynchronously is ok and better
                 .doFinally(() -> tempTransaction[0].close().subscribe())
-                .subscribe(handler::handle);
+                .subscribe(unitResponse -> {
+                    unitResponse.getContext().setMsgId(request.getContext().getMsgId());
+                    handler.handle(unitResponse);
+                });
     }
 
     /**

@@ -35,6 +35,7 @@ public class OpenFalconShortMsgAdaptor implements Unit {
      * - content: 短信内容
      * - tos: 使用逗号分隔的多个手机号
      */
+    @Override
     public Input getInput() {
         return new Input()
                 .add("content", String.class, "短信内容", REQUIRED)

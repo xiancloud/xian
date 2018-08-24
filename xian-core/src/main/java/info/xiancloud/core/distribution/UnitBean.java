@@ -19,6 +19,7 @@ public abstract class UnitBean implements Unit {
     private String name;
     private GroupBean group;
 
+    @Override
     public UnitMeta getMeta() {
         return meta;
     }
@@ -27,6 +28,7 @@ public abstract class UnitBean implements Unit {
         this.meta = meta;
     }
 
+    @Override
     public Input getInput() {
         return input == null ? new Input() : input;
     }

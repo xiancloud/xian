@@ -40,6 +40,7 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
 
     @Override
     public SenderFuture send() {
+        //consider removing this making sure message id, because the id is made sure in outter scope (in the netty event loop thread)
         final boolean newTransIdGenerated = IdManager.makeSureMsgId(unitRequest.getContext());
         try {
             if (StringUtil.isEmpty(unitRequest.getContext().getGroup())) {
@@ -54,6 +55,7 @@ public abstract class AbstractAsyncSender implements IAsyncSender {
             LOG.error(exception);
             callback.callback(UnitResponse.createException(exception));
         } finally {
+            //consider removing this making sure message id, because the id is made sure in outter scope (in the netty event loop thread)
             if (newTransIdGenerated) {
                 //unit invocation without message id so we have produced one and clear thread local message id when invocation ends: 生没带来,死不带走
                 MsgIdHolder.clear();

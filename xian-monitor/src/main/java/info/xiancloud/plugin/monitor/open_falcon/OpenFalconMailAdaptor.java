@@ -38,6 +38,7 @@ public class OpenFalconMailAdaptor implements Unit {
      * - subject: 邮件标题
      * - tos: 使用逗号分隔的多个邮件地址
      */
+    @Override
     public Input getInput() {
         return new Input()
                 .add("content", String.class, "邮件内容")

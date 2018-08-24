@@ -68,11 +68,13 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
                 };
                 ISequencer.build(group, unit, json).sequence(
                         new DefaultLocalAsyncSender(request, new NotifyHandler() {
+                            @Override
                             protected void handle(UnitResponse unitResponse) {
                                 LocalNodeManager.sendBack(unitResponse, backPayloadConsumerOnFailure);
                             }
                         }),
                         new NotifyHandler() {
+                            @Override
                             protected void handle(UnitResponse failureOut) {
                                 LocalNodeManager.sendBack(failureOut, backPayloadConsumerOnFailure);
                             }
@@ -97,8 +99,9 @@ public class RpcServerDefaultHandler extends SimpleChannelInboundHandler<JSONObj
                         LOG.error(String.format("ssid=%s的消息没有找到对应的notifyHandler!整个消息内容=%s,", ssid, json), new Throwable());
                     }
                 }, response.getContext().getMsgId());
-            } else
+            } else {
                 LOG.error("rpc server端只支持request和response两种消息类型，不支持:" + MessageType.getMessageType(json), new RuntimeException());
+            }
         } catch (Throwable e) {
             LOG.error(e);
         } finally {

@@ -17,14 +17,15 @@ import java.util.Map;
 public interface SqlAction extends ISqlLogger {
 
     /**
-     * execution of this sql action
+     * execution of this sql action.
+     * This is the entrance of this sql action instance.
      *
      * @param daoUnit    dao unit object
      * @param map        unit arguments
      * @param connection represents a database connection
      * @return a single unit response object
      */
-    Single<UnitResponse> execute(Unit daoUnit, Map<String, Object> map, XianConnection connection);
+    Single<UnitResponse> execute(Unit daoUnit, Map<String, Object> map, XianConnection connection, String msgId);
 
     /**
      * @return sql driver
@@ -42,6 +43,7 @@ public interface SqlAction extends ISqlLogger {
     /**
      * Safety check.
      * Overwrite this method to provide your own check logic.
+     * Do not make this method blocking.
      *
      * @return checking result, succeeded response or failure response, no exception should be thrown.
      */

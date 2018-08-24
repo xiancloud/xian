@@ -19,7 +19,9 @@ public class Input {
 
     public static class Obj {
 
-        //this default constructor is used for UnitBean deserialization, please do not delete!
+        /**
+         * this default constructor is used for UnitBean deserialization, please do not delete!
+         */
         Obj() {
         }
 
@@ -39,11 +41,17 @@ public class Input {
         private String name;
         private Class clazz;
         private String description;
-        // defaults to not required.
+        /**
+         * defaults to not required.
+         */
         private boolean required = false;
-        //whether or not to use the consistent hash algorithm while sending messages.
+        /**
+         * whether or not to use the consistent hash algorithm while sending messages.
+         */
         private boolean xhash = false;
-        //whether or not to honor the sequence while dealing with received messages.
+        /**
+         * whether or not to honor the sequence while dealing with received messages.
+         */
         private boolean sequential = false;
 
         public String getName() {
@@ -108,6 +116,16 @@ public class Input {
         public Obj setSequential(boolean sequential) {
             this.sequential = sequential;
             return this;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
         }
     }
 
