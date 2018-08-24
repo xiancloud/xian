@@ -2,7 +2,7 @@
 xian是一个微服务框架，更确切的说是一个微服务套件。它基于Java8编写，不依赖spring，不依赖dubbo，上手和学习难度非常小。如果是以学会使用为目的，只要你会Java语言会gradle构建工具，甚至不需要了解微服务的各种概念，比学会使用dubbo和spring cloud不知道简单多少倍。
 
 很开心地告诉大家，现在我们可以基于xian开发100%异步的微服务了！我们基于netty非阻塞io和rxJava2响应式编程风格，实现了以同步风格代码开发异步业务逻辑。
-从gateway到业务层，整个业务生命周期都是异步的！当然，DAO层目前依然使用的是阻塞的JDBC，是由于目前我们局限于JDBC阻塞的标准API。
+从gateway到业务层，整个业务生命周期都是异步的！也已经支持了异步的DAO层实现，仅限于postgresql。由于mysql connectorJ是基于JDBC的实现，因此对于MySQL，我们局限于JDBC阻塞的标准API。
 至此，xian也是actor模型的完整实现了，希望哪天可以跟akka、vertx做性能pk！
 
 
