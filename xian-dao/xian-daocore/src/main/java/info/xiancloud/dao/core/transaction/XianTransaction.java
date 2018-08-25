@@ -87,4 +87,9 @@ public interface XianTransaction {
      */
     Completable close();
 
+    /**
+     * @return true if rollbacked false otherwise.
+     */
+    boolean isRollbacked();
+
 }

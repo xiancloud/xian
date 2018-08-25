@@ -112,15 +112,21 @@ public abstract class DaoUnit implements Unit {
     abstract public SqlAction[] getActions();
 
     /**
-     * judge whether we need to begin the transaction
+     * judge whether we need to begin the transaction.
+     * If there are more than one non-query sql actions in this dao unit, a new transaction will be begun.
+     * if a transaction is already begun, a nested transaction will be begun.
+     * Else no transaction will be begun.
+     *
+     * @return true if this unit is transacitonal false otherwise.
      */
     private boolean isTransactional(SqlAction[] sqlActions, XianTransaction transaction) {
+        int count = 0;
         for (SqlAction sqlAction : sqlActions) {
             if (!(sqlAction instanceof ISelect)) {
-                return true;
+                count++;
             }
         }
-        return transaction.isBegun();
+        return count > 1 || transaction.isBegun();
     }
 
     private boolean readOnly(SqlAction[] sqlActions, UnitRequest request) {

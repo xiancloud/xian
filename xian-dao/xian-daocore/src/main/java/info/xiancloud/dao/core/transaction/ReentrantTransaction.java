@@ -37,6 +37,7 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
 
     @Override
     public Completable rollback() {
+        transactionStatus.setRollbacked(true);
         return doRollback();
         /*.andThen(clear())  let dao unit close this transaction*/
     }
@@ -90,7 +91,7 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
     @Override
     public Completable close() {
         Completable completable;
-        if (count.intValue() == 0) {
+        if (count.intValue() == 0 || isRollbacked()) {
             if (connection != null && !connection.isClosed()) {
                 completable = doClose();
             } else {

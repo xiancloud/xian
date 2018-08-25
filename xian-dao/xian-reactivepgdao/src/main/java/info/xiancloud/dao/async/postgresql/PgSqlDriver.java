@@ -93,21 +93,21 @@ public class PgSqlDriver extends BaseSqlDriver {
     @Override
     public Single<UpdatingResult> update(String patternSql, Map<String, Object> map) {
         return pgConnection0
-                .rxPreparedQuery(preparedSql(patternSql), Tuple.of(preparedParams(patternSql, map)))
+                .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
                 .map(pgRowSet -> new UpdatingResult().setCount(pgRowSet.rowCount()));
     }
 
     @Override
     public Single<DeletionResult> delete(String patternSql, Map<String, Object> map) {
         return pgConnection0
-                .rxPreparedQuery(preparedSql(patternSql), Tuple.of(preparedParams(patternSql, map)))
+                .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
                 .map(pgRowSet -> new DeletionResult().setCount(pgRowSet.rowCount()));
     }
 
     @Override
     public Single<BatchInsertionResult> batchInsert(BatchInsertAction batchInsertAction) {
         Pair<String, Object[]> pair = preparedBatchInsertionSql(batchInsertAction);
-        return pgConnection0.rxPreparedQuery(pair.fst, Tuple.of(pair.snd))
+        return pgConnection0.rxPreparedQuery(pair.fst, tupleFromArray(pair.snd))
                 .map(pgRowSet -> new BatchInsertionResult().setCount(pgRowSet.rowCount()));
     }
 
@@ -145,7 +145,7 @@ public class PgSqlDriver extends BaseSqlDriver {
         return Single.fromCallable(() -> preparedParams(patternSql, map).length > 0)
                 .flatMap(prepared -> {
                     if (prepared) {
-                        return pgConnection0.rxPreparedQuery(preparedSql(patternSql), Tuple.of(preparedParams(patternSql, map)));
+                        return pgConnection0.rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)));
                     } else {
                         return pgConnection0.rxQuery(patternSql);
                     }
@@ -164,5 +164,13 @@ public class PgSqlDriver extends BaseSqlDriver {
                     }
                     return selectionResult;
                 });
+    }
+
+    private Tuple tupleFromArray(Object[] array) {
+        Tuple tuple = Tuple.tuple();
+        for (Object o : array) {
+            tuple.addValue(o);
+        }
+        return tuple;
     }
 }

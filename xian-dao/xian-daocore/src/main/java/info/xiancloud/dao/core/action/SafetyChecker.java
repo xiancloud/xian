@@ -48,7 +48,7 @@ public abstract class SafetyChecker {
             }
         }
         String wheres = Arrays.toString(whereArray);
-        LOG.warn(String.format("安全检查不通过...检查where语句%s发现它很可能是一个全表操作!参数=%s", wheres, map));
-        return UnitResponse.createError(DaoGroup.CODE_SQL_ERROR, JdbcPatternUtil.getCamelKeys(wheres), "not passed for where checking");
+        String errMsg = String.format("安全检查不通过...检查where语句%s发现它很可能是一个全表操作!参数=%s", wheres, map);
+        return UnitResponse.createError(DaoGroup.CODE_SQL_ERROR, JdbcPatternUtil.getCamelKeys(wheres), errMsg);
     }
 }

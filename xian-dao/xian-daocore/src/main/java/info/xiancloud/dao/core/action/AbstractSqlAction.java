@@ -73,10 +73,11 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
             if (XianConfig.getBoolean(CONFIG_LOG_DETAILED_SQL, true)) {
                 logSql(map);
             }
+            final long before = System.nanoTime();
             return executeSql()
                     .flatMap(sqlExecutionResult ->
                             Single.just(UnitResponse.createSuccess(sqlExecutionResult)))
-                    .doOnSuccess(unitResponse -> after(System.nanoTime()))
+                    .doOnSuccess(unitResponse -> after(before))
                     .onErrorReturn(error -> {
                         LOG.error(error);
                         return getSqlDriver().handleException(error, this);
