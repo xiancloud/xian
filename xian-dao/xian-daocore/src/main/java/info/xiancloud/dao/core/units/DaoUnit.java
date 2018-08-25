@@ -8,12 +8,14 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.dao.core.action.AbstractSqlAction;
+import info.xiancloud.dao.core.action.ISingleTableAction;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.select.ISelect;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.pool.PoolFactory;
 import info.xiancloud.dao.core.transaction.TransactionFactory;
 import info.xiancloud.dao.core.transaction.XianTransaction;
+import info.xiancloud.dao.core.utils.TableMetaCache;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -44,6 +46,11 @@ public abstract class DaoUnit implements Unit {
     @Override
     public final void execute(UnitRequest request, Handler<UnitResponse> handler) {
         final SqlAction[] sqlActions = getActions();
+        for (SqlAction sqlAction : sqlActions) {
+            if (sqlAction instanceof ISingleTableAction) {
+                TableMetaCache.makeSureCache(((ISingleTableAction) sqlAction).getTableName());
+            }
+        }
         bareError(request);
         final boolean readOnly = readOnly(sqlActions, request) || request.getContext().isReadyOnly();
         final AtomicBoolean transactional = new AtomicBoolean(false);
