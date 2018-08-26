@@ -6,7 +6,6 @@ import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.ArrayUtil;
 import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.thread.MsgIdHolder;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.model.sqlresult.SqlExecutionResult;
 import info.xiancloud.dao.core.sql.BaseSqlDriver;
@@ -51,43 +50,45 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
 
     @Override
     public final Single<UnitResponse> execute(Unit daoUnit, Map<String, Object> map, XianConnection connection, String msgId) {
-        //set msgId in order make sure compatibility of synchronous and asynchronous dao.
-        boolean msgIdWritten = MsgIdHolder.set(msgId);
-        try {
-            this.msgId = msgId;
-            this.map = map;
-            this.connection = connection;
-            this.daoUnit = (DaoUnit) daoUnit;
-            sqlDriver = getSqlDriver();
-            if (ignore()) {
-                return Single.just(UnitResponse.createSuccess(
-                        String.format("This sql action '%s.%s' is ignored for execution.",
-                                this.daoUnit.getName(), getClass().getSimpleName())
-                ));
-            } else {
-                UnitResponse response = check();
-                if (!response.succeeded()) {
-                    return Single.just(response);
-                }
-            }
-            if (XianConfig.getBoolean(CONFIG_LOG_DETAILED_SQL, true)) {
-                logSql(map);
-            }
-            final long before = System.nanoTime();
-            return executeSql()
-                    .flatMap(sqlExecutionResult ->
-                            Single.just(UnitResponse.createSuccess(sqlExecutionResult)))
-                    .doOnSuccess(unitResponse -> after(before))
-                    .onErrorReturn(error -> {
-                        LOG.error(error);
-                        return getSqlDriver().handleException(error, this);
-                    })
-                    ;
-        } finally {
-            if (msgIdWritten) {
-                MsgIdHolder.clear();
+        ///Not needed anymore because we have make all sql execution on xian thread pool managed thread pool
+        // set msgId in order make sure compatibility of synchronous and asynchronous dao.
+        // boolean msgIdWritten = MsgIdHolder.set(msgId);
+        // try {
+        //    ...
+        // }
+        // finally {
+        //     if (msgIdWritten) {
+        //         MsgIdHolder.clear();
+        //     }
+        //}
+        this.msgId = msgId;
+        this.map = map;
+        this.connection = connection;
+        this.daoUnit = (DaoUnit) daoUnit;
+        sqlDriver = getSqlDriver();
+        if (ignore()) {
+            return Single.just(UnitResponse.createSuccess(
+                    String.format("This sql action '%s.%s' is ignored for execution.",
+                            this.daoUnit.getName(), getClass().getSimpleName())
+            ));
+        } else {
+            UnitResponse response = check();
+            if (!response.succeeded()) {
+                return Single.just(response);
             }
         }
+        if (XianConfig.getBoolean(CONFIG_LOG_DETAILED_SQL, true)) {
+            logSql(map);
+        }
+        final long before = System.nanoTime();
+        return executeSql()
+                .flatMap(sqlExecutionResult -> Single.just(UnitResponse.createSuccess(sqlExecutionResult)))
+                .doOnSuccess(unitResponse -> after(before))
+                .onErrorReturn(error -> {
+                    LOG.error(error);
+                    return getSqlDriver().handleException(error, this);
+                })
+                ;
     }
 
     /**
@@ -110,40 +111,48 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     }
 
     private void after(long before) {
-        boolean msgIdWritten = MsgIdHolder.set(msgId);
-        try {
-            Long howLong = ((System.nanoTime() - before)) / 1000000;
-            JSONObject sqlLog = new JSONObject() {{
-                put("type", "sql");
-                put("cost", howLong);
-                put("sql", patternSql);
-                put("description", "执行SQL耗时 ".concat(howLong.toString()).concat(" ms"));
-            }};
-            if (howLong > SLOW_QUERY_IN_MILLIS) {
-                sqlLog.put("description", String.format("超过%sms的慢查询", SLOW_QUERY_IN_MILLIS));
-                LOG.error(sqlLog.toJSONString());
-            } else {
-                LOG.info(sqlLog.toJSONString());
-            }
-        } finally {
-            if (msgIdWritten) {
-                MsgIdHolder.clear();
-            }
+        ///Not needed anymore because we have make all sql execution on xian thread pool managed thread pool
+        // set msgId in order make sure compatibility of synchronous and asynchronous dao.
+        // boolean msgIdWritten = MsgIdHolder.set(msgId);
+        // try {
+        //    ...
+        // }
+        // finally {
+        //     if (msgIdWritten) {
+        //         MsgIdHolder.clear();
+        //     }
+        //}
+        Long howLong = ((System.nanoTime() - before)) / 1000000;
+        JSONObject sqlLog = new JSONObject() {{
+            put("type", "sql");
+            put("cost", howLong);
+            put("sql", patternSql);
+            put("description", "执行SQL耗时 ".concat(howLong.toString()).concat(" ms"));
+        }};
+        if (howLong > SLOW_QUERY_IN_MILLIS) {
+            sqlLog.put("description", String.format("超过%sms的慢查询", SLOW_QUERY_IN_MILLIS));
+            LOG.error(sqlLog.toJSONString());
+        } else {
+            LOG.info(sqlLog.toJSONString());
         }
     }
 
     @Override
     public void logSql(Map<String, Object> map) {
-        boolean msgIdWritten = MsgIdHolder.set(msgId);
-        try {
-            LOG.info("XianPatternSQL ：" + getPatternSql());
-            LOG.info("Prepared SQL：" + getSqlDriver().preparedSql(getPatternSql()));
-            LOG.info("Full SQL：" + getFullSql());
-        } finally {
-            if (msgIdWritten) {
-                MsgIdHolder.clear();
-            }
-        }
+        ///Not needed anymore because we have make all sql execution on xian thread pool managed thread pool
+        // set msgId in order make sure compatibility of synchronous and asynchronous dao.
+        // boolean msgIdWritten = MsgIdHolder.set(msgId);
+        // try {
+        //    ...
+        // }
+        // finally {
+        //     if (msgIdWritten) {
+        //         MsgIdHolder.clear();
+        //     }
+        //}
+        LOG.info("XianPatternSQL ：" + getPatternSql());
+        LOG.info("Prepared SQL：" + getSqlDriver().preparedSql(getPatternSql()));
+        LOG.info("Full SQL：" + getFullSql());
     }
 
     @Override

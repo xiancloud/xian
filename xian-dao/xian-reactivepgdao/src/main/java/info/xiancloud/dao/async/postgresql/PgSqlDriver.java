@@ -1,7 +1,10 @@
 package info.xiancloud.dao.async.postgresql;
 
 import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Pair;
+import info.xiancloud.core.util.thread.MsgIdHolder;
+import info.xiancloud.dao.async.XianRxJava2Scheduler;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.insert.BatchInsertAction;
 import info.xiancloud.dao.core.connection.XianConnection;
@@ -35,13 +38,16 @@ public class PgSqlDriver extends BaseSqlDriver {
         for (Object o : params.values()) {
             tuple.addValue(o);
         }
+        final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery(preparedSql(patternSql), tuple)
+                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
                 .flatMap(pgRowSet -> Single.just(new SingleInsertionResult()
                         .setCount(pgRowSet.rowCount())
                         //todo here is no generated id
                         .setId(null)
-                ));
+                ))
+                ;
     }
 
     @Override
@@ -73,7 +79,6 @@ public class PgSqlDriver extends BaseSqlDriver {
     public UnitResponse handleException(Throwable exception, SqlAction sqlAction) {
         String fullActualSql = sqlAction.getFullSql();
         UnitResponse response = UnitResponse.createException(exception, "sql failure: " + fullActualSql);
-        exception.printStackTrace();
 ///      todo check this exception.
 //        if (exception instanceof SQLException) {
 //            switch (((SQLException) exception).getErrorCode()) {
@@ -92,46 +97,71 @@ public class PgSqlDriver extends BaseSqlDriver {
 
     @Override
     public Single<UpdatingResult> update(String patternSql, Map<String, Object> map) {
+        LOG.info("=================== execution update sql driver");
+        final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
-                .map(pgRowSet -> new UpdatingResult().setCount(pgRowSet.rowCount()));
+                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                .map(pgRowSet -> {
+                    LOG.info("===================  parse updation result set: " + map);
+                    return new UpdatingResult().setCount(pgRowSet.rowCount());
+                })
+                ;
     }
 
     @Override
     public Single<DeletionResult> delete(String patternSql, Map<String, Object> map) {
+        LOG.info("=================== execution delete sql driver");
+        final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
-                .map(pgRowSet -> new DeletionResult().setCount(pgRowSet.rowCount()));
+                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                .map(pgRowSet -> {
+                    LOG.info("===================  parse deletion result set: " + map);
+                    return new DeletionResult().setCount(pgRowSet.rowCount());
+                })
+                ;
     }
 
     @Override
     public Single<BatchInsertionResult> batchInsert(BatchInsertAction batchInsertAction) {
         Pair<String, Object[]> pair = preparedBatchInsertionSql(batchInsertAction);
-        return pgConnection0.rxPreparedQuery(pair.fst, tupleFromArray(pair.snd))
-                .map(pgRowSet -> new BatchInsertionResult().setCount(pgRowSet.rowCount()));
+        final String msgId = MsgIdHolder.get();
+        return pgConnection0
+                .rxPreparedQuery(pair.fst, tupleFromArray(pair.snd))
+                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                .map(pgRowSet -> new BatchInsertionResult().setCount(pgRowSet.rowCount()))
+                ;
     }
 
     @Override
     public Single<String[]> queryCols(String tableName) {
-        return pgConnection0.rxPreparedQuery("SELECT * FROM " + tableName + " WHERE 1>2 ")
+        final String msgId = MsgIdHolder.get();
+        return pgConnection0
+                .rxPreparedQuery("SELECT * FROM " + tableName + " WHERE 1>2 ")
+                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
                 .map(pgRowSet -> {
                     List<String> cols = pgRowSet.columnsNames();
                     return cols.toArray(new String[cols.size()]);
-                });
+                })
+                ;
     }
 
     @Override
     public Single<String> getIdCol(String tableName) {
-        final String primaryKeyNameAlias = "primarykey";
+        final String primaryKeyNameAlias = "primarykey",
+                msgId = MsgIdHolder.get();
         return pgConnection0
-                .rxPreparedQuery(
+                .rxQuery(
                         " SELECT a.attname AS " + primaryKeyNameAlias +
                                 " FROM   pg_index i " +
                                 " JOIN   pg_attribute a ON a.attrelid = i.indrelid " +
                                 "                      AND a.attnum = ANY(i.indkey) " +
-                                " WHERE  i.indrelid = $1::regclass " +
-                                " AND    i.indisprimary; ", Tuple.of(tableName))
-                .map(pgRowSet -> pgRowSet.iterator().next().getString(primaryKeyNameAlias));
+                                " WHERE  i.indrelid = '" + tableName + "'::regclass " +
+                                " AND    i.indisprimary; ")
+                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                .map(pgRowSet -> pgRowSet.iterator().next().getString(primaryKeyNameAlias))
+                ;
     }
 
     @Override
@@ -142,12 +172,19 @@ public class PgSqlDriver extends BaseSqlDriver {
 
     @Override
     public Single<RecordsListSelectionResult> select(String patternSql, Map<String, Object> map) {
+        final String msgId = MsgIdHolder.get();
         return Single.fromCallable(() -> preparedParams(patternSql, map).length > 0)
                 .flatMap(prepared -> {
                     if (prepared) {
-                        return pgConnection0.rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)));
+                        return pgConnection0
+                                .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
+                                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                                ;
                     } else {
-                        return pgConnection0.rxQuery(patternSql);
+                        return pgConnection0
+                                .rxQuery(patternSql)
+                                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                                ;
                     }
                 })
                 .map(pgRowSet -> {

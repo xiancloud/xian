@@ -6,6 +6,7 @@ import info.xiancloud.core.Unit;
 import info.xiancloud.core.message.ExceptionWithUnitResponse;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.dao.core.action.AbstractSqlAction;
 import info.xiancloud.dao.core.action.ISingleTableAction;
@@ -93,6 +94,7 @@ public abstract class DaoUnit implements Unit {
                             if (error instanceof ExceptionWithUnitResponse) {
                                 exceptionWithUnitResponse = (ExceptionWithUnitResponse) error;
                             } else {
+                                LOG.error(error);
                                 exceptionWithUnitResponse = new ExceptionWithUnitResponse(UnitResponse.createException(error));
                             }
                             if (transactional.get()) {
@@ -108,6 +110,11 @@ public abstract class DaoUnit implements Unit {
                 .subscribe(unitResponse -> {
                     unitResponse.getContext().setMsgId(request.getContext().getMsgId());
                     handler.handle(unitResponse);
+                }, error -> {
+                    LOG.error(error);
+                    UnitResponse errorResponse = UnitResponse.createException(error);
+                    errorResponse.getContext().setMsgId(request.getContext().getMsgId());
+                    handler.handle(errorResponse);
                 });
     }
 

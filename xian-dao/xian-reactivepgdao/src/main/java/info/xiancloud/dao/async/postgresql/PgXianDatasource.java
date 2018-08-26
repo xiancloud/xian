@@ -1,6 +1,8 @@
 package info.xiancloud.dao.async.postgresql;
 
 import info.xiancloud.core.util.LOG;
+import info.xiancloud.core.util.thread.MsgIdHolder;
+import info.xiancloud.dao.async.XianRxJava2Scheduler;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.pool.XianDataSource;
 import io.reactiverse.pgclient.PgPoolOptions;
@@ -44,8 +46,10 @@ public class PgXianDatasource extends XianDataSource {
 
     @Override
     public Single<XianConnection> getConnection() {
+        String msgId = MsgIdHolder.get();
         return pgDatasource
                 .rxGetConnection()
+                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
                 .map(pgConnection -> new PgConnection().setPgConnection0(pgConnection));
     }
 

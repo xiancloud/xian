@@ -1,6 +1,7 @@
 package info.xiancloud.dao.core.action.update;
 
 import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.dao.core.action.IDML;
 import info.xiancloud.dao.core.action.IUnique;
@@ -39,6 +40,7 @@ public abstract class UpdateAction extends WhereAction implements IUnique, IDML 
 
     @Override
     protected Single<UpdatingResult> executeSql() {
+        LOG.info("==================update execution");
         return getSqlDriver().update(getPatternSql(), getMap());
     }
 

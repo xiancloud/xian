@@ -19,7 +19,7 @@ public class TestReactivepgCompositedDaoUnit extends DaoUnit {
                     @Override
                     protected String[] searchConditions() {
                         return new String[]{
-                                "column2 = {column2}"
+                                "column2 = 2"
                         };
                     }
                 },
@@ -31,9 +31,11 @@ public class TestReactivepgCompositedDaoUnit extends DaoUnit {
 
                     @Override
                     protected String[] searchConditions() {
-                        return new String[0];
+                        return new String[]{
+                                "column3 = 3"
+                        };
                     }
-                }
+                },
         };
     }
 

@@ -37,18 +37,18 @@ final public class UnitResponse {
      */
     private String code;
     /**
+     * description message.
+     */
+    private String message;
+    /**
      * the data object.
      * Can be an exception.
      */
     private Object data;
-    /*
-     * null if no exception. Do not use this exception property when code is {@link Group#CODE_SUCCESS}
-    private Throwable exception;
-    */
-    /**
-     * description message.
-     */
-    private String message;
+
+    ///null if no exception. Do not use this exception property when code is {@link Group#CODE_SUCCESS}
+    // 'exception' property is deprecated, exception is put in 'data' property.
+    // private Throwable exception;
 
     /**
      * There is always a default. Null pointer is not welcome.

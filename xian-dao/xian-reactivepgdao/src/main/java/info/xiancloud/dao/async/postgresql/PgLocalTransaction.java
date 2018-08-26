@@ -34,6 +34,17 @@ public class PgLocalTransaction extends BaseLocalTransaction {
     @Override
     protected Completable doRollback() {
         return pgTransaction0.rxRollback();
+
+        ///fixme, seems that reactive-pg-client's rxRollback() and rollback(handler) both have some bug.
+        /*return Completable.create(emitter -> {
+            pgTransaction0.rollback(event -> {
+                if (event.succeeded()) {
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(event.cause());
+                }
+            });
+        });*/
     }
 
 
