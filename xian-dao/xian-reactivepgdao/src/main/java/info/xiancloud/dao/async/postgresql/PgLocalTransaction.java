@@ -20,10 +20,11 @@ public class PgLocalTransaction extends BaseLocalTransaction {
 
     @Override
     protected Completable doBegin() {
-        PgConnection pgConnection = (PgConnection) connection;
-        io.reactiverse.reactivex.pgclient.PgConnection pgConnection0 = pgConnection.getPgConnection0();
-        pgTransaction0 = pgConnection0.begin();
-        return Completable.complete();
+        return Completable.fromAction(() -> {
+            PgConnection pgConnection = (PgConnection) connection;
+            io.reactiverse.reactivex.pgclient.PgConnection pgConnection0 = pgConnection.getPgConnection0();
+            pgTransaction0 = pgConnection0.begin();
+        });
     }
 
     @Override

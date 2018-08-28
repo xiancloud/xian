@@ -22,8 +22,9 @@ public class JdbcConnection extends BaseXianConnection {
         return Completable.fromAction(() -> connection0.close());
     }
 
-    public void setConnection0(Connection connection0) {
+    public JdbcConnection setConnection0(Connection connection0) {
         this.connection0 = connection0;
+        return this;
     }
 
     /**

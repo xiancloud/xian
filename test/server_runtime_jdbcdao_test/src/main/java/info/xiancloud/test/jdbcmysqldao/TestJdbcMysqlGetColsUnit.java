@@ -1,4 +1,4 @@
-package info.xiancloud.test.reactivepgdao;
+package info.xiancloud.test.jdbcmysqldao;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.Group;
@@ -11,8 +11,8 @@ import info.xiancloud.dao.core.utils.TableMetaCache;
 
 import java.util.concurrent.ExecutionException;
 
-public class TestReactivepgGetColsUnit implements Unit {
-    private static final String TABLE_NAME = "untitled_table";
+public class TestJdbcMysqlGetColsUnit implements Unit {
+    private static final String TABLE_NAME = "xian_table";
 
     @Override
     public Input getInput() {
@@ -21,7 +21,7 @@ public class TestReactivepgGetColsUnit implements Unit {
 
     @Override
     public Group getGroup() {
-        return ReactivepgTestDaoGroup.SINGLETON;
+        return JdbcMysqlTestDaoGroup.SINGLETON;
     }
 
     @Override

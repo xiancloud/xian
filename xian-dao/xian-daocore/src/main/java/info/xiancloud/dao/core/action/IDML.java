@@ -1,7 +1,18 @@
 package info.xiancloud.dao.core.action;
 
 /**
- * DML语句标记
+ * DML（Data Manipulation Language）
+ * eg.
+ * <code>
+ * SELECT
+ * INSERT
+ * UPDATE
+ * DELETE
+ * MERGE
+ * CALL
+ * EXPLAIN PLAN
+ * LOCK TABLE
+ * </code>
  *
  * @author happyyangyuan
  */

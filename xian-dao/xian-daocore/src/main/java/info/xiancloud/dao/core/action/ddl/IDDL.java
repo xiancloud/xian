@@ -1,13 +1,25 @@
-package info.xiancloud.dao.jdbc.sql.ddl;
+package info.xiancloud.dao.core.action.ddl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * 继承了此接口的action都是DDL语句的action
+ * DDL is
+ * Data Definition Language.
+ * eg.
+ * <code>
+ * CREATE
+ * ALTER
+ * DROP
+ * TRUNCATE
+ * COMMENT
+ * RENAME
+ * </code>
+ * DDL needs no commitment.
  *
  * @author happyyangyuan
+ * @deprecated Not used by now.
  */
 public interface IDDL {
     /**

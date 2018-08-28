@@ -3,6 +3,9 @@ package info.xiancloud.dao.jdbc.pool.druid;
 import com.alibaba.druid.pool.GetConnectionTimeoutException;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.pool.XianDataSource;
+import info.xiancloud.dao.jdbc.connection.JdbcConnection;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 import java.sql.SQLException;
 
@@ -42,9 +45,11 @@ public class DruidDataSource extends XianDataSource {
     }
 
     @Override
-    public XianConnection getConnection() {
+    public Single<XianConnection> getConnection() {
         try {
-            return internalDataSource.getConnection(connectionAcquisitionTimeout);
+            return Single.just(
+                    new JdbcConnection().setConnection0(internalDataSource.getConnection(connectionAcquisitionTimeout))
+            );
         } catch (GetConnectionTimeoutException e) {
             throw new RuntimeException("获取数据库连接超时", e);
         } catch (SQLException e) {
@@ -53,8 +58,8 @@ public class DruidDataSource extends XianDataSource {
     }
 
     @Override
-    public void destroy() {
-        internalDataSource.close();
+    public Completable destroy() {
+        return Completable.fromAction(() -> internalDataSource.close());
     }
 
     @Override

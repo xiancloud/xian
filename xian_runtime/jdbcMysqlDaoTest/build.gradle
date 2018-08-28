@@ -1,0 +1,6 @@
+dependencies {
+    runtime project(':xian-dao:xian-jdbcdao')
+    runtime project(':xian-httpserver:xian-httpserver-core')
+    runtime project(':xian-httpserver:xian-nettyhttpserver')
+    runtime project(':test:server_runtime_jdbcdao_test')
+}

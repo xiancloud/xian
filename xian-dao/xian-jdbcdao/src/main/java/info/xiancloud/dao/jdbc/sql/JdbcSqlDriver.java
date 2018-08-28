@@ -2,8 +2,10 @@ package info.xiancloud.dao.jdbc.sql;
 
 import com.alibaba.fastjson.JSONObject;
 import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.core.util.StringUtil;
+import info.xiancloud.core.util.thread.MsgIdHolder;
 import info.xiancloud.dao.core.DaoGroup;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.insert.BatchInsertAction;
@@ -156,9 +158,13 @@ public class JdbcSqlDriver extends BaseSqlDriver {
             public int resultType() {
                 return SELECT_SINGLE;
             }
-        }.execute(null, null, connection).map(unitResponse -> {
-            Map autoIncrement = unitResponse.getData();
-            return autoIncrement.get(StringUtil.underlineToCamel(alias)).toString();
+        }.execute(null, null, connection, MsgIdHolder.get()).map(unitResponse -> {
+            SingleRecordSelectionResult autoIncrement = unitResponse.getData();
+            if (autoIncrement.getCount() == 0) {
+                LOG.info("No primary key exists in table " + tableName);
+                return "";
+            }
+            return autoIncrement.getRecord().get(alias).toString();
         });
     }
 
