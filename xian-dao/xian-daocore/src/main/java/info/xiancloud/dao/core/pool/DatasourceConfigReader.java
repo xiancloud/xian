@@ -4,7 +4,7 @@ import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.util.LOG;
 
 /**
- * Datasource configuration reader. Datasource configuration property file demo: <br/>
+ * Datasource configuration reader. Datasource configuration property file demo: <br>
  * <p>
  * <code>
  * db_url=

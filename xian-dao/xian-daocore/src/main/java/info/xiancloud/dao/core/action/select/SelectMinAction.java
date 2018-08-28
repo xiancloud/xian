@@ -5,10 +5,8 @@ import info.xiancloud.core.util.StringUtil;
 /**
  * SelectMinAction, eg.
  * <code>
- * <p>
  * select min(col0) from table0 where col1 = 123
  * group by col2
- * </p>
  * </code>
  *
  * @author happyyangyuan

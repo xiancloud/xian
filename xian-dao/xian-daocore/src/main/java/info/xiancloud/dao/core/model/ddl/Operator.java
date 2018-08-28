@@ -22,23 +22,23 @@ public enum Operator {
      */
     equal,
     /**
-     * "not equal operator", eg. !=
+     * "not equal" operator, eg. !=
      */
     not_equal,
     /**
-     * "less than" operator, eg. <
+     * "less than" operator, eg. ＜
      */
     less_than,
     /**
-     * "less or equal" operator, eg. <=
+     * "less or equal" operator, eg. ＜＝
      */
     less_equal,
     /**
-     * "greater or equal" operator, eg. >=
+     * "greater or equal" operator, eg. ＞=
      */
     greater_equal,
     /**
-     * "greater than" operator, eg. >
+     * "greater than" operator, eg. ＞
      */
     greater_than,
     /**

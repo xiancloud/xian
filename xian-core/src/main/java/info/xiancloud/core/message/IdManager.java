@@ -42,7 +42,7 @@ public class IdManager {
     }
 
     /**
-     * @return LOCAL_NODE_ID <S>+ currentTimeMillis</S> + sequence序号
+     * @return LOCAL_NODE_ID + sequence序号
      */
     public static String nextMsgId() {
         return LOCAL_NODE_ID.concat("_")/* + System.nanoTime() + "_"*/ + MSG_ID_SEQUENCE.incrementAndGet();

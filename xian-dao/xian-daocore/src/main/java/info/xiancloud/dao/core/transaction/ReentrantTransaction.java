@@ -46,9 +46,9 @@ public abstract class ReentrantTransaction extends BaseXianTransaction {
 
     /**
      * Clear this transaction.
-     * Clearing transaction does the following steps:<br/>
-     * 1. clear cache   <br/>
-     * 2. close the connection  <br/>
+     * Clearing transaction does the following steps:<br>
+     * 1. clear cache   <br>
+     * 2. close the connection  <br>
      * 3. set counter to 0.
      * <p>
      * This method must be implemented to be reentrant to make calling this method more than once to be safe .

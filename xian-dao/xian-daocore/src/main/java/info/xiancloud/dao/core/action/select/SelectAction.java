@@ -46,8 +46,8 @@ public abstract class SelectAction extends WhereAction implements ISelect {
 
     /**
      * provides select list for the query below:
-     * <br/> <code>
-     * SELECT select_list <br/>
+     * <br><code>
+     * SELECT select_list
      * [ FROM table_source ] [ WHERE search_condition ]
      * </code>
      *
@@ -57,8 +57,8 @@ public abstract class SelectAction extends WhereAction implements ISelect {
 
     /**
      * provides table source for the query below:
-     * <br/> <code>
-     * SELECT select_list <br/>
+     * <code>
+     * SELECT select_list
      * [ FROM table_source ] [ WHERE search_condition ]
      * </code>
      *

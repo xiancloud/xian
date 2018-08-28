@@ -22,9 +22,9 @@ public abstract class WhereAction extends AbstractSqlAction {
     }
 
     /**
-     * Produces sql header. A sql header is select and from clause or update table set xxx=yyy clause. <br/>
-     * eg. <code>select * from source_table</code><br/>
-     * <code> update table0 set col0=123 </code><br/>
+     * Produces sql header. A sql header is select and from clause or update table set xxx=yyy clause. <br>
+     * eg. <code>select * from source_table</code><br>
+     * <code> update table0 set col0=123 </code><br>
      * Note: where clause is not part of sql header
      *
      * @return sql header
@@ -34,7 +34,7 @@ public abstract class WhereAction extends AbstractSqlAction {
     /**
      * Give an array of search conditions for the frame to format a where clause.
      *
-     * @return search condition string array. eg. {col0 = 10, col1 > 0}
+     * @return search condition string array. eg. {col0 = 10, col1 ＞ 0}
      */
     protected abstract String[] searchConditions();
 

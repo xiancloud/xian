@@ -41,9 +41,9 @@ public interface XianSqlDriver extends SqlDriverInsertion, SalDriverUpdating, Sq
      * produces a batch prepared insertion sql and its prepared parameter array.
      * 注意:批量插入不支持本db框架的pattern模式,原因是本action的入参并不是单纯的一个map,而是map列表,这些map内的key都是一样的
      *
-     * @param batchInsertAction the batch insertion action, which provides the following property for a prepared batch sql building: <br/>
-     *                          1. tableName table you want to insert records into.<br/>
-     *                          2. cols      table columns<br/>
+     * @param batchInsertAction the batch insertion action, which provides the following property for a prepared batch sql building:
+     *                          1. tableName table you want to insert records into.
+     *                          2. cols      table columns
      *                          3. values    values you want to insert
      * @return the prepared sql and prepared parameter array pair.
      */

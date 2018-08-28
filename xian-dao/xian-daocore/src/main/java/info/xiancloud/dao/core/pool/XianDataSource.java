@@ -14,8 +14,8 @@ public abstract class XianDataSource {
     /**
      * this full url for the datasource except the username and password.
      * implementations must obey the qualified url specification:
-     * eg. mysql://host:port/database?abc=efg&hi=000;
-     * eg. postgresql://host:port/database?abc=efg&lll=111;
+     * eg. mysql://host:port/database?abc=efg&amp;hi=000;
+     * eg. postgresql://host:port/database?abc=efg&amp;lll=111;
      * This is mysql standard and xian's dao plugin obeys it. Other datasource should abey it too.
      */
     protected String url;
