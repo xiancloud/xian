@@ -71,7 +71,8 @@ public abstract class DaoUnit implements Unit {
                     }
                 })
                 .flatMap(transaction -> Flowable.fromArray(sqlActions)
-                        .flatMapSingle(action -> action.execute(this, request.getArgMap(), transaction.getConnection(), request.getContext().getMsgId()))
+                        .concatMapSingle(action -> action.execute(this, request.getArgMap(), transaction.getConnection(), request.getContext().getMsgId()))
+                        /*.flatMapSingle(action -> action.execute(this, request.getArgMap(), transaction.getConnection(), request.getContext().getMsgId()))*/
                         .reduce(UnitResponse.succeededSingleton()
                                 , (unitResponse, unitResponse2) -> {
                                     if (unitResponse2.succeeded()) {

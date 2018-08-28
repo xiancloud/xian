@@ -4,7 +4,6 @@ import info.xiancloud.core.message.UnitResponse;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Pair;
 import info.xiancloud.core.util.thread.MsgIdHolder;
-import info.xiancloud.dao.async.XianRxJava2Scheduler;
 import info.xiancloud.dao.core.action.SqlAction;
 import info.xiancloud.dao.core.action.insert.BatchInsertAction;
 import info.xiancloud.dao.core.connection.XianConnection;
@@ -41,7 +40,10 @@ public class PgSqlDriver extends BaseSqlDriver {
         final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery(preparedSql(patternSql), tuple)
-                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                /*.observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                 */
                 .flatMap(pgRowSet -> Single.just(new SingleInsertionResult()
                         .setCount(pgRowSet.rowCount())
                         //todo here is no generated id
@@ -101,7 +103,10 @@ public class PgSqlDriver extends BaseSqlDriver {
         final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
-                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                /*.observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                 */
                 .map(pgRowSet -> {
                     LOG.info("===================  parse updation result set: " + map);
                     return new UpdatingResult().setCount(pgRowSet.rowCount());
@@ -115,7 +120,10 @@ public class PgSqlDriver extends BaseSqlDriver {
         final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
-                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                /*.observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                 */
                 .map(pgRowSet -> {
                     LOG.info("===================  parse deletion result set: " + map);
                     return new DeletionResult().setCount(pgRowSet.rowCount());
@@ -129,7 +137,10 @@ public class PgSqlDriver extends BaseSqlDriver {
         final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery(pair.fst, tupleFromArray(pair.snd))
-                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                /*.observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                 */
                 .map(pgRowSet -> new BatchInsertionResult().setCount(pgRowSet.rowCount()))
                 ;
     }
@@ -139,7 +150,10 @@ public class PgSqlDriver extends BaseSqlDriver {
         final String msgId = MsgIdHolder.get();
         return pgConnection0
                 .rxPreparedQuery("SELECT * FROM " + tableName + " WHERE 1>2 ")
-                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                /*.observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                 */
                 .map(pgRowSet -> {
                     List<String> cols = pgRowSet.columnsNames();
                     return cols.toArray(new String[cols.size()]);
@@ -159,7 +173,10 @@ public class PgSqlDriver extends BaseSqlDriver {
                                 "                      AND a.attnum = ANY(i.indkey) " +
                                 " WHERE  i.indrelid = '" + tableName + "'::regclass " +
                                 " AND    i.indisprimary; ")
-                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                /*.observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                 */
                 .map(pgRowSet -> pgRowSet.iterator().next().getString(primaryKeyNameAlias))
                 ;
     }
@@ -178,12 +195,18 @@ public class PgSqlDriver extends BaseSqlDriver {
                     if (prepared) {
                         return pgConnection0
                                 .rxPreparedQuery(preparedSql(patternSql), tupleFromArray(preparedParams(patternSql, map)))
-                                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                                /* .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                                   todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                                   todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                                */
                                 ;
                     } else {
                         return pgConnection0
                                 .rxQuery(patternSql)
-                                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                                /* .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                                   todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                                   todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                                */
                                 ;
                     }
                 })

@@ -1,8 +1,6 @@
 package info.xiancloud.dao.async.postgresql;
 
-import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.thread.MsgIdHolder;
-import info.xiancloud.dao.async.XianRxJava2Scheduler;
 import info.xiancloud.dao.core.connection.XianConnection;
 import info.xiancloud.dao.core.pool.XianDataSource;
 import io.reactiverse.pgclient.PgPoolOptions;
@@ -49,7 +47,10 @@ public class PgXianDatasource extends XianDataSource {
         String msgId = MsgIdHolder.get();
         return pgDatasource
                 .rxGetConnection()
-                .observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                /*.observeOn(new XianRxJava2Scheduler().setMsgId(msgId))
+                todo, it seems that if we use reactive-pg-client, we have to use vertx-worker-thread.
+                todo, because reactive-pg-client uses the vertx-work-thread context to hold transaction status.
+                 */
                 .map(pgConnection -> new PgConnection().setPgConnection0(pgConnection));
     }
 
