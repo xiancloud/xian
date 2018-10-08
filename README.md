@@ -22,62 +22,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 
 ## 30分钟学会使用xian frame开发微服务
 
-### 编写一个微服务单元
-编写一个微服务单元只需要实现接口Unit即可：
-````java
-public class HelloWorldUnit implements Unit {
-    @Override
-    public String getName() { // 指定一个unit名称
-        return "helloWorld";
-    }
-    
-    @Override
-    public Group getGroup() { // 指定当前微服务单元所属的group对象
-        return TestGroup.singleton;
-    }
-
-    @Override
-    public Input getInput() { // 指定微服务单元的入参定义
-        return Input.create().add("yourName", String.class, "你的名字", REQUIRED);
-    }
-
-    @Override
-    public void execute(UnitRequest msg,Handler<UnitResponse> handler) { // 当前微服务单元的执行逻辑
-        UnitResponse unitResponse = UnitResponse.createSuccess("hello world, "+ msg.getString("yourName"));
-        handler.handle(unitResponse); // callback回调 以返回unit执行结果
-    }
-}
-````
-定义一个微服务单元是不是很简单？ 接下来我们展示如何使用RPC来调用该服务单元：
-````java
-UnitResponse resp = SingleRxXian.call("test", "helloWorld", map/bean).blockingGet();//这种阻塞业务的方式，我们是非常不推荐的！这里仅仅做展示。
-````
-以上是同步RPC调用，下面展示异步RPC调用：
-````java
-SingleRxXian
-    .call("test", "helloWorld", map/bean)
-    .subscribe(unitResponse -> {
-        // 这里可以对unitResponse进行处理
-    });
-    
-// 链式调用， 这里如果大家对rxJava有一定的了解的话，那么以下代码你肯定信手拈来
-SingleRxXian
-    .call("test", "helloWorld", map/bean)
-    .flatMap(unitResponse -> {
-       return SingleRxXian.call("anotherGroup", "anotherUnit0", unitResponse.dataToMap());
-    })
-    .flatMap(unitResponse -> {
-       return SingleRxXian.call("anotherGroup", "anotherUnit1", unitResponse.dataToMap());
-    })
-    .subscribe(unitResponse -> {
-        // 这里可以对unitResponse进行处理
-    });
-    
-````
-
-接下来，你只需要在各个微服务内编写各自的微服务单元，然后就可以实现自己的分布式应用啦，就是这么简单！
-
-### xian_template
+### 如何运行？程序的入口？——xian_template
 我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xian frame的依赖。
 
 #### 1、下载gradle项目模板源码
@@ -221,6 +166,61 @@ SingleRxXian.call("demoGroup01", "demoUnit01",new JSONObject()).subscribe();
 
 子module /xian_template/test内可以开发Junit代码或者直接写main入口代码进行单元测试，它将所有的本project定义的unit统一在本地管理，而不使用注册中心，我们可以直接使用rpc工具类"Xian.java"来本地调用的各个unit。详见/xian_template project内的DemoUnitTest.java类。
 
+
+### 编写一个微服务单元
+编写一个微服务单元只需要实现接口Unit即可：
+````java
+public class HelloWorldUnit implements Unit {
+    @Override
+    public String getName() { // 指定一个unit名称
+        return "helloWorld";
+    }
+    
+    @Override
+    public Group getGroup() { // 指定当前微服务单元所属的group对象
+        return TestGroup.singleton;
+    }
+
+    @Override
+    public Input getInput() { // 指定微服务单元的入参定义
+        return Input.create().add("yourName", String.class, "你的名字", REQUIRED);
+    }
+
+    @Override
+    public void execute(UnitRequest msg,Handler<UnitResponse> handler) { // 当前微服务单元的执行逻辑
+        UnitResponse unitResponse = UnitResponse.createSuccess("hello world, "+ msg.getString("yourName"));
+        handler.handle(unitResponse); // callback回调 以返回unit执行结果
+    }
+}
+````
+定义一个微服务单元是不是很简单？ 接下来我们展示如何使用RPC来调用该服务单元：
+````java
+UnitResponse resp = SingleRxXian.call("test", "helloWorld", map/bean).blockingGet();//这种阻塞业务的方式，我们是非常不推荐的！这里仅仅做展示。
+````
+以上是同步RPC调用，下面展示异步RPC调用：
+````java
+SingleRxXian
+    .call("test", "helloWorld", map/bean)
+    .subscribe(unitResponse -> {
+        // 这里可以对unitResponse进行处理
+    });
+    
+// 链式调用， 这里如果大家对rxJava有一定的了解的话，那么以下代码你肯定信手拈来
+SingleRxXian
+    .call("test", "helloWorld", map/bean)
+    .flatMap(unitResponse -> {
+       return SingleRxXian.call("anotherGroup", "anotherUnit0", unitResponse.dataToMap());
+    })
+    .flatMap(unitResponse -> {
+       return SingleRxXian.call("anotherGroup", "anotherUnit1", unitResponse.dataToMap());
+    })
+    .subscribe(unitResponse -> {
+        // 这里可以对unitResponse进行处理
+    });
+    
+````
+
+接下来，你只需要在各个微服务内编写各自的微服务单元，然后就可以实现自己的分布式应用啦，就是这么简单！
 
 
 ### 基础概念参考
