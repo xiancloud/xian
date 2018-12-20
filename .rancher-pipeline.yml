@@ -5,5 +5,5 @@ stages:
       image: harbor.cedarhd.com/xiancloud/gradle-java-8
       shellScript: |-
         java -version
-        gradle clean uploadArchives closeAndReleaseRepository
+        gradle clean uploadArchives
 timeout: 60
