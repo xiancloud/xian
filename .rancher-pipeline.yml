@@ -5,5 +5,5 @@ stages:
       image: gradle:4.10-jdk8
       shellScript: |-
         java -version
-        gradle clean uploadArchives closeAndReleaseRepository
+        #gradle clean uploadArchives closeAndReleaseRepository
 timeout: 60
