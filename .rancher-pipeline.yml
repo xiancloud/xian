@@ -2,8 +2,8 @@ stages:
 - name: uploadArchives
   steps:
   - runScriptConfig:
-      image: amd64/gradle:4.10-jre8-slim
+      image: harbor.cedarhd.com/xiancloud/gradle-java-8
       shellScript: |-
         java -version
-        #gradle clean uploadArchives closeAndReleaseRepository
+        gradle clean uploadArchives closeAndReleaseRepository
 timeout: 60
