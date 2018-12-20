@@ -1,0 +1,9 @@
+stages:
+- name: uploadArchives
+  steps:
+  - runScriptConfig:
+      image: gradle
+      shellScript: |-
+        java -version
+        gradle clean uploadArchives closeAndReleaseRepository
+timeout: 60
