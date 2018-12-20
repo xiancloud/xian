@@ -2,7 +2,7 @@ stages:
 - name: uploadArchives
   steps:
   - runScriptConfig:
-      image: gradle:jdk8
+      image: amd64/gradle:4.10-jre8-slim
       shellScript: |-
         java -version
         #gradle clean uploadArchives closeAndReleaseRepository
