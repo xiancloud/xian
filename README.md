@@ -18,7 +18,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 7. 帮助实现devops开发运维协作能力。
 8. actor-model实现，开发异步业务而没有回调地狱！
 ### 基于xian你可以实现如下逻辑架构图对应的微服务集群
-![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://xiancloud.info/xian/基于xian的微服务逻辑架构图.png)
+![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://processon.com/chart_image/5c779b2ae4b07bd3f0709102.png?_=1551343472005)
 
 ## 30分钟学会使用xian frame开发微服务
 
