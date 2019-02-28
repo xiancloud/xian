@@ -48,7 +48,7 @@ compile group: 'info.xiancloud', name: 'xian-core', version: "${xianVersion}"
 ````
 ##### 3.3、 xian_runtime内定义了4个微服务application
 调用关系如下图所示：
-![xian_template rpc调用关系图](http://xiancloud.info/xian/xian_template微服务调用关系图.png)
+![xian_template rpc调用关系图](http://processon.com/chart_image/5a9996e7e4b0701a028658d7.png?_=1551343650234)
 
 其中，demoGateway是网关微服务，内置了高性能netty http server。
 其他微服务application接下来介绍。
