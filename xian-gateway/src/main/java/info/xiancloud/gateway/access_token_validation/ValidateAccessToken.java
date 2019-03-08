@@ -95,7 +95,7 @@ public class ValidateAccessToken {
      */
     private static Single<AccessToken> forToken(String tokenString) {
         return SingleRxXian.call("OAuth", "validateAccessToken", new JSONObject() {{
-            put("accessToken", tokenString);
+            put("access_token", tokenString);
         }}).map(o -> {
             if (!o.succeeded()) {
                 throw new AccessTokenFailure(tokenString);
