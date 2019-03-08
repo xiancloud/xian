@@ -9,7 +9,7 @@ subprojects {
     apply plugin: 'signing'
 
     group 'info.xiancloud'
-    version '0.2.1'
+    version '0.2.1.1'
 
     repositories {
         jcenter()
@@ -135,6 +135,18 @@ subprojects {
         }
         artifacts {
             war tasks.war
+        }
+    }
+
+    //install xian's releases into our private repository.
+    install {
+        repositories {
+            mavenDeployer {
+                // Modify userName and password if you want to upload xian to your private repo.
+                repository(url: "https://your.company.com/repository/maven-releases/") {
+                    authentication(userName: "*****", password: "*****")
+                }
+            }
         }
     }
 }
