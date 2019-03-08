@@ -9,7 +9,7 @@ subprojects {
     apply plugin: 'signing'
 
     group 'info.xiancloud'
-    version '0.2.1.1'
+    version '0.2.1.2'
 
     repositories {
         jcenter()
