@@ -21,7 +21,9 @@ public class GroupHtmlApidocUnit implements Unit {
 
     @Override
     public UnitMeta getMeta() {
-        return UnitMeta.create().setDataOnly(true);
+        return UnitMeta.create()
+                /*tell the api gateway to return data part of the response only*/.setDataOnly(true)
+                /*tell the api gateway not to check the access token header.*/.setSecure(false);
     }
 
     @Override

@@ -39,10 +39,14 @@ public class ValidateAccessToken {
     }
 
     private static boolean isSecure(String uri) {
-        if (Arrays.asList(XianConfig.getStringArray("api_gateway_white_uri_list")).contains(uri)) {
+        if (!StringUtil.isEmpty(uri)) {
             //todo add 'secure' property for rule engine，instead of static config
-            //todo please deprecate white uri, kept for compatibility only.
-            return false;
+            //todo please deprecate white uri, and use unit's meta property to determine whether a unit is secure or not. See below. This is kept for compatibility only.
+            for (String apiGatewayWhiteUri : XianConfig.getStringArray("api_gateway_white_uri_list")) {
+                if(uri.startsWith(apiGatewayWhiteUri)){
+                    return false;
+                }
+            }
         }
         URIBean uriBean = URIBean.create(uri);
         try {
