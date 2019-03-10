@@ -607,6 +607,10 @@ public class Reflection {
             }
         } else {//data 是 java 对象    只支持type= Map /HashMap /JSONObject / 可实例化的javaBean
             try {
+                if (String.class == nonCollectionType) {
+                    //如果目标类型是string，那么这里直接将Java bean转换为string类型，可以适用于Java bean类上自定义了序列化和反序列化器的情况，这比先转换为JSON对象再转换为字符串要少一步计算操作
+                    return (T) JSON.toJSONString(nonCollectionData);
+                }
                 JSONObject value = (JSONObject) JSON.toJSON(nonCollectionData);
                 if (nonCollectionType.isAssignableFrom(JSONObject.class)) {
                     return (T) value;
@@ -615,9 +619,6 @@ public class Reflection {
                     return (T) new HashMap() {{
                         putAll(value);
                     }};
-                }
-                if (String.class == nonCollectionType) {
-                    return (T) value.toJSONString();
                 }
                 return value.toJavaObject(nonCollectionType);
             } catch (Throwable unknownError) {
