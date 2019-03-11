@@ -9,7 +9,7 @@ subprojects {
     apply plugin: 'signing'
 
     group 'info.xiancloud'
-    version '0.2.1.3'
+    version '0.2.1.4'
 
     repositories {
         jcenter()
@@ -143,8 +143,8 @@ subprojects {
         repositories {
             mavenDeployer {
                 // Modify userName and password if you want to upload xian to your private repo.
-                repository(url: "https://your.company.com/repository/maven-releases/") {
-                    authentication(userName: "*****", password: "*****")
+                repository(url: "https://nexus.cedarhd.com/repository/maven-releases/") {
+                    authentication(userName: "yangyuan", password: "-160034962")
                 }
             }
         }

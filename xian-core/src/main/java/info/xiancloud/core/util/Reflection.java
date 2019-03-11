@@ -607,20 +607,22 @@ public class Reflection {
             }
         } else {//data 是 java 对象    只支持type= Map /HashMap /JSONObject / 可实例化的javaBean
             try {
+                //这里直接将Java bean转换为string类型，可以适用于Java bean类上自定义了序列化和反序列化器的情况，这比先转换为JSON对象再转换为字符串要少一步计算操作
+                //todo 统一这样先序列化为string，再反序列化为jsonObject对性能是有一定的损耗，可以考虑向fastjson官方提出一个issue看看
+                String jsonString = JSON.toJSONString(nonCollectionData);
                 if (String.class == nonCollectionType) {
-                    //如果目标类型是string，那么这里直接将Java bean转换为string类型，可以适用于Java bean类上自定义了序列化和反序列化器的情况，这比先转换为JSON对象再转换为字符串要少一步计算操作
-                    return (T) JSON.toJSONString(nonCollectionData);
+                    return (T) jsonString;
                 }
-                JSONObject value = (JSONObject) JSON.toJSON(nonCollectionData);
+                JSONObject jsonObject = JSON.parseObject(jsonString);
                 if (nonCollectionType.isAssignableFrom(JSONObject.class)) {
-                    return (T) value;
+                    return (T) jsonObject;
                 }
                 if (HashMap.class == nonCollectionType) {
                     return (T) new HashMap() {{
-                        putAll(value);
+                        putAll(jsonObject);
                     }};
                 }
-                return value.toJavaObject(nonCollectionType);
+                return jsonObject.toJavaObject(nonCollectionType);
             } catch (Throwable unknownError) {
                 throw castFailedException(nonCollectionData, nonCollectionType, unknownError);
             }
