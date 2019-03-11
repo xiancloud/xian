@@ -1,7 +1,7 @@
 //see https://plugins.gradle.org/plugin/io.codearte.nexus-staging
-//plugins {
-//    id "io.codearte.nexus-staging" version "0.11.0"
-//}
+plugins {
+    id "io.codearte.nexus-staging" version "0.11.0"
+}
 
 subprojects {
     apply plugin: 'java'
@@ -42,10 +42,11 @@ subprojects {
         archives javadocJar, sourcesJar
     }
 
-    //publish artifacts into private nexus
+    //install xian's releases into your private repository.
     install {
         repositories {
             mavenDeployer {
+                // Modify your private nexus config in gradle.properties file if you want to upload xian to your private repo.
                 repository(url: "${nexusUrl}/repository/maven-releases/") {
                     authentication(userName: nexusUsername, password: nexusPassword)
                 }
@@ -65,7 +66,7 @@ subprojects {
     }
 
     // Signature of artifacts
-    /*signing {
+    signing {
         sign configurations.archives
     }
 
@@ -118,7 +119,7 @@ subprojects {
     nexusStaging {
         username = ossrhUser
         password = ossrhPassword
-    }*/
+    }
 
     if (project.file('WebRoot').exists()) {
         println 'web detected:' + project.name
@@ -138,15 +139,4 @@ subprojects {
         }
     }
 
-    //install xian's releases into our private repository.
-    install {
-        repositories {
-            mavenDeployer {
-                // Modify userName and password if you want to upload xian to your private repo.
-                repository(url: "https://xx.xx.com/repository/maven-releases/") {
-                    authentication(userName: "xxxx", password: "xxxxx")
-                }
-            }
-        }
-    }
 }
