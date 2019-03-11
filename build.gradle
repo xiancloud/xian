@@ -143,8 +143,8 @@ subprojects {
         repositories {
             mavenDeployer {
                 // Modify userName and password if you want to upload xian to your private repo.
-                repository(url: "https://nexus.cedarhd.com/repository/maven-releases/") {
-                    authentication(userName: "yangyuan", password: "-160034962")
+                repository(url: "https://xx.xx.com/repository/maven-releases/") {
+                    authentication(userName: "xxxx", password: "xxxxx")
                 }
             }
         }
