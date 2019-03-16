@@ -605,7 +605,7 @@ public class Reflection {
             if (String.class == nonCollectionType) {
                 return (T) ((Enum) nonCollectionData).name();
             }
-        } else {//data 是 java 对象    只支持type= Map /HashMap /JSONObject / 可实例化的javaBean
+        } else {//data 是 java 对象    只支持type= Map /HashMap /JSONObject / 可实例化的javaBean / java.lang.String
             try {
                 //这里直接将Java bean转换为string类型，可以适用于Java bean类上自定义了序列化和反序列化器的情况，这比先转换为JSON对象再转换为字符串要少一步计算操作
                 //todo 统一这样先序列化为string，再反序列化为jsonObject对性能是有一定的损耗，可以考虑向fastjson官方提出一个issue看看

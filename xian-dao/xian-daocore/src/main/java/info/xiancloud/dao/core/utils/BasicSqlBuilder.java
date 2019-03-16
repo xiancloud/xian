@@ -198,7 +198,7 @@ public class BasicSqlBuilder {
 
         //pg arg index starts with 1
         int i = 1;
-        for (Map<String, Object> map : dataList) {
+        for (Map map : dataList) {
             qmSb.append("(");
             for (String col : validCols) {
                 Object value = map.get(StringUtil.underlineToCamel(col));
