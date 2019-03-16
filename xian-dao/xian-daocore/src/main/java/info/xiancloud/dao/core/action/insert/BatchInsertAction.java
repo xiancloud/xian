@@ -52,6 +52,15 @@ public abstract class BatchInsertAction extends AbstractSqlAction implements ISi
     }
 
     /**
+     * batch insertion does not support pattern sql, so here we do not print pattern sql.
+     */
+    @Override
+    protected void doLogSql() {
+        //here we only print prepared sql statement.
+        LOG.info("Prepared SQL：" + getSqlDriver().preparedBatchInsertionSql(this).fst);
+    }
+
+    /**
      * Records to be inserted.
      * A batch prepared insert sql is like:
      * <p>

@@ -140,14 +140,21 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
         // set msgId in order make sure compatibility of synchronous and asynchronous dao.
         boolean msgIdWritten = MsgIdHolder.set(msgId);
         try {
-            LOG.info("XianPatternSQL ：" + getPatternSql());
-            LOG.info("Prepared SQL：" + getSqlDriver().preparedSql(getPatternSql()));
-            LOG.info("Full SQL：" + getFullSql());
+            doLogSql();
         } finally {
             if (msgIdWritten) {
                 MsgIdHolder.clear();
             }
         }
+    }
+
+    /**
+     * subclass may write this method to have its own sql logger
+     */
+    protected void doLogSql() {
+        LOG.info("XianPatternSQL ：" + getPatternSql());
+        LOG.info("Prepared SQL：" + getSqlDriver().preparedSql(getPatternSql()));
+        LOG.info("Full SQL：" + getFullSql());
     }
 
     @Override
@@ -164,10 +171,10 @@ public abstract class AbstractSqlAction implements SqlAction, ISqlLogger {
     }
 
     /**
-     * produces a pattern sql.
+     * constructs a pattern sql.
      * This method is called only once.
      *
-     * @return a deferred result which will emit either a single successful pattern or an error
+     * @return xian pattern sql or an empty string if current sql action does not support pattern sql.
      */
     abstract protected String patternSql();
 
