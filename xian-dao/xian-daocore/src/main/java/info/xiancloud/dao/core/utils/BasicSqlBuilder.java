@@ -2,6 +2,7 @@ package info.xiancloud.dao.core.utils;
 
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Pair;
+import info.xiancloud.core.util.Reflection;
 import info.xiancloud.core.util.StringUtil;
 
 import java.util.*;
@@ -129,7 +130,7 @@ public class BasicSqlBuilder {
      * @param dataList  values for the batch insertion sql
      * @return A pair with prepared sql as the first element and the prepared parameter array as the second.
      */
-    public static Pair<String, Object[]> buildJdbcBatchInsertPreparedSQL(String tableName, String[] cols, List<Map<String, Object>> dataList) {
+    public static Pair<String, Object[]> buildJdbcBatchInsertPreparedSQL(String tableName, String[] cols, List<Map/*<String, Object>*/> dataList) {
         Set<String> validCols = findValidCols(cols, dataList);
         List<Object> valuesArray = new ArrayList<>();
         StringBuilder sqlSb = new StringBuilder();
@@ -152,7 +153,7 @@ public class BasicSqlBuilder {
             qmSb.append("(");
             for (String col : validCols) {
                 Object value = map.get(StringUtil.underlineToCamel(col));
-                valuesArray.add(value);
+                valuesArray.add(toDatabaseSupportedValue(value));
                 qmSb.append("?,");
             }
             deleteLastCommaIfNecessary(qmSb);
@@ -176,7 +177,7 @@ public class BasicSqlBuilder {
      * @param dataList  values for the batch insertion sql
      * @return A pair with prepared sql as the first element and the prepared parameter array as the second.
      */
-    public static Pair<String, Object[]> buildPgBatchInsertPreparedSQL(String tableName, String[] cols, List<Map<String, Object>> dataList) {
+    public static Pair<String, Object[]> buildPgBatchInsertPreparedSQL(String tableName, String[] cols, List<Map/*<String, Object>*/> dataList) {
         Set<String> validCols = findValidCols(cols, dataList);
         List<Object> valuesArray = new ArrayList<>();
         StringBuilder sqlSb = new StringBuilder();
@@ -201,7 +202,7 @@ public class BasicSqlBuilder {
             qmSb.append("(");
             for (String col : validCols) {
                 Object value = map.get(StringUtil.underlineToCamel(col));
-                valuesArray.add(value);
+                valuesArray.add(toDatabaseSupportedValue(value));
                 qmSb.append("$").append(i).append(",");
                 i++;
             }
@@ -213,6 +214,38 @@ public class BasicSqlBuilder {
         return new Pair<>(sqlSb.toString(), valuesArray.toArray());
     }
 
+    /**
+     * Convert Java value to database supported value.
+     * Please refer to "https://www.cnblogs.com/jerrylz/p/5814460.html" for detail.
+     *
+     * @param value java value, can be any type.
+     * @return database supported value
+     */
+    private static Object toDatabaseSupportedValue(Object value) {
+        if (value instanceof java.lang.String ||
+                value instanceof byte[] ||
+                value instanceof Byte[] ||
+                value instanceof java.lang.Long ||
+                value instanceof java.lang.Integer ||
+                value instanceof java.lang.Boolean ||
+                value instanceof java.math.BigInteger ||
+                value instanceof java.lang.Float ||
+                value instanceof java.lang.Double ||
+                value instanceof java.math.BigDecimal ||
+                value instanceof java.sql.Date ||
+                value instanceof java.util.Date ||
+                /*
+                because java.sql.Time and java.sql.Timestamp is subclass of java.sql.Date so the checks always return true
+                value instanceof java.sql.Time || value instanceof java.sql.Timestamp ||
+                */
+                value instanceof java.util.Calendar
+                ) {
+            return value;
+        } else {
+            return Reflection.toType(value, String.class);
+        }
+    }
+
 
     private static void deleteLastCommaIfNecessary(StringBuilder qmSb) {
         if (qmSb.length() > 0 && qmSb.charAt(qmSb.length() - 1) == ',') {
@@ -222,7 +255,7 @@ public class BasicSqlBuilder {
         }
     }
 
-    private static Set<String> findValidCols(String[] allCols, List<Map<String, Object>> dataList) {
+    private static Set<String> findValidCols(String[] allCols, List<Map/*<String, Object>*/> dataList) {
         LOG.debug("本方法为满足批量插入的灵活性,搜索出所有的有效列名,允许map列表内的key参差不齐的场景");
         Set<String> validCols = new HashSet<>();
         for (String col : allCols) {

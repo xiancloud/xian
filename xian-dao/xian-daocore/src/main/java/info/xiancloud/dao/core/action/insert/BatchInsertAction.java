@@ -27,10 +27,12 @@ public abstract class BatchInsertAction extends AbstractSqlAction implements ISi
      */
     public static final String BATCH_INSERTION_VALUES_KEY = "values";
 
+    private List<Map> values;
+
     @Override
     protected final Single<BatchInsertionResult> executeSql() {
         LOG.debug("返回的是插入的条数");
-        List<Map<String, Object>> values = getValues();
+        List<Map> values = getValues();
         if (values == null || values.isEmpty()) {
             LOG.warn("没什么可以插入的数据，什么也不做");
             return Single.just(new BatchInsertionResult().setCount(0));
@@ -75,8 +77,11 @@ public abstract class BatchInsertAction extends AbstractSqlAction implements ISi
      *
      * @return values
      */
-    public List<Map<String, Object>> getValues() {
-        return Reflection.toType(getMap().get(BATCH_INSERTION_VALUES_KEY), List.class);
+    public List<Map> getValues() {
+        if (values == null) {
+            values = Reflection.toTypedList(getMap().get(BATCH_INSERTION_VALUES_KEY), Map.class);
+        }
+        return values;
     }
 
 }
