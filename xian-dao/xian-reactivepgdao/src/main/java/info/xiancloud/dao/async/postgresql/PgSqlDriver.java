@@ -79,8 +79,13 @@ public class PgSqlDriver extends BaseSqlDriver {
 
     @Override
     public UnitResponse handleException(Throwable exception, SqlAction sqlAction) {
-        String fullActualSql = sqlAction.getFullSql();
-        UnitResponse response = UnitResponse.createException(exception, "sql failure: " + fullActualSql);
+        String actualSql;
+        if (sqlAction instanceof BatchInsertAction) {
+            actualSql = preparedBatchInsertionSql((BatchInsertAction) sqlAction).fst;
+        } else {
+            actualSql = sqlAction.getFullSql();
+        }
+        UnitResponse response = UnitResponse.createException(exception, "sql failure: " + actualSql);
 ///      todo check this exception.
 //        if (exception instanceof SQLException) {
 //            switch (((SQLException) exception).getErrorCode()) {

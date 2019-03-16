@@ -221,18 +221,24 @@ public class JdbcSqlDriver extends BaseSqlDriver {
 
     @Override
     public UnitResponse handleException(Throwable exception, SqlAction sqlAction) {
-        String acutalSql = SqlUtils.mapToSql(sqlAction.getPatternSql(), sqlAction.getMap());
-        UnitResponse response = UnitResponse.createException(exception, "sql failure: " + acutalSql);
+        String actualSql;
+        if (sqlAction instanceof BatchInsertAction) {
+            actualSql = preparedBatchInsertionSql((BatchInsertAction) sqlAction).fst;
+        } else {
+            //todo use sqlAction.getFullSql() instead?
+            actualSql = SqlUtils.mapToSql(sqlAction.getPatternSql(), sqlAction.getMap());
+        }
+        UnitResponse response = UnitResponse.createException(exception, "sql failure: " + actualSql);
         if (exception instanceof SQLException) {
             switch (((SQLException) exception).getErrorCode()) {
                 //fixme, this is for mysql only
                 /*Error: 1062 SQLSTATE: 23000 (ER_DUP_ENTRY)
                   Message: Duplicate entry '%s' for key %d */
                 case 1062:
-                    response = UnitResponse.create(DaoGroup.CODE_REPETITION_NOT_ALLOWED, acutalSql, exception.getLocalizedMessage());
+                    response = UnitResponse.create(DaoGroup.CODE_REPETITION_NOT_ALLOWED, actualSql, exception.getLocalizedMessage());
                     break;
                 default:
-                    response = UnitResponse.createError(DaoGroup.CODE_SQL_ERROR, acutalSql, "执行sql语句出现问题");
+                    response = UnitResponse.createError(DaoGroup.CODE_SQL_ERROR, actualSql, "执行sql语句出现问题");
             }
         }
         return response;
