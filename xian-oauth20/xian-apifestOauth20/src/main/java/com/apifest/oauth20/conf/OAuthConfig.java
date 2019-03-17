@@ -21,8 +21,8 @@ import com.apifest.oauth20.api.ICustomGrantTypeHandler;
 import com.apifest.oauth20.api.IUserAuthentication;
 import com.apifest.oauth20.persistence.DBManagerFactory;
 import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.util.ClassGraphUtil;
 import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.TraverseClasspath;
 
 import java.util.Set;
 
@@ -73,7 +73,7 @@ public final class OAuthConfig {
         if (userAuthenticationClass == null) {
             synchronized (lock) {
                 if (userAuthenticationClass == null) {
-                    Set<Class<? extends IUserAuthentication>> classes = TraverseClasspath.getNonAbstractSubClasses(IUserAuthentication.class);
+                    Set<Class<? extends IUserAuthentication>> classes = ClassGraphUtil.getNonAbstractSubClasses(IUserAuthentication.class);
                     if (classes == null || classes.isEmpty()) {
                         LOG.warn("No IUserAuthentication implementations found! User authentication will always pass successfully", new Exception());
                     } else {
@@ -92,7 +92,7 @@ public final class OAuthConfig {
         if (customGrantTypeHandler == null) {
             synchronized (lock) {
                 if (customGrantTypeHandler == null) {
-                    Set<Class<? extends ICustomGrantTypeHandler>> classes = TraverseClasspath.getNonAbstractSubClasses(ICustomGrantTypeHandler.class);
+                    Set<Class<? extends ICustomGrantTypeHandler>> classes = ClassGraphUtil.getNonAbstractSubClasses(ICustomGrantTypeHandler.class);
                     if (classes == null || classes.isEmpty()) {
                         throw new RuntimeException(String.format("No ICustomGrantTypeHandler implementation found for custom.grant_type={%s}", customGrantType));
                     } else {

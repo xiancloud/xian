@@ -37,7 +37,7 @@ public class Reflection {
     public static <T> List<T> getSubClassInstances(Class<T> tClass) {
         return new ArrayList<T>() {
             {
-                addAll(TraverseClasspath.getSubclassInstances(tClass));
+                addAll(ClassGraphUtil/*TraverseClasspath*/.getSubclassInstances(tClass));
             }
 
             @Override
@@ -62,7 +62,7 @@ public class Reflection {
      * @return a set of concret subclasses.
      */
     public static <T> Set<Class<? extends T>> getNonAbstractSubclasses(Class<T> clazz) {
-        return TraverseClasspath.getNonAbstractSubClasses(clazz);
+        return ClassGraphUtil/*TraverseClasspath*/.getNonAbstractSubClasses(clazz);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Reflection {
      */
     public static <T> List<T> getWithAnnotatedClass(Class annotationClass, String packages) {
         return new ArrayList<T>() {{
-            addAll(TraverseClasspath.getWithAnnotatedClass(annotationClass, packages));
+            addAll(ClassGraphUtil.getWithAnnotatedClass(annotationClass, packages));
         }};
     }
 

@@ -2,7 +2,7 @@ package info.xiancloud.rules;
 
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.TraverseClasspath;
+import info.xiancloud.core.util.Reflection;
 import info.xiancloud.gateway.controller.BaseController;
 import info.xiancloud.gateway.controller.URIBean;
 import info.xiancloud.gateway.handle.TransactionalNotifyHandler;
@@ -24,7 +24,7 @@ public class RuleControllerRouter implements IControllerMapper {
 
     private static void loadRules() {
         ruleMap = new HashMap<>();
-        Set<Class<? extends RuleController>> rules = TraverseClasspath.getNonAbstractSubClasses(RuleController.class);
+        Set<Class<? extends RuleController>> rules = Reflection.getNonAbstractSubclasses(RuleController.class);
         LOG.info("RuleControllers found: " + rules);
         for (Class<? extends RuleController> rule : rules) {
             LOG.info("a rule = " + rule.getName());

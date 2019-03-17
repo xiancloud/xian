@@ -1,8 +1,7 @@
 package info.xiancloud.core.event;
 
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
-import info.xiancloud.core.thread_pool.ThreadPoolManager;
-import info.xiancloud.core.util.TraverseClasspath;
+import info.xiancloud.core.util.ClassGraphUtil;
 import info.xiancloud.core.util.thread.MsgIdHolder;
 
 import java.util.Collections;
@@ -29,7 +28,7 @@ public class EventPublisher implements IEventPublish {
         if (listeners == null) {
             synchronized (lock) {
                 if (listeners == null) {
-                    listeners = Collections.unmodifiableSet(TraverseClasspath.getSubclassInstances(IEventListener.class));
+                    listeners = Collections.unmodifiableSet(ClassGraphUtil/*TraverseClasspath*/.getSubclassInstances(IEventListener.class));
                 }
             }
         }

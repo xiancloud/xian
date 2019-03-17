@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
-import info.xiancloud.core.util.TraverseClasspath;
+import info.xiancloud.core.util.ClassGraphUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,7 +35,7 @@ public class GetPackagesToScan implements Unit {
     @Override
     public void execute(UnitRequest msg, Handler<UnitResponse> handler) {
         try {
-            Method defaultPackages = TraverseClasspath.class.getDeclaredMethod("defaultPackages");
+            Method defaultPackages = ClassGraphUtil/*TraverseClasspath*/.class.getDeclaredMethod("defaultPackages");
             defaultPackages.setAccessible(true);
             handler.handle(UnitResponse.createSuccess(JSON.toJSONString(defaultPackages.invoke(null))));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {

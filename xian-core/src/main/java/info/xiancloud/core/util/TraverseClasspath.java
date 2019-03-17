@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author happyyangyuan
  */
-public class TraverseClasspath {
+class TraverseClasspath {
 
     /**
      * Reflection is not thread-safe scanning the jars files in the classpath,
@@ -71,7 +71,7 @@ public class TraverseClasspath {
      * Note that we only initiate subclasses which are with default constructor, those without default constructors
      * we judge them as canInitiate=false.
      *
-     * @param parentClass        parent class
+     * @param parentClass  parent class
      * @param packageNames package name prefix
      * @param <T>          class generic type
      * @return a set of subclass instances

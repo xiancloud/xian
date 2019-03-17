@@ -18,7 +18,7 @@ package com.apifest.oauth20;
 
 import com.apifest.oauth20.api.*;
 import info.xiancloud.core.util.LOG;
-import info.xiancloud.core.util.TraverseClasspath;
+import info.xiancloud.core.util.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class LifecycleEventHandlers {
         if (!loadedLock.get()) {
             synchronized (loadedLock) {
                 if (!loadedLock.get()) {
-                    Set<Class<? extends LifecycleHandler>> subClasses = TraverseClasspath.getNonAbstractSubClasses(LifecycleHandler.class);
+                    Set<Class<? extends LifecycleHandler>> subClasses = Reflection.getNonAbstractSubclasses(LifecycleHandler.class);
                     for (Class<? extends LifecycleHandler> clazz : subClasses) {
                         if (clazz.isAnnotationPresent(OnRequest.class)) {
                             private_requestEventHandlers.add(clazz);
@@ -57,7 +57,7 @@ public class LifecycleEventHandlers {
                             LOG.info(String.format("postIssueTokenHandler added {%s}", clazz));
                         }
                     }
-                    Set<Class<? extends ExceptionEventHandler>> exceptionHandlerClasses = TraverseClasspath.getNonAbstractSubClasses(ExceptionEventHandler.class);
+                    Set<Class<? extends ExceptionEventHandler>> exceptionHandlerClasses = Reflection.getNonAbstractSubclasses(ExceptionEventHandler.class);
                     for (Class<? extends ExceptionEventHandler> clazz : exceptionHandlerClasses) {
                         if (clazz.isAnnotationPresent(OnException.class)) {
                             private_exceptionHandlers.add(clazz);
