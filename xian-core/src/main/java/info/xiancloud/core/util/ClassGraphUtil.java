@@ -13,10 +13,7 @@ import java.util.stream.Collectors;
 
 public class ClassGraphUtil {
     public static void main(String[] args) {
-        getNonAbstractSubClasses(Unit.class)
-                .stream()
-                .peek(classInfo -> System.out.println(classInfo.getName()))
-                .collect(Collectors.toSet());
+        getNonAbstractSubClasses(Unit.class).stream().peek(classInfo -> System.out.println(classInfo.getName())).collect(Collectors.toSet());
         getSubclassInstances(Unit.class).stream().peek(unit -> System.out.println(unit.getName())).collect(Collectors.toSet());
     }
 
@@ -30,12 +27,13 @@ public class ClassGraphUtil {
         }
         try (ScanResult scanResult =
                      new ClassGraph()
-                             .verbose()
                              .enableAllInfo()
                              .whitelistPackages(packageNames)
                              .scan()) {
-            return scanResult
-                    .getClassesImplementing(parentClass.getName())
+            ClassInfoList classInfos = parentClass.isInterface() ?
+                    scanResult.getClassesImplementing(parentClass.getName()) :
+                    scanResult.getSubclasses(parentClass.getName());
+            return classInfos
                     .stream()
                     .filter(classInfo -> !classInfo.isAbstract())
                     .collect(Collectors.toSet());
@@ -52,12 +50,13 @@ public class ClassGraphUtil {
         }
         try (ScanResult scanResult =
                      new ClassGraph()
-                             .verbose()
                              .enableAllInfo()
                              .whitelistPackages(packageNames)
                              .scan()) {
-            return scanResult
-                    .getClassesImplementing(parentClass.getName())
+            ClassInfoList classInfos = parentClass.isInterface() ?
+                    scanResult.getClassesImplementing(parentClass.getName()) :
+                    scanResult.getSubclasses(parentClass.getName());
+            return classInfos
                     .stream()
                     .filter(classInfo -> !classInfo.isAbstract())
                     .map(classInfo -> classInfo.loadClass(parentClass))
@@ -71,7 +70,6 @@ public class ClassGraphUtil {
         }
         try (ScanResult scanResult =
                      new ClassGraph()
-                             .verbose()
                              .enableAllInfo()
                              .whitelistPackages(packageNames)
                              .scan()) {
@@ -85,7 +83,6 @@ public class ClassGraphUtil {
         }
         try (ScanResult scanResult =
                      new ClassGraph()
-                             .verbose()
                              .enableAllInfo()
                              .whitelistPackages(packageNames)
                              .scan()) {
@@ -111,12 +108,13 @@ public class ClassGraphUtil {
         Set<T> set;
         try (ScanResult scanResult =
                      new ClassGraph()
-                             .verbose()
                              .enableAllInfo()
                              .whitelistPackages(packageNames)
                              .scan()) {
-            set = scanResult
-                    .getClassesImplementing(parentClass.getName())
+            ClassInfoList classInfos = parentClass.isInterface() ?
+                    scanResult.getClassesImplementing(parentClass.getName()) :
+                    scanResult.getSubclasses(parentClass.getName());
+            set = classInfos
                     .stream()
                     .filter(classInfo -> {
                         Class<T> subclass = classInfo.loadClass(parentClass);

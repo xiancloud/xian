@@ -9,7 +9,7 @@ subprojects {
     apply plugin: 'signing'
 
     group 'info.xiancloud'
-    version '0.3.0.alpha'
+    version '0.3.0.alpha.a'
 
     repositories {
         jcenter()
@@ -39,7 +39,7 @@ subprojects {
     }
 
     artifacts {
-        archives javadocJar, sourcesJar
+        archives /*javadocJar,*/ sourcesJar
     }
 
     //install xian's releases into your private repository.
