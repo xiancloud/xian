@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 public class ValidateAccessToken {
 
     public static Single<Boolean> validate(UnitRequest request) {
+        LOG.info("ValidateAccessToken");
         if (!isSecure(request.getContext().getUri())) {
             //No secure requirement, then we do not check the access token.
             return Single.just(true);
@@ -43,7 +44,7 @@ public class ValidateAccessToken {
             //todo add 'secure' property for rule engine，instead of static config
             //todo please deprecate white uri, and use unit's meta property to determine whether a unit is secure or not. See below. This is kept for compatibility only.
             for (String apiGatewayWhiteUri : XianConfig.getStringArray("api_gateway_white_uri_list")) {
-                if(uri.startsWith(apiGatewayWhiteUri)){
+                if (uri.startsWith(apiGatewayWhiteUri)) {
                     return false;
                 }
             }
@@ -59,13 +60,14 @@ public class ValidateAccessToken {
     }
 
     /**
-     * query for access token info and put it into originalMap
+     * query for access token info and set it into the request context
      * and return the scope of current token.
      *
      * @return the scope of the request or
      * {@link AccessTokenFailure} if no token string is provided.
      */
     private static Single<String> fetchAccessTokenAndReturnScope(UnitRequest request) {
+        LOG.info("fetchAccessTokenAndReturnScope");
         String ip = request.getContext().getIp();
         if (StringUtil.isEmpty(ip))
             throw new IllegalArgumentException("Client's ip is empty, please check!");
@@ -102,6 +104,7 @@ public class ValidateAccessToken {
             put("access_token", tokenString);
         }}).map(o -> {
             if (!o.succeeded()) {
+                LOG.info("=--------DEBUG-----------"+o.toVoJSONString());
                 throw new AccessTokenFailure(tokenString);
             }
             return o.dataToType(AccessToken.class);

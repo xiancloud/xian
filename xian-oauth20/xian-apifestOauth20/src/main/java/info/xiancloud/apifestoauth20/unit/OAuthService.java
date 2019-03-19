@@ -10,6 +10,10 @@ import info.xiancloud.core.Group;
  * @author happyyangyuan
  */
 public class OAuthService implements Group {
+    /**
+     * token error or token expired
+     */
+    public static final String CODE_BAD_TOKEN = "BAD_TOKEN";
     public static final Authenticator auth = new Authenticator();
     public static final Group singleton = new OAuthService();
 

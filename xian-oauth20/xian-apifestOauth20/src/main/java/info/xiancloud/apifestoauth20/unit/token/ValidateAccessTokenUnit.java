@@ -5,6 +5,7 @@ import info.xiancloud.apifestoauth20.unit.OAuthService;
 import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;
+import info.xiancloud.core.util.LOG;
 
 /**
  * validateAccessToken
@@ -49,7 +50,10 @@ public class ValidateAccessTokenUnit implements Unit {
                 .subscribe(
                         token -> handler.handle(UnitResponse.createSuccess(token)),
                         exception -> handler.handle(UnitResponse.createException(exception)),
-                        () -> handler.handle(UnitResponse.createUnknownError(null, "token required.")));
+                        () -> {
+                            LOG.info("Token not found or expired.");
+                            handler.handle(UnitResponse.createError(OAuthService.CODE_BAD_TOKEN, null, null));
+                        });
     }
 
     @Override

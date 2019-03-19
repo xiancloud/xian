@@ -16,6 +16,7 @@
 
 package com.apifest.oauth20;
 
+import com.alibaba.fastjson.JSONObject;
 import com.apifest.oauth20.api.AuthenticationException;
 import com.apifest.oauth20.api.ICustomGrantTypeHandler;
 import com.apifest.oauth20.api.IUserAuthentication;
@@ -353,7 +354,7 @@ public class Authenticator {
      * validate the given token string
      *
      * @param token the token string
-     * @return the valid token or null
+     * @return the valid token or an empty result if token not found or token expired.
      */
     public Maybe<AccessToken> isValidToken(String token) {
         return db.findAccessToken(token)
@@ -361,9 +362,13 @@ public class Authenticator {
                     LOG.info("token详情:" + accessToken);
                     if (accessToken != null && accessToken.isValid()) {
                         if (accessToken.tokenExpired()) {
-                            LOG.info("accessToken 已过期,client_id= " + accessToken.getClientId());
-                            db.updateAccessTokenValidStatus(accessToken.getToken(), false)
-                                    .subscribe();
+                            LOG.info(new JSONObject()
+                                    //todo 设计一个打印type日志的Java类，将结构固定下来
+                                    .fluentPut("description", "accessToken has expired, client_id= " + accessToken.getClientId())
+                                    .fluentPut("accessToken", accessToken)
+                                    .fluentPut("type", OAuth20LogType.OAUTH20_TOKEN_EXPIRED));
+                            db.updateAccessTokenValidStatus(accessToken.getToken(), false).subscribe();
+                            // return empty result if token expired.
                             return Maybe.empty();
                         }
                         return Maybe.just(accessToken);
