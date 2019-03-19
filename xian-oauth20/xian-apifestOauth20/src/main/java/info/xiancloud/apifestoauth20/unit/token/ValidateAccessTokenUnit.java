@@ -34,7 +34,9 @@ public class ValidateAccessTokenUnit implements Unit {
                     put("token_type", "token_type");
                     put("expires_in", "expires_in");
                     put("client_id", "client_id");
-                }}));
+                }}))
+                .addFailedUnitResponse(UnitResponse.createError(OAuthService.CODE_BAD_TOKEN, null, null))
+                ;
     }
 
     @Override
