@@ -1,9 +1,9 @@
-package com.apifest.oauth20.unit.token;
+package info.xiancloud.apifestoauth20.unit.token;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.apifest.oauth20.persistence.DBManagerFactory;
-import com.apifest.oauth20.unit.OAuthService;
+import info.xiancloud.apifestoauth20.unit.OAuthService;
 import com.apifest.oauth20.utils.QueryParameter;
 import com.apifest.oauth20.utils.ResponseBuilder;
 import info.xiancloud.core.*;

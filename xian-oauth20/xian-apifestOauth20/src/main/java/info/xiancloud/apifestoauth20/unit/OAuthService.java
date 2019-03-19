@@ -1,4 +1,4 @@
-package com.apifest.oauth20.unit;
+package info.xiancloud.apifestoauth20.unit;
 
 import com.apifest.oauth20.Authenticator;
 import com.apifest.oauth20.ScopeService;

@@ -1,7 +1,7 @@
-package com.apifest.oauth20.unit.scope;
+package info.xiancloud.apifestoauth20.unit.scope;
 
 import com.alibaba.fastjson.JSONObject;
-import com.apifest.oauth20.unit.OAuthService;
+import info.xiancloud.apifestoauth20.unit.OAuthService;
 import info.xiancloud.core.*;
 import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.message.UnitResponse;

@@ -1,6 +1,5 @@
 package info.xiancloud.core.util;
 
-import info.xiancloud.core.Unit;
 import info.xiancloud.core.conf.XianConfig;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
@@ -12,10 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClassGraphUtil {
-    public static void main(String[] args) {
-        getNonAbstractSubClasses(Unit.class).stream().peek(classInfo -> System.out.println(classInfo.getName())).collect(Collectors.toSet());
-        getSubclassInstances(Unit.class).stream().peek(unit -> System.out.println(unit.getName())).collect(Collectors.toSet());
-    }
 
     /**
      * Reflection is not thread-safe scanning the jars files in the classpath,
