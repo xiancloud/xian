@@ -16,7 +16,7 @@ import info.xiancloud.core.util.StringUtil;
 import info.xiancloud.gateway.controller.URIBean;
 import io.reactivex.Single;
 
-import java.util.Arrays;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -27,14 +27,19 @@ import java.util.regex.Pattern;
  */
 public class ValidateAccessToken {
 
+    /**
+     * @param request the unit request
+     * @return true if validation passed false otherwise.
+     */
     public static Single<Boolean> validate(UnitRequest request) {
-        LOG.info("ValidateAccessToken");
+        LOG.debug("ValidateAccessToken");
         if (!isSecure(request.getContext().getUri())) {
             //No secure requirement, then we do not check the access token.
             return Single.just(true);
         }
         return fetchAccessTokenAndReturnScope(request)
-                .map(scope -> Scope.validate(scope, request.getContext().getGroup(), request.getContext().getUnit())
+                .map(optionalScope ->
+                        optionalScope.isPresent() && Scope.validate(optionalScope.get(), request.getContext().getGroup(), request.getContext().getUnit())
                 );
 
     }
@@ -63,25 +68,30 @@ public class ValidateAccessToken {
      * query for access token info and set it into the request context
      * and return the scope of current token.
      *
-     * @return the scope of the request or
-     * {@link AccessTokenFailure} if no token string is provided.
+     * @return the scope of the request or empty
+     * if no token string is provided.
      */
-    private static Single<String> fetchAccessTokenAndReturnScope(UnitRequest request) {
+    private static Single<Optional<String>> fetchAccessTokenAndReturnScope(UnitRequest request) {
         LOG.info("fetchAccessTokenAndReturnScope");
         String ip = request.getContext().getIp();
-        if (StringUtil.isEmpty(ip))
+        if (StringUtil.isEmpty(ip)) {
             throw new IllegalArgumentException("Client's ip is empty, please check!");
+        }
         if (isWhiteIp(ip)) {
-            return Single.just(Scope.api_all);
+            return Single.just(Optional.of(Scope.api_all));
         }
         String accessToken = request.getContext().getHeader() == null ? null :
                 request.getContext().getHeader().getOrDefault(Constant.XIAN_REQUEST_TOKEN_HEADER, null);
         if (StringUtil.isEmpty(accessToken)) {
-            return Single.error(new AccessTokenFailure(null));
+            return Single.just(Optional.empty());
         } else {
-            return forToken(accessToken).map(accessTokenObject -> {
-                request.getContext().setAccessToken(accessTokenObject);
-                return accessTokenObject.getScope();
+            return forToken(accessToken).map(optionalAccessToken -> {
+                if (optionalAccessToken.isPresent()) {
+                    request.getContext().setAccessToken(optionalAccessToken.get());
+                    return Optional.of(optionalAccessToken.get().getScope());
+                } else {
+                    return Optional.empty();
+                }
             });
         }
     }
@@ -97,18 +107,18 @@ public class ValidateAccessToken {
 
     /**
      * @param tokenString the token string
-     * @return the access token or AccessTokenFailure exception if validation failed.
+     * @return the access token or empty if token is wrong or expired.
      */
-    private static Single<AccessToken> forToken(String tokenString) {
-        return SingleRxXian.call("OAuth", "validateAccessToken", new JSONObject() {{
-            put("access_token", tokenString);
-        }}).map(o -> {
-            if (!o.succeeded()) {
-                LOG.info("=--------DEBUG-----------"+o.toVoJSONString());
-                throw new AccessTokenFailure(tokenString);
-            }
-            return o.dataToType(AccessToken.class);
-        });
+    private static Single<Optional<AccessToken>> forToken(String tokenString) {
+        return SingleRxXian
+                .call("OAuth", "validateAccessToken", new JSONObject().fluentPut("access_token", tokenString))
+                .map(response -> {
+                    if (!response.succeeded()) {
+                        //wrong token or expired token
+                        return Optional.empty();
+                    }
+                    return Optional.of(response.dataToType(AccessToken.class));
+                });
     }
 
     /**

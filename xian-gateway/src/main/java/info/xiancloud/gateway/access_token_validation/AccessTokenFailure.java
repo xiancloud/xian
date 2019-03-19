@@ -4,6 +4,7 @@ import info.xiancloud.core.util.StringUtil;
 
 /**
  * @author happyyangyuan
+ * @deprecated Exception reduces performance. We use empty/null result instead of exception now.
  */
 public class AccessTokenFailure extends Exception {
     private Object accessToken;

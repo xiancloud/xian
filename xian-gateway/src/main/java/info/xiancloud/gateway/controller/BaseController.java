@@ -27,19 +27,23 @@ public abstract class BaseController implements Runnable {
     @Override
     public void run() {
         ValidateAccessToken.validate(controllerRequest)
-                .subscribe(passed -> {
-                    if (!passed) {
-                        handler.callback(UnitResponse.createError(Group.CODE_BAD_REQUEST, null, "请求不合法！"));
-                    } else {
-                        if (handler.isTransactional()) {
-                            LOG.error("global transaction is not supported by now.");
+                .subscribe(
+                        passed -> {
+                            if (!passed) {
+                                // For security here, we will not give a clearer tip.
+                                handler.callback(UnitResponse.createError(Group.CODE_BAD_REQUEST, null, "Bad request!"));
+                            } else {
+                                if (handler.isTransactional()) {
+                                    LOG.error("global transaction is not supported by now.");
+                                }
+                                atomicAsyncRun();
+                            }
+                        },
+                        t -> {
+                            LOG.error("request validation error", t);
+                            handler.callback(UnitResponse.createException(t));
                         }
-                        atomicAsyncRun();
-                    }
-                }, t -> {
-                    LOG.error(t);
-                    handler.callback(UnitResponse.createException(t));
-                });
+                );
     }
 
     /**
