@@ -366,7 +366,7 @@ public class Authenticator {
                                     //todo 设计一个打印type日志的Java类，将结构固定下来
                                     .fluentPut("description", "accessToken has expired, client_id= " + accessToken.getClientId())
                                     .fluentPut("accessToken", accessToken)
-                                    .fluentPut("type", OAuth20LogType.OAUTH20_TOKEN_EXPIRED));
+                                    .fluentPut("type", LogTypeOAuth20.oAuth20TokenExpired));
                             db.updateAccessTokenValidStatus(accessToken.getToken(), false).subscribe();
                             // return empty result if token expired.
                             return Maybe.empty();

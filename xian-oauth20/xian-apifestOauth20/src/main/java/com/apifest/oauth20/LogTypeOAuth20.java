@@ -5,10 +5,10 @@ package com.apifest.oauth20;
  *
  * @author happyyangyuan
  */
-public enum OAuth20LogType {
+public enum LogTypeOAuth20 {
     /**
      * token expired type
      */
-    OAUTH20_TOKEN_EXPIRED,;
+    oAuth20TokenExpired,;
 
 }

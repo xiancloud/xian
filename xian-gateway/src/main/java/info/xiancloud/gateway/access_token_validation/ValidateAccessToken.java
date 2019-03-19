@@ -13,6 +13,7 @@ import info.xiancloud.core.message.UnitRequest;
 import info.xiancloud.core.support.authen.AccessToken;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.StringUtil;
+import info.xiancloud.gateway.LogTypeGateway;
 import info.xiancloud.gateway.controller.URIBean;
 import io.reactivex.Single;
 
@@ -78,6 +79,9 @@ public class ValidateAccessToken {
             throw new IllegalArgumentException("Client's ip is empty, please check!");
         }
         if (isWhiteIp(ip)) {
+            LOG.info(new JSONObject().fluentPut("type", LogTypeGateway.whiteIp)
+                    .fluentPut("description", "request is from white ip " + ip)
+                    .fluentPut("ip", ip));
             return Single.just(Optional.of(Scope.api_all));
         }
         String accessToken = request.getContext().getHeader() == null ? null :
