@@ -3,7 +3,6 @@ dependencies {
     compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.0'
     compile group: 'org.quartz-scheduler', name: 'quartz-jobs', version: '2.3.0'
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
-    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
     compile group: 'com.fathzer', name: 'javaluator', version: '3.0.1'
     compile group: 'io.netty', name: 'netty-all', version: '4.1.19.Final'
     compile group: 'com.google.guava', name: 'guava', version: '21.0'

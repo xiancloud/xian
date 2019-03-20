@@ -1,6 +1,8 @@
 package info.xiancloud.core.util;
 
+import info.xiancloud.core.Constant;
 import info.xiancloud.core.conf.XianConfig;
+import info.xiancloud.core.log.SystemOutLogger;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
@@ -10,6 +12,11 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Classpath scanner using ClassGraph library.
+ *
+ * @author happyyangyuan
+ */
 public class ClassGraphUtil {
 
     /**
@@ -36,27 +43,23 @@ public class ClassGraphUtil {
     }
 
     /**
-     * Reflection is not thread-safe scanning the jars files in the classpath,
-     * must be synchronized otherwise a "java.lang.IllegalStateException: zip file closed" is thrown.
+     * Scan classpath for all concrete subclasses of specified interface or class
+     *
+     * @return all concrete subclasses of specified interface or class
      */
+    @SuppressWarnings("all")
     synchronized public static <T> Set<Class<? extends T>> getNonAbstractSubClasses(Class<T> parentClass, String... packageNames) {
-        if (packageNames == null || packageNames.length == 0) {
-            packageNames = defaultPackages();
-        }
-        try (ScanResult scanResult =
-                     new ClassGraph()
-                             .enableAllInfo()
-                             .whitelistPackages(packageNames)
-                             .scan()) {
-            ClassInfoList classInfos = parentClass.isInterface() ?
-                    scanResult.getClassesImplementing(parentClass.getName()) :
-                    scanResult.getSubclasses(parentClass.getName());
-            return classInfos
-                    .stream()
-                    .filter(classInfo -> !classInfo.isAbstract())
-                    .map(classInfo -> classInfo.loadClass(parentClass))
-                    .collect(Collectors.toSet());
-        }
+        return getNonAbstractSubClassInfoSet(parentClass, packageNames).stream().map(classInfo -> {
+            try {
+                //Here we must use parentClass's classloader to make sure we are always using the same classloader.
+                return (Class<? extends T>) parentClass.getClassLoader().loadClass(classInfo.getName());
+            } catch (ClassNotFoundException e) {
+                SystemOutLogger.SINGLETON.error("Failed to load class " + classInfo.getName(), e, "");
+                System.exit(Constant.SYSTEM_EXIT_CODE_FOR_SYS_INIT_ERROR);
+                //dead code
+                return null;
+            }
+        }).collect(Collectors.toSet());
     }
 
     public synchronized static ClassInfoList getWithAnnotatedClassInfoList(Class<? extends Annotation> annotationClass, String... packageNames) {
@@ -73,17 +76,17 @@ public class ClassGraphUtil {
     }
 
     public synchronized static Set<Class<?>> getWithAnnotatedClass(Class<? extends Annotation> annotationClass, String... packageNames) {
-        if (packageNames == null || packageNames.length == 0) {
-            packageNames = defaultPackages();
-        }
-        try (ScanResult scanResult =
-                     new ClassGraph()
-                             .enableAllInfo()
-                             .whitelistPackages(packageNames)
-                             .scan()) {
-            return scanResult.getClassesWithAnnotation(annotationClass.getName())
-                    .stream().map(ClassInfo::loadClass).collect(Collectors.toSet());
-        }
+        return getWithAnnotatedClassInfoList(annotationClass, packageNames).stream().map(classInfo -> {
+            try {
+                //Here we must use parentClass's classloader to make sure we are always using the same classloader.
+                return annotationClass.getClassLoader().loadClass(classInfo.getName());
+            } catch (ClassNotFoundException e) {
+                SystemOutLogger.SINGLETON.error("Failed to load class " + classInfo.getName(), e, "");
+                System.exit(Constant.SYSTEM_EXIT_CODE_FOR_SYS_INIT_ERROR);
+                //dead code
+                return null;
+            }
+        }).collect(Collectors.toSet());
     }
 
     /**
@@ -97,44 +100,27 @@ public class ClassGraphUtil {
      * @return a set of subclass instances
      */
     public synchronized static <T> Set<T> getSubclassInstances(Class<T> parentClass, String... packageNames) {
-        if (packageNames == null || packageNames.length == 0) {
-            packageNames = defaultPackages();
-        }
-        Set<T> set;
-        try (ScanResult scanResult =
-                     new ClassGraph()
-                             .enableAllInfo()
-                             .whitelistPackages(packageNames)
-                             .scan()) {
-            ClassInfoList classInfos = parentClass.isInterface() ?
-                    scanResult.getClassesImplementing(parentClass.getName()) :
-                    scanResult.getSubclasses(parentClass.getName());
-            set = classInfos
-                    .stream()
-                    .filter(classInfo -> {
-                        Class<T> subclass = classInfo.loadClass(parentClass);
-                        if (!classInfo.isAbstract() && Reflection.canInitiate(subclass)) {
-                            return true;
-                        } else {
-                            System.out.println(subclass + " can not be initiated, ignored.");
-                            return false;
-                        }
-                    })
-                    .map(classInfo -> {
-                        try {
-                            return classInfo.loadClass(parentClass).newInstance();
-                        } catch (InstantiationException | IllegalAccessException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    })
-                    .collect(Collectors.toSet());
-        }
-        return set;
+        return getNonAbstractSubClasses(parentClass, packageNames).stream()
+                .filter(subclass -> {
+                    if (Reflection.canInitiate(subclass)) {
+                        return true;
+                    } else {
+                        System.out.println(subclass + " can not be initiated, ignored.");
+                        return false;
+                    }
+                })
+                .map(subclass -> {
+                    try {
+                        return subclass.newInstance();
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }).collect(Collectors.toSet());
     }
 
     private static String[] defaultPackages() {
-        String[] packagesToScan = XianConfig.getStringArray("packagesToScan", new String[]{"com"});
+        String[] packagesToScan = XianConfig.getStringArray("packagesToScan", new String[]{""});
         return ArrayUtil.concat(new String[]{"info.xiancloud"}, packagesToScan);
     }
 }

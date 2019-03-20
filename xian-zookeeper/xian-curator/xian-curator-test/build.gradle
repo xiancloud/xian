@@ -1,4 +1,5 @@
 dependencies {
     compile group: 'org.testng', name: 'testng', version: '6.11'
+    compile group: 'org.javassist', name: 'javassist', version: '3.21.0-GA'
     /*testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'*/
 }
