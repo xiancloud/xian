@@ -10,11 +10,11 @@ import com.alibaba.fastjson.JSONObject;
  * @author happyyangyuan
  */
 public interface IJsonBody extends IBodyParser {
-    default JSONObject parseBody(String $body) throws ReqBodyParseFailure {
+    default JSONObject parseBody(String httpBody) throws ReqBodyParseFailure {
         try {
-            return JSON.parseObject($body);
+            return JSON.parseObject(httpBody);
         } catch (JSONException parseFailed) {
-            throw new ReqBodyParseFailure("http请求内容不符合规范，不是json格式:" + $body);
+            throw new ReqBodyParseFailure("http request body is not a standard json object string, please check: " + httpBody);
         }
     }
 }
