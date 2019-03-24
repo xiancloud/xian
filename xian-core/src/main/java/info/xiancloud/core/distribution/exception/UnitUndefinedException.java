@@ -28,6 +28,7 @@ public class UnitUndefinedException extends AbstractXianException {
         return String.format("Unit is undefined: %s.%s", groupName, unitName);
     }
 
+    @Override
     public UnitResponse toUnitResponse() {
         return UnitResponse.createError(Group.CODE_UNIT_UNDEFINED, null, getLocalizedMessage());
     }

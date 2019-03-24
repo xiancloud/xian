@@ -32,24 +32,26 @@ public class URIBean {
         int groupIndex = path.indexOf('/') + 1,
                 unitIndex = path.indexOf('/', groupIndex) + 1,
                 uriExtensionIndex = path.indexOf('/', unitIndex) + 1;
-        if (groupIndex == 0 || unitIndex == 0)
+        if (groupIndex == 0 || unitIndex == 0) {
             throw new IllegalArgumentException("uri is illegal: " + uri);
+        }
         group = path.substring(groupIndex, unitIndex - 1);
-        if (uriExtensionIndex == 0)
+        if (uriExtensionIndex == 0) {
             unit = path.substring(unitIndex);
-        else {
+        } else {
             unit = path.substring(unitIndex, uriExtensionIndex - 1);
             uriExtension = path.substring(uriExtensionIndex);
         }
         Map<String, List<String>> parameters = queryStringDecoder.parameters();
         parameters.forEach((key, values) -> {
             if (values == null || values.isEmpty()) {
-                LOG.debug("空参数统一对应空字符串");
+                //空参数统一对应空字符串
                 uriParameters.put(key, "");
-            } else if (values.size() == 1)
+            } else if (values.size() == 1) {
                 uriParameters.put(key, values.get(0));
-            else
+            } else {
                 uriParameters.put(key, values);
+            }
         });
     }
 
