@@ -14,7 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HttpSessionLocalCache {
 
     private static Map<String, Object> sessionMap;
-    //我们向外暴露出只读map,供session数量监控使用
+    /**
+     * 我们向外暴露出只读map,供session数量监控使用
+     */
     private static Map<String, Object> unmodifiableSessionMap;
 
     static {
