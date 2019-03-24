@@ -26,6 +26,26 @@ public class URIBean {
         return new URIBean(uri);
     }
 
+    /**
+     * Check the uri is xian pattern or not.
+     * xian pattern uri must starts with /${group}/${unit}
+     * TODO combine URI checking with UriBean creation. And use UriBean reference instead of URI string later on for performance consideration.
+     *
+     * @param uri the URI to be checked
+     * @return true if it is xian pattern false other wise.
+     */
+    public static boolean checkUri(String uri) {
+        QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri, true);
+        String path = queryStringDecoder.path();
+        int groupIndex = path.indexOf('/') + 1,
+                unitIndex = path.indexOf('/', groupIndex) + 1;
+        if (groupIndex == 0 || unitIndex == 0) {
+            LOG.warn("URI is illegal: " + uri);
+            return false;
+        }
+        return true;
+    }
+
     private URIBean(String uri) {
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri, true);
         String path = queryStringDecoder.path();
@@ -33,7 +53,7 @@ public class URIBean {
                 unitIndex = path.indexOf('/', groupIndex) + 1,
                 uriExtensionIndex = path.indexOf('/', unitIndex) + 1;
         if (groupIndex == 0 || unitIndex == 0) {
-            throw new IllegalArgumentException("uri is illegal: " + uri);
+            throw new IllegalArgumentException("URI is illegal: " + uri);
         }
         group = path.substring(groupIndex, unitIndex - 1);
         if (uriExtensionIndex == 0) {
