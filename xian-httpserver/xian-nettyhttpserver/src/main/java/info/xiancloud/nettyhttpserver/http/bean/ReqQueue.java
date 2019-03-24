@@ -16,11 +16,19 @@ public class ReqQueue {
     private final Queue<Request> reqQueue = new ConcurrentLinkedQueue<>();
     private final Map<String, ResponseWrapper> msgId_response = new HashMap<>();
 
-    public static final int RES_COUNT_THRESHOLD = 500;//防内存泄露
-    public static final int TIMEOUT_IN_MILLIS = Integer.MAX_VALUE /*原超时时间为15*1000ms，现改为无限大，即不超时*/;
+    /**
+     * 防内存泄露
+     */
+    public static final int RES_COUNT_THRESHOLD = 500;
+    /**
+     * 原超时时间为15*1000ms，现改为无限大，即不超时
+     */
+    public static final int TIMEOUT_IN_MILLIS = Integer.MAX_VALUE;
     public static final AttributeKey<ReqQueue> REQ_QUEUE = AttributeKey.valueOf("REQ_QUEUE_NAME");
 
-    //增加并发安全机制,日后如遇到长连接处理速度极限可以考虑去掉synchronized关键字,但需要仔细验证并发安全问题
+    /**
+     * 增加并发安全机制,日后如遇到长连接处理速度极限可以考虑去掉synchronized关键字,但需要仔细验证并发安全问题
+     */
     public void writeAndFlush(ResponseWrapper... responses) {
         synchronized (this) {
             for (ResponseWrapper response : responses) {
