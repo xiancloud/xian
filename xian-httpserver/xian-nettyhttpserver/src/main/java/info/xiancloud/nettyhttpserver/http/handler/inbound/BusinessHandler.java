@@ -31,8 +31,9 @@ public class BusinessHandler extends ChannelInboundHandlerAdapter {
         HttpSessionLocalCache.cacheSession(request.getMsgId(), request);
         if (checkAndRespond(request)) {
             forUseCase(ctx, request);
-            ctx.fireChannelRead(request);
         }
+        //make sure the next 'ReqSubmitted' handler to be executed.
+        ctx.fireChannelRead(request);
     }
 
     /**
@@ -69,8 +70,8 @@ public class BusinessHandler extends ChannelInboundHandlerAdapter {
         requestBean.setHeader(request.getHeader());
         IAsyncForwarder scheduler = IAsyncForwarder.getForwarder(requestBean.getUri());
         scheduler.forward(requestBean);
+        //说明:以上IApiGatewayRequest.submitRequest是异步提交任务,即内部启用了线程池来加载任务了,因此这里不需提交线程池来执行任务
         LOG.info("UnitRequest is committed.");
-        LOG.debug("说明:以上IApiGatewayRequest.submitRequest是异步提交任务,即内部启用了线程池来加载任务了,因此这里不需提交线程池来执行任务");
     }
 
     @Override

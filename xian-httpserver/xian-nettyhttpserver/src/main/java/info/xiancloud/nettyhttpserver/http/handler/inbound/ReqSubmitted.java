@@ -7,6 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
+ * The last inbound handler
+ *
  * @author happyyangyuan
  */
 public class ReqSubmitted extends SimpleChannelInboundHandler<Request> {
