@@ -27,12 +27,12 @@ public class ReqReceived extends ChannelInboundHandlerAdapter {
                 MsgIdHolder.set(outerMsg);
                 LOG.info("xian独立节点传入了msgId=" + outerMsg);
             }
-            String $ip = httpRequest.headers().get("X-Real-IP");
-            if (StringUtil.isEmpty($ip)) {
+            String ip = httpRequest.headers().get("X-Real-IP");
+            if (StringUtil.isEmpty(ip)) {
                 InetSocketAddress address = (InetSocketAddress) (ctx.channel().remoteAddress());
-                $ip = address.getAddress().getHostAddress();
+                ip = address.getAddress().getHostAddress();
             }
-            LOG.info(String.format("收到来自%s的FullHttpRequest \r\n %s!", $ip, msg));
+            LOG.info(String.format("收到来自%s的FullHttpRequest \r\n %s!", ip, msg));
             ctx.fireChannelRead(msg);
         } else {
             LOG.info("收到chucked http message...直接忽略，等待组装完毕");

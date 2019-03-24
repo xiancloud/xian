@@ -61,8 +61,10 @@ public abstract class AbstractAsyncForwarder implements IAsyncForwarder, IRespon
                 .setUriExtension(uriBean.getUriExtension())
                 .setMsgId(msgId)
                 .setUriParameters(uriBean.getUriParameters());
-        controllerRequest.getArgMap().putAll(uriBean.getUriParameters());//uri parameters overwrite body parameters.
+        //uri parameters overwrite body parameters.
+        controllerRequest.getArgMap().putAll(uriBean.getUriParameters());
         BaseController controller = IControllerMapper.getController(controllerRequest, new TransactionalNotifyHandler() {
+            @Override
             protected void handle(UnitResponse unitResponse) {
                 if (unitResponse == null) {
                     Throwable emptyOutputException = new RuntimeException("UnitResponse is not allowed to be null.");

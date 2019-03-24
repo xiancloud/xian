@@ -12,7 +12,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class ReqSubmitted extends SimpleChannelInboundHandler<Request> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Request msg) throws Exception {
-        LOG.debug(">>>>>>>>>>>> 请求已提交给业务层,释放httpRequest的buffer引用并清空$msgId");
+        LOG.info(">>>>>>>>>>>> 请求已提交给业务层,释放httpRequest的buffer引用并清空$msgId");
         MsgIdHolder.clear();
     }
 }
