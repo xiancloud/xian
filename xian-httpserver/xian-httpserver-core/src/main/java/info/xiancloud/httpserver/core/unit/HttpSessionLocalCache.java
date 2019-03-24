@@ -22,13 +22,13 @@ public class HttpSessionLocalCache {
         unmodifiableSessionMap = Collections.unmodifiableMap(sessionMap);
     }
 
-    public static void cacheSession(String $msgId, Object session) {
-        sessionMap.put($msgId, session);
+    public static void cacheSession(String msgId, Object session) {
+        sessionMap.put(msgId, session);
     }
 
-    public static Object removeSession(String $msgId) {
-        LOG.debug("session remove :" + $msgId);
-        return sessionMap.remove($msgId);
+    public static Object removeSession(String msgId) {
+        LOG.debug("session remove :" + msgId);
+        return sessionMap.remove(msgId);
     }
 
     public static Map<String, Object> getSessionMap() {
