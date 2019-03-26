@@ -238,12 +238,12 @@ Apache ZooKeeper是Apache软件基金会的一个软件项目，他为大型分�
 在xian_template示例项目中，我提供了一个zookeeper server用于测试使用，请勿用于生产环境。可以在你的application.properties中配置你zookeeper服务端地址
 ````properties
 #service registration center internet url
-zookeeperConnectionStringInternet=zk.xiancloud.info:19129
+zookeeperConnectionStringInternet=zk.xiancloud.info:32761
 ````
 ##### zkui
 zkui是一个zookeeper的UI客户端，github开源地址：https://github.com/DeemOpen/zkui
 
-xian_template提供了一个zkui服务：http://zkui.xiancloud.info:19193
+xian_template提供了一个zkui服务：http://zkui.xiancloud.info:30678
 
 账号密码是：admin/happyyangyuan
 
