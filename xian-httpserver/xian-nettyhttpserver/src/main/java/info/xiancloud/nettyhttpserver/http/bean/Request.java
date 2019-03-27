@@ -3,6 +3,7 @@ package info.xiancloud.nettyhttpserver.http.bean;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import info.xiancloud.core.Constant;
+import info.xiancloud.core.util.EnvUtil;
 import info.xiancloud.core.util.LOG;
 import info.xiancloud.nettyhttpserver.http.Config;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,7 +37,9 @@ public class Request {
      */
     private final long reqReceivedTimeInMillis;
 
-    //异步回调时使用
+    /**
+     * 异步回调时使用
+     */
     @JSONField(serialize = false)
     private ChannelHandlerContext channelHandlerContext;
 
@@ -44,15 +47,20 @@ public class Request {
         this.httpRequest = httpRequest;
         this.msgId = msgId;
         /*QueryStringDecoder queryStringDecoder = new QueryStringDecoder(httpRequest.uri());*/
-        url = httpRequest.uri()/*queryStringDecoder.path()*/;
+        /*queryStringDecoder.path()*/
+        url = httpRequest.uri();
         header = new HashMap<>();
         for (Map.Entry<String, String> headerKeyValue : httpRequest.headers()) {
             if (headerKeyValue.getKey().startsWith(Constant.XIAN_HEADER_PREFIX)) {
                 header.put(headerKeyValue.getKey(), headerKeyValue.getValue());
             }
         }
-        contentType = httpRequest.headers().get(HttpHeaderNames.CONTENT_TYPE, Config.getContentType());//如果请求方没有定义,则默认为Config.getContentType()
+        //如果请求方没有定义,则默认为Config.getContentType()
+        contentType = httpRequest.headers().get(HttpHeaderNames.CONTENT_TYPE, Config.getContentType());
         String rawBody = httpRequest.content().toString(Config.defaultUtf8()).trim();
+        if (!EnvUtil.isProduction()) {
+            LOG.info("Full http request body (non-production log only): \r\n" + rawBody);
+        }
         if ((rawBody.startsWith("[") && rawBody.endsWith("]"))
                 || (rawBody.startsWith("{") && rawBody.endsWith("}"))
                 || (rawBody.startsWith("<") && rawBody.endsWith(">"))
