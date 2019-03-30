@@ -235,7 +235,7 @@ group定义了unit分组，每个unit都属于唯一一个group，groupName和un
 ##### zookeeper
 Apache ZooKeeper是Apache软件基金会的一个软件项目，他为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。 ZooKeeper曾经是Hadoop的一个子项目，但现在是一个独立的顶级项目。 ZooKeeper的架构通过冗余服务实现高可用性。 参考自“维基百科”。
 
-在xian_template示例项目中，我提供了一个zookeeper server用于测试使用，请勿用于生产环境。可以在你的application.properties中配置你zookeeper服务端地址
+在xian_template示例项目中，我提供了一个zookeeper服务用于测试使用，请勿用于生产等环境。可以在你的application.properties中配置你zookeeper服务端地址
 ````properties
 #service registration center internet url
 zookeeperConnectionStringInternet=zk.xiancloud.info:32761
@@ -243,9 +243,9 @@ zookeeperConnectionStringInternet=zk.xiancloud.info:32761
 ##### zkui
 zkui是一个zookeeper的UI客户端，github开源地址：https://github.com/DeemOpen/zkui
 
-xian_template提供了一个zkui服务：http://zkui.xiancloud.info:30678
+xian_template提供了一个zkui服务：https://zkui.xiancloud.info
 
-账号密码是：admin/happyyangyuan
+账号密码是：appconfig/appconfig
 
 ##### 我们使用zkui来实现集中配置管理
 登录zkui后，请访问/xian_runtime_yourEnvironment/resources/来看查看和修改你的插件配置。
