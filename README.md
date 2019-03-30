@@ -6,13 +6,12 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 至此，xian也是actor模型的完整实现了，希望哪天可以跟akka、vertx做性能pk！
 
 ## 目录
-[xian的基础介绍](doc/zh_CN/xianBasis.md)  
-[30分钟学会使用xian frame开发微服务](doc/zh_CN/quickStart.md)  
-    [如何运行？程序的入口？——xian_template](doc/zh_CN/quickStart.md#如何运行？程序的入口？——xian_template)  
-    [编写一个微服务单元](doc/zh_CN/quickStart.md#编写一个微服务单元)  
-    [基础概念参考](doc/zh_CN/quickStart.md#基础概念参考)  
-[xian现有功能](doc/zh_CN/xianFunctionList.md)  
-
+1. [xian的基础介绍](doc/zh_CN/xianBasis.md)  
+2. [30分钟学会使用xian frame开发微服务](doc/zh_CN/quickStart.md)  
+    2.1 [如何运行？程序的入口？——xian_template](doc/zh_CN/quickStart.md#如何运行？程序的入口？——xian_template)  
+    2.2 [编写一个微服务单元](doc/zh_CN/quickStart.md#编写一个微服务单元)  
+    2.3 [基础概念参考](doc/zh_CN/quickStart.md#基础概念参考)  
+3. [xian现有功能](doc/zh_CN/xianFunctionList.md)  
 
 ## 写在末尾
 1. xian，即“贤”，来自某个人的名，代表“好”、“佳”的意思。谨以此名字纪念我死去的爱情。
@@ -24,6 +23,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
     https://github.com/google/guava,  
     https://logging.apache.org/log4j,  
     http://zookeeper.apache.org,  
-    http://curator.apache.org;
+    http://curator.apache.org,  
+    https://gradle.org;
 
 
