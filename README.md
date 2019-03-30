@@ -18,11 +18,11 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 1. xian，即“贤”，来自某个人的名，代表“好”、“佳”的意思。谨以此名字纪念我逝去的爱情。
 2. 请大家多多指点，加星加星！关注！ 那些开发中和规划中的功能就全靠你们的星星了，可怜脸。
 3. 鸣谢：  
- > http://netty.io,  
- > https://github.com/ReactiveX/RxJava,  
- > https://github.com/alibaba/fastjson,  
- > https://github.com/google/guava,   
- > https://logging.apache.org/log4j,  
- > http://zookeeper.apache.org,  
- > http://curator.apache.org,  
- > https://gradle.org;
+- http://netty.io,  
+- https://github.com/ReactiveX/RxJava,  
+- https://github.com/alibaba/fastjson,  
+- https://github.com/google/guava,   
+- https://logging.apache.org/log4j,  
+- http://zookeeper.apache.org,  
+- http://curator.apache.org,  
+- https://gradle.org;
