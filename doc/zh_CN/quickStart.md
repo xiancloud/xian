@@ -109,11 +109,13 @@ curl -XPOST http://localhost:9123/demoGroup01/demoUnit01
 
 #### API文档微服务 apidocApplication
 顾名思义，它就是为你自动生成API文档的，执行start.sh来启动该微服务，然后访问如下地址查看文档效果:  
-1. [自定义的api描述文档](http://localhost:9123/apidoc/customizedHtml?docName=可定制的文档标题&docDescription=可定制的文档描述超文本&unitFilter=demoGroup01.demoUnit01,demoGroup02.demoUnit02)  
-2. [全api描述文档](http://localhost:9123/apidoc/fullHtml?docName=可定制的文档标题)  
-3. [单元组的api描述文档](http://localhost:9123/apidoc/groupHtml?groupName=apidoc&docName=可定制的文档标题&docDescription=可定制的文档描述超文本)  
+1. [自定义的api描述文档](https://demo.xiancloud.info/apidoc/customizedHtml?docName=可定制的文档标题&docDescription=可定制的文档描述超文本&unitFilter=demoGroup01.demoUnit01,demoGroup02.demoUnit02)  
+2. [全api描述文档](https://demo.xiancloud.info/apidoc/fullHtml?docName=可定制的文档标题)  
+3. [单元组的api描述文档](https://demo.xiancloud.info/apidoc/groupHtml?groupName=apidoc&docName=可定制的文档标题&docDescription=可定制的文档描述超文本)  
   
-tips: 可以设置你自己想要的参数来定制不同的API文档出来哦。
+tips: 
+- 访问本地的服务，你需要把上述地址中的`https://demo.xiancloud.info`改为`http://localhost:9123`
+- 可以设置你自己想要的参数来定制不同的API文档出来哦。
 
 
 #### 惯例和约定
