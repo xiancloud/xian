@@ -1,0 +1,3 @@
+dependencies {
+    compile 'org.mongodb:mongodb-driver-sync:3.10.1'
+}
