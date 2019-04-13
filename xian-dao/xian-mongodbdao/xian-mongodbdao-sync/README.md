@@ -60,7 +60,9 @@ Mongo.Page<Person> page = Mongo.findPageByPageNumber(collection, gt("age", 0), 1
 LOG.info(page);
 
 ```
-所有分页`info.xiancloud.plugin.dao.mongodb.Mongo`内都可以找到。
+说明  
+1. 所有分页操作在`info.xiancloud.plugin.dao.mongodb.Mongo`内都可以找到。
+2. MongoDB的查询条件operator操作见`com.mongodb.client.model.Filters`。
 
 #### MongoDB其他基本读写操作
 使用你IDE提示功能直接检查官方的`com.mongodb.client.MongoCollection`类有哪些MongoDB操作即可。
