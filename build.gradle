@@ -39,7 +39,7 @@ subprojects {
     }
 
     artifacts {
-        archives /*javadocJar,*/ sourcesJar
+        archives javadocJar, sourcesJar
     }
 
     //install xian's releases into your private repository.

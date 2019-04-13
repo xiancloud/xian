@@ -36,13 +36,14 @@ public class PluginFileUtil {
      * @throws FileNotFoundException unable to find a war file in the plugins directory.
      */
     public static File war() throws FileNotFoundException {
-        String[] warsInPluginsDir = new File(PLUGINS_DIR_NAME).list((dir, name) -> name.endsWith(".war")),
-                warsInLibsDir = new File(LIBS_DIR_NAME).list((dir, name) -> name.endsWith(".war"));
-        String[] wars = ArrayUtil.concatV2(String.class, warsInLibsDir, warsInPluginsDir);
+        File[] warsInPluginsDir = new File(PLUGINS_DIR_NAME).listFiles((dir, name) -> name.endsWith(".war")),
+                warsInLibsDir = new File(LIBS_DIR_NAME).listFiles((dir, name) -> name.endsWith(".war"));
+        File[] wars = ArrayUtil.concatV2(File.class, warsInLibsDir, warsInPluginsDir);
         if (wars == null || wars.length == 0) {
             throw new FileNotFoundException("unable to find a war file in " + PLUGINS_DIR_NAME);
         }
-        return new File(PLUGINS_DIR_NAME + wars[0]);
+        //We only fetch the first war file, so please make sure there is only one war file there.
+        return wars[0];
     }
 
     /**
