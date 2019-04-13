@@ -56,7 +56,9 @@ final public class UnitResponse {
     private Context context = Context.create();
 
     /**
-     * singleton instance of a succeeded unit response
+     * Singleton instance of a succeeded unit response.
+     *
+     * @deprecated This singleton object is not thread-safe, use it carefully.
      */
     private static final UnitResponse SUCCEEDED_SINGLETON = createSuccess();
 
@@ -65,25 +67,6 @@ final public class UnitResponse {
         return this;
     }
 
-    /*
-     * @return the exception object if this unit response represents a exception response. Null if no exception.
-    public Throwable getException() {
-        return exception;
-    }
-
-     * Set the exception of this unit response, note that this will set the rollback property in the context to true,
-     * which will lead to a transaction rolling back if transaction is enabled.
-     *
-     * @param exception the exception object.
-     * @return this unit response object.
-
-    public UnitResponse setException(Throwable exception) {
-        this.exception = exception;
-        getContext().setRollback(true);
-        return this;
-    }
-    */
-
     private UnitResponse() {
     }
 
@@ -91,6 +74,10 @@ final public class UnitResponse {
         return context;
     }
 
+    /**
+     * @return {@link #SUCCEEDED_SINGLETON The success unit response object}.
+     * @deprecated This method returns a singleton unit response which is not thread-safe. Use {@link #createSuccess()} instead.
+     */
     public static UnitResponse succeededSingleton() {
         return SUCCEEDED_SINGLETON;
     }
@@ -547,10 +534,6 @@ final public class UnitResponse {
 
     @SuppressWarnings("unused")
     public String getMessage() {
-        /*if (succeeded() && message != null) {
-            LOG.warn("成功的output禁止使用errMsg属性：message= " + message);
-            return null;
-        }*/
         return message;
     }
 
