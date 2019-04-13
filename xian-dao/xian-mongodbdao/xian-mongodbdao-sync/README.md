@@ -1,15 +1,15 @@
-### mongodbdao-sync
+## xian-mongodbdao-sync插件
 这是一个依赖[MongoDB官方同步driver](http://mongodb.github.io/mongo-java-driver/3.10/driver/)的dao层ORM插件。使用该插件可以实现以ORM的方式访问
 访问MongoDB。
-#### 使用教程
-##### 在你的业务插件中配置MongoDB插件依赖
+### 使用教程
+#### 在你的业务插件中配置MongoDB插件依赖
 编辑`build.gradle`文件
 ```gradle
 dependencies {
     compile group: 'info.xiancloud', name: 'xian-mongodbdao-sync', version: "${xianVersion}"
 }
 ```
-##### 配置MongoDB数据源
+#### 配置MongoDB数据源
 在你的业务插件代码的`src/main/resources/plugin.properties`配置文件内写入配置文件：
 ```properties
 # MongoDB的数据源完整的连接字符串，请根据实际情况调整你的参数值
@@ -19,7 +19,7 @@ mongodb_database=businessDatabaseName
 ```
 关于MongoDB数据源连接字符串，请参考[MongoDB connection string官方文档](https://docs.mongodb.com/manual/reference/connection-string/)。
 
-##### xian-mongodbdao-sync的基本操作
+#### xian-mongodbdao-sync的基本操作
 伪代码示例
 ```java
 import info.xiancloud.plugin.dao.mongodb.Mongo;
@@ -52,14 +52,17 @@ public final class Person implements Bean {
 }
 ```
 
-##### 分页查询封装
+#### 分页查询封装
+eg.
 ```
 MongoCollection<Person> collection = Mongo.getCollection("collectionName", Person.class);
 Mongo.Page<Person> page = Mongo.findPageByPageNumber(collection, gt("age", 0), 1, 10);
 LOG.info(page);
-```
 
-##### MongoDB其他基本读写操作
+```
+所有分页`info.xiancloud.plugin.dao.mongodb.Mongo`内都可以找到。
+
+#### MongoDB其他基本读写操作
 使用你IDE提示功能直接检查官方的`com.mongodb.client.MongoCollection`类有哪些MongoDB操作即可。
 
 
