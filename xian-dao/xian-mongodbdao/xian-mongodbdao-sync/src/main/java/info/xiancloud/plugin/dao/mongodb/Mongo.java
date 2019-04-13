@@ -6,7 +6,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import info.xiancloud.core.conf.XianConfig;
-import info.xiancloud.core.init.shutdown.ShutdownHook;
+import info.xiancloud.core.util.LOG;
 import info.xiancloud.core.util.Reflection;
 import info.xiancloud.core.util.StringUtil;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -20,7 +20,12 @@ import java.util.function.Consumer;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-public class Mongo implements ShutdownHook {
+/**
+ * Mongo客户端管理和操作类
+ *
+ * @author happyyangyuan
+ */
+public class Mongo {
     private static volatile MongoDatabase DEFAULT_DATABASE;
     private static volatile MongoClient DEFAULT_CLIENT;
     private static final Object LOCK = new Object();
@@ -28,14 +33,6 @@ public class Mongo implements ShutdownHook {
     public static <T> MongoCollection<T> getCollection(String collectionName, Class<T> tClass) {
         //没时间做验证了，我怕它不是并发安全的，所以这里还是改回来非单例吧。
         return getOrInitDefaultDatabase().getCollection(collectionName, tClass);
-    }
-
-    @Override
-    public boolean shutdown() {
-        if (DEFAULT_DATABASE != null) {
-            DEFAULT_CLIENT.close();
-        }
-        return true;
     }
 
     /**
@@ -76,13 +73,32 @@ public class Mongo implements ShutdownHook {
         return DEFAULT_DATABASE;
     }
 
+    /**
+     * Destroy MongoDB client if the client is initialized or else nothing will be done.
+     * This method is thread-safe to be used concurrently with {@link #getOrInitDefaultDatabase()} and {@link #getOrInitDefaultDatabase(String, String)}
+     */
+    public static void destroy() {
+        if (Mongo.DEFAULT_DATABASE != null) {
+            synchronized (LOCK) {
+                if (Mongo.DEFAULT_DATABASE != null) {
+                    //销毁客户端，并将引用置空
+                    Mongo.DEFAULT_CLIENT.close();
+                    Mongo.DEFAULT_DATABASE = null;
+                    Mongo.DEFAULT_CLIENT = null;
+                }
+            }
+        } else {
+            LOG.warn("Mongodb client is not initialized yet, nothing is need to destroy.");
+        }
+    }
+
     public static <T> Page<T> findPageByPageNumber(MongoCollection<T> collection, Bson filter, int pageNumber, int pageSize) {
         long total = collection.countDocuments(filter);
         Page<T> page = new Page<>();
         page.setPageSize(pageSize);
         int totalPage = new Double(Math.ceil((double) total / pageSize)).intValue();
         page.setTotalPage(totalPage);
-        if(totalPage<pageNumber && totalPage !=0){
+        if (totalPage < pageNumber && totalPage != 0) {
             pageNumber = totalPage;
         }
         page.setPageNumber(pageNumber);
@@ -99,7 +115,7 @@ public class Mongo implements ShutdownHook {
         page.setPageSize(pageSize);
         int totalPage = new Double(Math.ceil((double) total / pageSize)).intValue();
         page.setTotalPage(totalPage);
-        if(totalPage<pageNumber && totalPage !=0){
+        if (totalPage < pageNumber && totalPage != 0) {
             pageNumber = totalPage;
         }
         page.setPageNumber(pageNumber);
@@ -141,11 +157,11 @@ public class Mongo implements ShutdownHook {
         /**
          * page number
          */
-        private int pageNumber=1;
+        private int pageNumber = 1;
         /**
          * result amount of this page
          */
-        private int pageSize=10;
+        private int pageSize = 10;
         /**
          * total page
          */
