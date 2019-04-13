@@ -19,25 +19,30 @@ mongodb_database=businessDatabaseName
 ```
 关于MongoDB数据源连接字符串，请参考[MongoDB connection string官方文档](https://docs.mongodb.com/manual/reference/connection-string/)。
 
-##### MongoDB基本读写操作
+##### xian-mongodbdao-sync的基本操作
+伪代码示例
 ```java
+import info.xiancloud.plugin.dao.mongodb.Mongo;
+
+...
+
 LOG.info(" 初始化MongoDB客户端连接...");
 Mongo.getOrInitDefaultDatabase(XianConfig.get("mongodb_connection_string"), XianConfig.get("mongodb_database"));
-LOG.info("获取MongoDB collection对象...");
-MongoCollection<GraylogMessage> collection = Mongo.getCollection("graylog_message_ext", GraylogMessage.class);
+LOG.info("获取MongoDB collection对象，如果配置文件指定的MongoDB业务库内不存在指定的集合名称，那么新建这个集合...");
+MongoCollection<GraylogMessage> collection = Mongo.getCollection("collectionName", GraylogMessage.class);
 LOG.info("向MongoDB写入列表数据...");
-collection.insertMany(request.getList("graylogMessages", GraylogMessage.class));
-
-LOG.info("从MongoDB读取数据");
-
+collection.insertMany(graylogMessageList, GraylogMessage.class));
 ```
 
+MongoDB自动生成id的序列化和反序列化注意事项
 ```java
 /**
  * The Person Pojo.
  */
 public final class Person implements Bean {
-    // 注意这里id字段类型
+    // 注意这里id字段类型是MongoDB官方驱动里面的ObjectId类型，这种类型支持让MongoDB为我们自动生成id
+    // 为了兼容MongoDB自动生成id的ObjectId类型，这里必须配置fastjson的序列化和反序列化器
+    // 当然，如果你不需要MongoDB自动生成的id，那么大可不必使用ObjectId类型作为id字段
     @JSONField(serializeUsing = ObjectIdSerializer.class, deserializeUsing = HexStringDeserializer.class)
     private ObjectId id;
     private String name;
@@ -46,6 +51,18 @@ public final class Person implements Bean {
     ...
 }
 ```
+
+##### 分页查询封装
+```
+MongoCollection<Person> collection = Mongo.getCollection("collectionName", Person.class);
+Mongo.Page<Person> page = Mongo.findPageByPageNumber(collection, gt("age", 0), 1, 10);
+LOG.info(page);
+```
+
+##### MongoDB其他基本读写操作
+使用你IDE提示功能直接检查官方的`com.mongodb.client.MongoCollection`类有哪些MongoDB操作即可。
+
+
 
 
 
