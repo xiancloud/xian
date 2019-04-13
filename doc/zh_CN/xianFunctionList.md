@@ -30,7 +30,7 @@
 29. 基于一致性哈希算法的异步保序功能。
 31. 第三方功能扩展能力：自定义插件开发。
 32. 响应式编程（rxJava2集成）。
-33. [MongoDB持久层插件](xian/xian-dao/xian-mongodbdao/xian-mongodbdao-sync/README.md)
+33. [MongoDB持久层插件](/xian-dao/xian-mongodbdao/xian-mongodbdao-sync/README.md)
 
 ### 正在开发中的功能
 1. 内置持久层框架对分布式事务支持
