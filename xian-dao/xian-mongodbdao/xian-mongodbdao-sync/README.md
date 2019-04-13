@@ -34,11 +34,12 @@ LOG.info("向MongoDB写入列表数据...");
 collection.insertMany(personList, Person.class));
 ```
 
-
-##### 使用MongoDB自动生成id
+#### MongoDB collection主键_id
+MongoDB数据库内collection的主键字段默认是“_id”，默认是ObjectId类型。
+##### 使用MongoDB自动生成id功能
 java pojo序列化和反序列化注意事项，如下代码所示：
 ```java
-public final class Person implements Bean {
+public final class Person implements Serializable {
     // 注意这里id字段类型是MongoDB官方驱动里面的ObjectId类型，这种类型支持让MongoDB为我们自动生成id
     // 为了兼容MongoDB自动生成id的ObjectId类型，这里必须配置fastjson的序列化和反序列化器
     // 当然，如果你不需要MongoDB自动生成的id，那么大可不必使用ObjectId类型作为id字段
@@ -51,7 +52,24 @@ public final class Person implements Bean {
     // getters and setters
 }
 ```
+以上方式生成的id在MongoDB内容如下所示：
+```
+_id: ObjectId("5ca1ad33a2e5ac0c9ea2db10")
+```
 
+##### 使用Java应用程序自定义生成的字符串id
+```java
+public final class Person implements Serializable {
+    // 注意这里id字段类型是String类型，这种类型不支持让MongoDB为我们自动生成id
+    // 在插入MongoDB数据库前，必须由Java程序生成一个字符串id出来
+    private String id;
+    private String name;
+    private int age;
+    private Address address;
+    ...
+    // getters and setters
+}
+```
 
 #### 分页查询封装
 eg.
@@ -68,6 +86,6 @@ LOG.info(page);
 
 #### MongoDB其他基本读写操作
 使用你IDE提示功能直接检查官方的`com.mongodb.client.MongoCollection`类有哪些MongoDB操作即可。
-以上示例代码可以从插件内`MongodbClientOpsDemo`示例代码中找到。
+以上示例代码可以从插件内`MongodbClientOpsDemo`中找到。
 
 
