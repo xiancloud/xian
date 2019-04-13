@@ -35,11 +35,9 @@ collection.insertMany(personList, Person.class));
 ```
 
 
-MongoDB自动生成id的序列化和反序列化注意事项
+##### 使用MongoDB自动生成id
+java pojo序列化和反序列化注意事项，如下代码所示：
 ```java
-/**
- * The Person Pojo.
- */
 public final class Person implements Bean {
     // 注意这里id字段类型是MongoDB官方驱动里面的ObjectId类型，这种类型支持让MongoDB为我们自动生成id
     // 为了兼容MongoDB自动生成id的ObjectId类型，这里必须配置fastjson的序列化和反序列化器
@@ -50,6 +48,7 @@ public final class Person implements Bean {
     private int age;
     private Address address;
     ...
+    // getters and setters
 }
 ```
 
