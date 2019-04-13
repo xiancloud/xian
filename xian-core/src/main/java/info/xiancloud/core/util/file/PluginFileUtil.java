@@ -13,7 +13,14 @@ import java.io.FileNotFoundException;
  */
 public class PluginFileUtil {
 
+    /**
+     * plugins relative directory
+     */
     private static final String PLUGINS_DIR_NAME = "plugins/";
+    /**
+     * libs relative directory
+     */
+    private static final String LIBS_DIR_NAME = "../libs/";
 
     /**
      * @return all jars in classpath, no cache.
@@ -21,7 +28,7 @@ public class PluginFileUtil {
     public static File[] jars() {
         File[] jarsInPluginsDir = jarsInPlugins(),
                 jarsInLibsDir = jarsInLibs();
-        return ArrayUtil.concat(jarsInLibsDir, jarsInPluginsDir);
+        return ArrayUtil.concatV2(File.class, jarsInLibsDir, jarsInPluginsDir);
     }
 
     /**
@@ -29,7 +36,9 @@ public class PluginFileUtil {
      * @throws FileNotFoundException unable to find a war file in the plugins directory.
      */
     public static File war() throws FileNotFoundException {
-        String[] wars = new File(PLUGINS_DIR_NAME).list((dir, name) -> name.endsWith(".war"));
+        String[] warsInPluginsDir = new File(PLUGINS_DIR_NAME).list((dir, name) -> name.endsWith(".war")),
+                warsInLibsDir = new File(LIBS_DIR_NAME).list((dir, name) -> name.endsWith(".war"));
+        String[] wars = ArrayUtil.concatV2(String.class, warsInLibsDir, warsInPluginsDir);
         if (wars == null || wars.length == 0) {
             throw new FileNotFoundException("unable to find a war file in " + PLUGINS_DIR_NAME);
         }

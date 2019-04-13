@@ -121,7 +121,7 @@ public class ClassGraphUtil {
 
     private static String[] defaultPackages() {
         String[] packagesToScan = XianConfig.getStringArray("packagesToScan", new String[]{""});
-        return ArrayUtil.concat(new String[]{"info.xiancloud"}, packagesToScan);
+        return ArrayUtil.concatV2(String.class, new String[]{"info.xiancloud"}, packagesToScan);
     }
 }
 

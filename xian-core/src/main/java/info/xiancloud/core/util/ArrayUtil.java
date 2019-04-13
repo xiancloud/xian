@@ -193,7 +193,10 @@ public class ArrayUtil {
     /**
      * concat 2 array to a new array.
      *
+     * @param first  first array, can not be null
+     * @param second second array, can not be null
      * @return the result array.
+     * @deprecated This method can not cocat null object and only supports concating of 2 arrays. Use {@link #concatV2(Class, Object[][])} instead.
      */
     public static <T> T[] concat(T[] first, T[] second) {
         T[] result = Arrays.copyOf(first, first.length + second.length);
@@ -201,4 +204,24 @@ public class ArrayUtil {
         return result;
     }
 
+    /**
+     * @param clazz  the type of array element
+     * @param arrays array of arrays, nullable.
+     * @param <T>    the parametrized type
+     * @return A new array concated with all the given arrays.
+     */
+    @SafeVarargs
+    @SuppressWarnings("all")
+    public static <T> T[] concatV2(Class<T> clazz, T[]... arrays) {
+        T[] seed = (T[]) Array.newInstance(clazz, 0);
+        if (arrays == null) {
+            return seed;
+        }
+        for (T[] array : arrays) {
+            if (array != null) {
+                seed = concat(seed, array);
+            }
+        }
+        return seed;
+    }
 }
