@@ -29,10 +29,11 @@ import info.xiancloud.plugin.dao.mongodb.Mongo;
 LOG.info(" 初始化MongoDB客户端连接...");
 Mongo.getOrInitDefaultDatabase(XianConfig.get("mongodb_connection_string"), XianConfig.get("mongodb_database"));
 LOG.info("获取MongoDB collection对象，如果配置文件指定的MongoDB业务库内不存在指定的集合名称，那么新建这个集合...");
-MongoCollection<GraylogMessage> collection = Mongo.getCollection("collectionName", GraylogMessage.class);
+MongoCollection<Person> collection = Mongo.getCollection("collectionName", Person.class);
 LOG.info("向MongoDB写入列表数据...");
-collection.insertMany(graylogMessageList, GraylogMessage.class));
+collection.insertMany(personList, Person.class));
 ```
+
 
 MongoDB自动生成id的序列化和反序列化注意事项
 ```java
@@ -52,6 +53,7 @@ public final class Person implements Bean {
 }
 ```
 
+
 #### 分页查询封装
 eg.
 ```
@@ -64,10 +66,9 @@ LOG.info(page);
 1. 所有分页操作在`info.xiancloud.plugin.dao.mongodb.Mongo`内都可以找到。
 2. MongoDB的查询条件operator操作见`com.mongodb.client.model.Filters`。
 
+
 #### MongoDB其他基本读写操作
 使用你IDE提示功能直接检查官方的`com.mongodb.client.MongoCollection`类有哪些MongoDB操作即可。
-
-
-
+以上示例代码可以从插件内`MongodbClientOpsDemo`示例代码中找到。
 
 
