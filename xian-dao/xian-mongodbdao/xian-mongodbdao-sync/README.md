@@ -52,7 +52,7 @@ public final class Person implements Serializable {
     // getters and setters
 }
 ```
-以上方式生成的id在MongoDB内容如下所示：
+以上方式生成的id在MongoDB内容如下所示，eg.：
 ```
 _id: ObjectId("5ca1ad33a2e5ac0c9ea2db10")
 ```
@@ -70,7 +70,7 @@ public final class Person implements Serializable {
     // getters and setters
 }
 ```
-该方式由Java生成id的，在MongoDB内存储的id类型就是字符串了：
+该方式由Java生成id的，在MongoDB内存储的id类型就是字符串了，eg.：
 ```
 _id: "26e0f8d0-5de6-11e9-aab4-ca30dc42ccd6"
 ```
