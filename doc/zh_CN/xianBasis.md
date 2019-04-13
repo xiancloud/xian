@@ -9,7 +9,7 @@
 7. 帮助实现devops开发运维协作能力。
 8. actor-model实现，开发异步业务而没有回调地狱！
 
-### xian框架的架构设计
+### xian框架的组件构成
 ![xian框架的架构设计](http://processon.com/chart_image/5cae9f20e4b09a003b2c18b8.png)
 ### 基于xian框架你可以实现如下逻辑架构图对应的微服务集群
 ![基于xian你可以实现如下逻辑架构图对应的微服务集群](http://processon.com/chart_image/5c779b2ae4b07bd3f0709102.png?_=1551343472005)
