@@ -70,6 +70,10 @@ public final class Person implements Serializable {
     // getters and setters
 }
 ```
+该方式由Java生成id的，在MongoDB内存储的id类型就是字符串了：
+```
+_id: "26e0f8d0-5de6-11e9-aab4-ca30dc42ccd6"
+```
 
 #### 分页查询封装
 eg.
