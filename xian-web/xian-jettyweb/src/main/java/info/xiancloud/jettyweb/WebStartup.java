@@ -1,5 +1,6 @@
 package info.xiancloud.jettyweb;
 
+import info.xiancloud.core.conf.XianConfig;
 import info.xiancloud.core.init.IStartService;
 import info.xiancloud.core.thread_pool.ThreadPoolManager;
 import info.xiancloud.core.util.LOG;
@@ -19,10 +20,11 @@ public class WebStartup implements IStartService {
 
     @Override
     public boolean startup() {
-        LOG.info("---开始启动jetty----");
-        final Server server = new Server(8080);
+        LOG.info("---Starting up jetty----");
+        final Server server = new Server(XianConfig.getInteger("embeddedJavaWebPort", 8080));
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setContextPath("/");
+        webAppContext.setLogUrlOnStart(true);
         File warFile;
         try {
             warFile = PluginFileUtil.war();
@@ -30,7 +32,7 @@ public class WebStartup implements IStartService {
             LOG.error(e);
             return false;
         }
-        LOG.info("---war包路径----" + warFile.getAbsolutePath());
+        LOG.info("---war absolute path----" + warFile.getAbsolutePath());
         webAppContext.setWar(warFile.getAbsolutePath());
         webAppContext.setExtractWAR(true);
         server.setHandler(webAppContext);
@@ -48,7 +50,7 @@ public class WebStartup implements IStartService {
         } catch (Exception e) {
             LOG.error(e);
         }
-        LOG.info("jetty启动完成.....");
+        LOG.info("jetty finished starting up .....");
         return true;
     }
 
