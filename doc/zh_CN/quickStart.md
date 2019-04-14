@@ -110,7 +110,7 @@ curl -XPOST http://localhost:9123/demoGroup01/demoUnit01
 #### API文档微服务 apidocApplication
 顾名思义，它就是为你自动生成API文档的，执行start.sh来启动该微服务，然后访问如下地址查看文档效果:  
 1. [自定义的api描述文档](https://demo.xiancloud.info/apidoc/customizedHtml?unitFilter=OAuth.issueAccessToken,OAuth.validateAccessToken&docName=接入&docDescription=第三方接入本服务使用oauth2.0认证协议，因此需要事先通过issueAccessToken接口获取临时accessToken。在获取到accessToken之后，其他业务性质接口必须传httpHeader：xian-accessToken=yourToken以便我们的服务对接入者进行身份验证。<br/>accessToken具有时效性，在过期前需要重新申请新的accessToken)  
-2. [全api描述文档](https://demo.xiancloud.info/apidoc/fullHtml?docName=可定制的文档标题)  
+2. [全api描述文档](https://demo.xiancloud.info/apidoc/fullHtml)  
 3. [单元组的api描述文档](https://demo.xiancloud.info/apidoc/groupHtml?groupName=apidoc&docName=可定制的文档标题&docDescription=可定制的文档描述超文本)  
   
 tips: 
