@@ -5,6 +5,9 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 从gateway到业务层，整个业务生命周期都是异步的！也已经支持了异步的DAO层实现，仅限于postgresql。由于mysql connectorJ是基于JDBC的实现，因此对于MySQL，我们局限于JDBC阻塞的标准API。
 至此，xian也是actor模型的完整实现了，希望哪天可以跟akka、vertx做性能pk！
 
+**基于xian的快速开发框架上线**  
+见https://github.com/happyyangyuan/xian_apiserver_allinone_template
+
 ## 目录
 1. [xian的基础介绍](doc/zh_CN/xianBasis.md)  
 2. [30分钟学会使用xian frame开发微服务](doc/zh_CN/quickStart.md)  
