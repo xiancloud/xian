@@ -1,4 +1,4 @@
-## 30分钟学会使用xian frame开发微服务
+## 快速使用xian框架开发微服务
 这里先总结一下使用xian开发微服务的基本步骤
 1. 克隆[gradle模板代码](https://github.com/happyyangyuan/xian_template)。
 2. 基于代码模板来开发unit服务单元。
