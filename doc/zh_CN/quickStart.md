@@ -1,4 +1,11 @@
 ## 30分钟学会使用xian frame开发微服务
+这里先总结一下使用xian开发微服务的基本步骤
+1. 克隆[gradle模板代码](https://github.com/happyyangyuan/xian_template)。
+2. 基于代码模板来开发unit服务单元。
+3. 搭建基础设施：zookeeper注册中心。也可以临时先使用我们提供的测试用的zookeeper：`zk.xiancloud.info:32761`。
+4. 本地构建和启动微服务Java程序/将服务发布到远程服务器。
+
+下面是详细的介绍过程。<br/>
 
 ### 如何运行？程序的入口？——xian_template
 我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xian frame的依赖。
