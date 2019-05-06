@@ -1,6 +1,6 @@
 ## xian的基础介绍
 ### xian框架能解决其他主流微服务框架费力才能解决或者解决不了的问题
-0. [前后端分离架构的快速开发框架](https://github.com/happyyangyuan/xian_apiserver_allinone_template)
+0. [前后端分离架构的apiserver框架](https://github.com/happyyangyuan/xian_apiserver_allinone_template)
 1. 微服务粒度自由拆分，修改配置和拆分包即可实现，几乎不用修改Java代码。
 2. 微服务API接口文档自动生成以及API文档定制。
 3. 微服务与数据库一对一、一对多、多对多关系轻松切换，而不用修改代码的问题。
