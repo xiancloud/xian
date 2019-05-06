@@ -22,6 +22,10 @@ unit作为xian微服务框架的最小服务单元，所有的unit都会被注�
 下图是我们官方提供的[zkui.xiancloud.info](https://zkui.xiancloud.info/home?zkPath=/xian_runtime_master/units)的units注册情况：
 ![units注册情况截图](zkui-units.png)
 
+上图左侧栏为注册的units列表，点击unit名称进入可以查看unit详细注册情况：
+![echoUnit详细注册情况](zkui-echoUnit.png)
+
+（更详细的注册中心和zkui使用见另外教程）
 
 ### unit与服务发现与API网关服务关系
 ![unit与服务发现与API网关服务关系](http://processon.com/chart_image/5ccfdfe0e4b0bab909739b3f.png?_=1557149767299)
