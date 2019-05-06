@@ -5,6 +5,9 @@ UnitMeta，我们可以把它理解成是unit最小服务单元的元数据定�
 public class SimpleFtpClientUnit implements Unit {
     public String getName() {return "simpleFtpClient";}
 
+    /**
+     * 请重点关注本方法
+    */
     @Override
     public UnitMeta getMeta() {
         return UnitMeta.createWithDescription("A simple ftp client tool, login every time you use it and the connection is closed after your file uploading is done.")
