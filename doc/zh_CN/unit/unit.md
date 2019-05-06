@@ -19,5 +19,9 @@ unit作为xian微服务框架的最小服务单元，每个unit对应着一个AP
 ## unit与注册中心
 unit作为xian微服务框架的最小服务单元，所有的unit都会被注册到注册中心内，从而实现服务发现，我们借助服务发现，便可以在其他微服务通过rpc调用到另一个微服务中指定的unit了。也可以从API网关外部通过http请求调用到指定的unit。
 
+下图是我们官方提供的[zkui.xiancloud.info](https://zkui.xiancloud.info/home?zkPath=/xian_runtime_master/units)的units注册情况：
+![units注册情况截图](zkui-units.png)
+
+
 ### unit与服务发现与API网关服务关系
 ![unit与服务发现与API网关服务关系](http://processon.com/chart_image/5ccfdfe0e4b0bab909739b3f.png?_=1557149767299)
