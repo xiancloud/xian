@@ -11,4 +11,4 @@ xian目前是基于zookeeper实现的注册中心，客户端使用的开源的[
 4. 微服务集群内其他节点内的zookeeper-watcher监听到并更新新加入到注册中心的服务单元列表。
 
 简化版本的服务发现与注册流程如下：
-![简化版本的服务发现与注册流程图](http://processon.com/chart_image/5cd06c53e4b01941c8c89211.png?_=1557165312143)
+![简化版本的服务发现与注册流程图](http://processon.com/chart_image/5cd06c53e4b01941c8c89211.png?_=1557165367437)
