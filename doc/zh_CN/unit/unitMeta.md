@@ -1,5 +1,26 @@
 # UnitMeta
-UnitMeta，我们可以把它理解成是unit最小服务单元的元数据定义对象，它指定了一些unit的高级隐藏特性。下面列出目前具有的元数据属性列表：
+UnitMeta，我们可以把它理解成是unit最小服务单元的元数据定义对象，它指定了一些unit的高级隐藏特性。<br/>
+下面以[SimpleFtpClientUnit.java](https://github.com/xiancloud/xian/blob/master/xian-ftp/xian-ftpclient/src/main/java/info/xiancloud/ftpclient/SimpleFtpClientUnit.java)使用示例：
+```java
+public class SimpleFtpClientUnit implements Unit {
+    public String getName() {return "simpleFtpClient";}
+
+    @Override
+    public UnitMeta getMeta() {
+        return UnitMeta.createWithDescription("A simple ftp client tool, login every time you use it and the connection is closed after your file uploading is done.")
+                .setDocApi(false);
+    }
+
+    public Input getInput() { return some input ...}
+
+    public void execute(UnitRequest msg, Handler<UnitResponse> handler) {...}
+
+    public Group getGroup() { return FtpClientService.singleton;}
+```
+
+
+## UnitMeta元数据属性列表
+下面列出目前具有的元数据属性列表：
 
 名称|类型|说明|默认值
 -|-|-|-
