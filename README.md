@@ -15,6 +15,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
     2.1 [如何运行？程序的入口？——xian_template](doc/zh_CN/quickStart.md#如何运行？程序的入口？——xian_template)  
     2.2 [编写一个微服务单元](doc/zh_CN/quickStart.md#编写一个微服务单元)  
     2.3 [基础概念参考](doc/zh_CN/quickStart.md#基础概念参考)  
+    2.4 [unit详解](doc/zh_CN/unit/unit.md)
 3. [xian功能清单](doc/zh_CN/xianFunctionList.md)  
 4. [与其他框架对比](doc/zh_CN/comparison.md)
 
