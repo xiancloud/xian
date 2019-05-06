@@ -7,7 +7,7 @@ xian是一个微服务框架，更确切的说是一个微服务套件。它基�
 
 **基于xian的API Server快捷开发教程上线**  
 - **前后端分离版本**见https://github.com/happyyangyuan/xian_apiserver_allinone_template
-- 前后端一体单机程序快速开发版本（开发中）
+- ~~前后端一体单机程序快速开发版本（这是技术的倒退，不再规划实现）~~
 
 ## 目录
 
