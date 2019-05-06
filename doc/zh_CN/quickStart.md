@@ -5,7 +5,7 @@
 3. 搭建基础设施：zookeeper注册中心。也可以临时先使用我们提供的测试用的zookeeper：`zk.xiancloud.info:32761`。
 4. 本地构建和启动微服务Java程序/将服务发布到远程服务器。
 
-下面是详细的介绍过程。<br/>
+下面开始介绍详细开发过程以及部分工作原理。<br/>
 
 ### 如何运行？程序的入口？——xian_template
 我在GitHub上给出了一个gradle项目模板，该模板已经帮你配置好了各种对xian frame的依赖。
