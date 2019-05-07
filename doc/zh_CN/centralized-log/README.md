@@ -58,9 +58,12 @@ subprojects {
 
 ## 日志开发指南
 ### graylog-udp-server地址配置
-- 使用application.properties来配置
-- 使用环境变量来配置
-- 环境变量优先级高于application.properties（这更符合容器化方案的风格）
+提供多种配置日志服务器的方式，这里介绍比较方便的两种：
+1. 使用application.properties来配置
+2. 使用环境变量来配置
+
+环境变量优先级高于application.properties（这更符合容器化方案的风格）
+
 #### 使用application.properties来配置
 配置文件路径：/xian_template/xian_runtime/${application}/conf/application.properties
 ```
