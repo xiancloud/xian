@@ -28,6 +28,13 @@ LOG.error(String.format("ssid=%s的消息没有找到对应的notifyHandler!整�
 
 ### 业务级粒度的日志链
 如上文说到的，我们在框架层提供traceId机制来串联业务日志，这些日志可以通过集中日志系统进行检索和查询
-![graylog-msgId-search](graylog-msgId-search.md)
+![graylog-msgId-search](graylog-msgId-search.png)
 <br/>
-搜索结果输出msgId对应的整条业务线上的日志
+搜索结果输出msgId对应的整条业务线上的日志<br/>
+![graylog-msgId-search-result](graylog-msgId-search-result.jpeg)
+说明：
+1. 该图上的msgId对应的都是同一个msgId。
+2. nodeId为微服务的节点id，可以看到这批日志跨越了两个节点，第一个节点未`apigateway`网关节点。第二个节点为业务节点`dianping`
+3. 该图上日志按照时间线从下往上排序的。
+4. 该图上的日志是一次完整的API请求日志。
+
