@@ -77,7 +77,7 @@ export gelfInputInternetUrl=udp:${graylog_hostname}
 ```
 ps：请根据自己的graylog地址修改上述配置内容中的变量
 
-### 代码示例
+### 打印日志的代码示例
 ```
 //打印 info 日志，graylog上面对应的info级别日志是`level:6`
 LOG.info("info级别业务日志内容。");
