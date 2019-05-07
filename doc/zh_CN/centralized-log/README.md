@@ -1,11 +1,22 @@
 # 集中日志管理
 xian框架内置了集中日志收集和可视化日志查询，提供了gelf4j日志插件和graylog集成。
+## 目录
+* 工作原理
+  * [gelf协议](https://github.com/xiancloud/xian/tree/master/doc/zh_CN/centralized-log#gelf协议)
+  * [日志输出的性能考虑](https://github.com/xiancloud/xian/tree/master/doc/zh_CN/centralized-log#日志输出的性能考虑)
+  * [log4j2](https://github.com/xiancloud/xian/tree/master/doc/zh_CN/centralized-log#log4j2)
+  * [xian-gelf-common插件](https://github.com/xiancloud/xian/tree/master/doc/zh_CN/centralized-log#xian-gelf-common插件)
+* 日志开发指南
+  * [graylog-udp-server地址配置](https://github.com/xiancloud/xian/tree/master/doc/zh_CN/centralized-log#graylog-udp-server地址配置)
+  * [打印日志的代码示例](https://github.com/xiancloud/xian/tree/master/doc/zh_CN/centralized-log#打印日志的代码示例)
+* 附录
+  * [graylog](https://github.com/xiancloud/xian/tree/master/doc/zh_CN/centralized-log#graylog)
 
 ## 工作原理
 ### gelf协议
 [gelf协议的详细描述见这一份文档](gelf.md)
 
-### 性能考虑
+### 日志输出的性能考虑
 - 采用gelf支持的udp协议传输网络日志，由于udp协议是纯净的报文传输协议，日志服务以及网络带宽因素都不会对Java程序造成性能影响。
 - 完全基于网络日志，而不写本地硬盘，避免硬盘io资源消耗，只消耗本地网络带宽和部分网卡数据传输性能。
 
@@ -36,7 +47,7 @@ subprojects {
     }
 ```
 
-#### log4j gelf appender
+#### log4j-gelf-appender
 相信大家对log4j的appender不会陌生，它是用来将日志分流输出到不同的目标上去的，比如
 - 标准输出`ConsoleAppender`
 - 文件输出`FileAppender`
@@ -46,7 +57,7 @@ subprojects {
 详见源码[GelfLogAppender.java](https://github.com/xiancloud/xian/blob/master/xian-log/xian-gelf-common/src/main/java/biz/paluch/logging/gelf/log4j2/GelfLogAppender.java)
 
 ## 日志开发指南
-### graylog udp server地址配置
+### graylog-udp-server地址配置
 - 使用application.properties来配置
 - 使用环境变量来配置
 - 环境变量优先级高于application.properties（这更符合容器化方案的风格）
