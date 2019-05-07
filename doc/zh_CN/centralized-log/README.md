@@ -69,11 +69,11 @@ subprojects {
 ```
 /xian_template
 ├──xian_runtime/
-│  ├───apidocApplication/
-│  │   └──conf/
-│  │     └──application.properties # gelf udp server配置，请关注此配置文件
-│  ├───demoApplication01/
-│  └───demoGateway/
+  ├───apidocApplication/
+  │   └──conf/
+  │     └──application.properties # gelf udp server配置，请关注此配置文件
+  ├───demoApplication01/
+  └───demoGateway/
 ```
 /xian_template/xian_runtime/${application}/conf/application.properties配置示例：
 ```properties
