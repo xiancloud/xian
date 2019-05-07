@@ -1,6 +1,6 @@
 ## xian frame现有功能
 1. [微服务间通讯RPC、MQ](rpc/README.md)。
-2. [最小微服务电源unit](unit/unit.md)——方法级粒度的服务治理、服务可视化管理（zkui）。
+2. [最小微服务单元unit](unit/unit.md)——方法级粒度的服务治理、服务可视化管理（zkui）。
 3. [集中日志收集和可视化日志查询](centralized-log/README.md)（提供了gelf4j日志插件和graylog集成）。
 4. [全链路日志](call-chain/README.md)——分布式业务日志链路追踪，可以在上述3的集中日志系统内查询定位出指定业务链路上完备日志线条（xian框架基于threadContext实现msgId传递机制，将业务日志做了串联）。
 5. 将Java web应用集成到微服务集群内形成业务层的“微服务”，复用框架提供的自动化集成部署和横向扩展能力，目前支持任何servlet框架集成，特别对springboot做了友好支持。
