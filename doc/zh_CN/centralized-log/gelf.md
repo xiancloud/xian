@@ -29,24 +29,30 @@ gelf协议可以用来传输来自任何终端设备、服务器采集的数据�
   "version": "1.1"
 }
 ```
-##### gelf udp 演示
+##### gelf udp 命令示例
 ```bash
-echo -n '{ "version": "1.1", "host": "gelf-udp.org", "short_message": "A short message transported using gelf udp protocol.", "level": 5, "_some_info": "foo" }' | nc -w0 -u alpha-log.cedarhd.com 30115
+echo -n \
+'{ "version": "1.1", "host": "gelf-udp.org", "short_message": "A short message transported using gelf udp protocol.", "level": 5, "_some_info": "foo" }' \
+| nc -w0 -u ${graylog-hostname} ${graylog-port}
 ```
 
 ##### gelf tcp 演示
 ```bash
-echo -n -e '{ "version": "1.1", "host": "gelf-tcp.org", "short_message": "A short message transported using gelf tcp protocol", "level": 5, "_some_info": "foo" }'"\0" | nc -w0 alpha-log.cedarhd.com 12201
+echo -n -e \
+'{ "version": "1.1", "host": "gelf-tcp.org", "short_message": "A short message transported using gelf tcp protocol", "level": 5, "_some_info": "foo" }'"\0" \
+| nc -w0 ${graylog-hostname} ${graylog-port}
 ```
 ##### gelf http 演示
 ```bash
-curl -X POST -H 'Content-Type: application/json' -d '{ "version": "1.1", "host": "gelf-http.org", "short_message": "A short message transported using gelf http protocol", "level": 5, "_some_info": "foo" }' 'http://alpha-log.cedarhd.com:30158/gelf'
+curl -X POST -H 'Content-Type: application/json' -d \
+'{ "version": "1.1", "host": "gelf-http.org", "short_message": "A short message transported using gelf http protocol", "level": 5, "_some_info": "foo" }' \
+"https://${graylog-hostname}/gelf"
 ```
 http post请求示例
 ```
 # 请求
 URL:
-    https://alpha-log.abc123zxc.com/gelf
+    https://${graylog-host}/gelf
 method:
     post
 header:
