@@ -31,7 +31,7 @@ LOG.error(String.format("ssid=%s的消息没有找到对应的notifyHandler!整�
 ![graylog-msgId-search](graylog-msgId-search.png)
 <br/>
 搜索结果输出msgId对应的整条业务线上的日志<br/>
-![graylog-msgId-search-result](graylog-msgId-search-result.jpeg)
+![graylog-msgId-search-result](graylog-msgId-search-result.png)
 说明：
 1. 该图上的msgId对应的都是同一个msgId。
 2. nodeId为微服务的节点id，可以看到这批日志跨越了两个节点，第一个节点未`apigateway`网关节点。第二个节点为业务节点`dianping`
