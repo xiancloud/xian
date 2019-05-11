@@ -38,7 +38,7 @@ rpc server端会伴随着节点启动而启动，开启**随机端口**监听，
         }
     }
 ```
-rpc client不会伴随着节点启动而启动与其他节点的socket长连接，而是等到当前节点需要调用另外一个节点内的unit服务单元时，才会开始建立与另外一个接单内置的netty server之间的长连接。
+rpc client不会伴随着节点启动而启动与其他节点的socket长连接，而是等到当前节点需要调用另外一个节点内的unit服务单元时，才会开始建立与另外一个节点内置的netty server之间的长连接。
 见源码`public final class RpcNettyClient implements RpcClient`，伪代码如下：
 ```RpcNettyClient.java
     public boolean request(String nodeId, String message) {
