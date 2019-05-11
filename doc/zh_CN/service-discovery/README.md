@@ -1,5 +1,5 @@
 # 服务发现
-xian目前是基于zookeeper实现的注册中心，客户端使用的开源的[阿帕奇curator](https://curator.apache.org)
+xian目前是基于zookeeper实现的注册中心，客户端使用的开源的[阿帕奇curator](https://curator.apache.org)。  <br/>
 同时，我们为zk配置了一个zkui界面客户端。
 
 关于zookeeper和zkui的概述，在[上文快速入门教程#注册中心](https://github.com/xiancloud/xian/blob/master/doc/zh_CN/quickStart.md#注册中心)中有提及。
