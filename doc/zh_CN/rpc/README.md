@@ -24,7 +24,7 @@ compile group: 'io.netty', name: 'netty-all', version: '4.1.19.Final'
 - 短连接频繁握手的性能损耗
 
 #### 长连接懒加载机制
-rpc server端会伴随这节点启动而启动，开启**随机端口**监听，见[Node.java源码](https://github.com/xiancloud/xian/blob/master/xian-core/src/main/java/info/xiancloud/core/distribution/Node.java)
+rpc server端会伴随着节点启动而启动，开启**随机端口**监听，见[Node.java源码](https://github.com/xiancloud/xian/blob/master/xian-core/src/main/java/info/xiancloud/core/distribution/Node.java)
 ```Node.java
     public static int RPC_PORT;
     
