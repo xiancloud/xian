@@ -52,12 +52,14 @@ rpc client不会伴随着节点启动而启动与其他节点的socket长连接�
 ```
 
 #### 长连接复用机制
-同上问长连接懒加载是同一份代码，这里抠出来强调一下：
+同上文的长连接懒加载示例，是同一份代码，这里抠出来强调一下：
 ```java
 if (!channelAvailable(nodeId)) {
    lazyInit(nodeId);
 }
 nodeId_to_connectedChannel_map.get(nodeId).writeAndFlush(message + Constant.RPC_DELIMITER);
+
+## ps：lazyInit(nodeId)的逻辑是：创建一个socket长连接，将长连接的channel引用存储concurrentHashMap，以便后面对其进行复用。
 ```
 
 #### 长连接回收机制
